@@ -1,0 +1,271 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+@{
+    // Sử dụng null-coalescing để gán giá trị mặc định nếu Model null
+    ViewData["Title"] = Model?.Title ?? "Chi tiết sự kiện";
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutNova.cshtml";
+}
+
+@if (Model == null)
+{
+    <div class="container py-5 text-center">
+        <h3>Không tìm thấy dữ liệu sự kiện.</h3>
+        <a href="/" class="button">Quay lại trang chủ</a>
+    </div>
+}
+else
+{
+    <style>
+        :root {
+            --primary-nova: #5864FF;
+        }
+
+        .section-title h3 {
+            font-weight: 800;
+            color: #081828;
+        }
+
+        .speaker-card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
+            transition: 0.3s;
+            background: #fff;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+            .speaker-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+
+        .speaker-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 3px solid var(--primary-nova);
+        }
+
+        .schedule-item {
+            background: #f9f9f9;
+            padding: 20px 30px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 5px solid var(--primary-nova);
+            transition: 0.3s;
+        }
+
+            .schedule-item:hover {
+                background: #fff;
+                box-shadow: 0 5px 15px rgba(88, 100, 255, 0.15);
+            }
+
+        .single-pricing {
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+
+            .single-pricing:hover {
+                border-color: var(--primary-nova);
+                transform: scale(1.05);
+            }
+
+        .price-value {
+            color: var(--primary-nova);
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+    </style>
+
+    <section id="home" class="hero-section-wrapper-5">
+        <div class="hero-section hero-style-5 img-bg"
+             style="background-image:url('/templates/nova/assets/img/hero/hero-5/hero-bg.svg')">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="hero-content-wrapper">
+                            <span class="text-uppercase text-primary fw-bold mb-2 d-block">
+                                @(Model.Category?.Name ?? "Sự kiện")
+                            </span>
+
+                            <h2 class="mb-30" style="font-size:3rem">
+                                @Model.Title
+                            </h2>
+
+                            <p class="mb-30">
+                                <i class="lni lni-map-marker"></i> @(Model.Location ?? "Địa điểm chưa cập nhật") <br />
+                                <i class="lni lni-timer"></i>
+                                @Model.StartDate.ToString("HH:mm - dd/MM/yyyy")
+                            </p>
+
+                            <a href="#pricing" class="button button-lg radius-50">
+                                Mua Vé Ngay <i class="lni lni-ticket"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 align-self-end">
+                        <img class="img-fluid rounded shadow"
+                             src="@(string.IsNullOrEmpty(Model.ImageUrl)
+                                                                 ? "/templates/nova/assets/img/hero/hero-5/hero-img.svg"
+                                                                 : Model.ImageUrl)" alt="@Model.Title">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <section id="about" class="about-section about-style-4">
+        <div class="container">
+            <div class="about-content-wrapper text-center mx-auto" style="max-width:800px">
+                <div class="section-title mb-30">
+                    <h3>Về Sự Kiện</h3>
+                </div>
+                <div class="text-start fs-5">
+                    @Html.Raw(Model.Description ?? "Thông tin đang được cập nhật...")
+                </div>
+            </div>
+        </div>
+    </section>
+
+@if (Model.Speakers != null && Model.Speakers.Any())
+    {
+        <section id="speakers" class="feature-section bg-light">
+            <div class="container">
+                <div class="section-title text-center mb-60">
+                    <h3>Diễn Giả</h3>
+                    <p>Những chuyên gia đồng hành cùng sự kiện</p>
+                </div>
+
+                <div class="row justify-content-center">
+                    @foreach (var sp in Model.Speakers)
+                    {
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="speaker-card">
+                                <img src="@(sp.ImageUrl ?? "/images/default-avatar.png")" class="speaker-img" alt="@sp.Name" />
+                                <h5>@sp.Name</h5>
+                                <p class="text-primary">@sp.JobTitle</p>
+                                @if (!string.IsNullOrEmpty(sp.SocialUrl))
+                                {
+                                    <a href="@sp.SocialUrl" target="_blank">
+                                        <i class="lni lni-linkedin-original"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    @if (Model.Schedules != null && Model.Schedules.Any())
+    {
+        <section id="schedule" class="about-section">
+            <div class="container">
+                <div class="section-title text-center mb-50">
+                    <h3>Lịch Trình</h3>
+                </div>
+
+                @foreach (var item in Model.Schedules.OrderBy(s => s.StartTime))
+                {
+                    <div class="schedule-item">
+                        <h5 class="text-primary">
+                            @item.StartTime.ToString("HH:mm")
+                            -
+                            @item.EndTime.ToString("HH:mm")
+                        </h5>
+                        <h5>@item.Title</h5>
+                        <p class="text-muted">
+                            <i class="lni lni-map-marker"></i> @(item.Location ?? "Tại hội trường")
+                        </p>
+                        <p>@item.Description</p>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <section id="pricing" class="pricing-section bg-light">
+        <div class="container">
+            <div class="section-title text-center mb-60">
+                <h3>Vé Tham Dự</h3>
+            </div>
+
+            <div class="row justify-content-center">
+                @foreach (var ticket in Model.TicketTypes ?? Enumerable.Empty<EventManagementSystem.Web.Models.Entities.TicketType>())
+                {
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="single-pricing text-center p-5">
+                            <h6>@ticket.Name</h6>
+                            <h3 class="price-value">
+                                @(ticket.Price == 0 ? "Miễn Phí" : ticket.Price.ToString("N0") + "đ")
+                            </h3>
+                            <p>Số lượng: @ticket.Quantity</p>
+
+                            <a href="#register"
+                               class="button radius-30 w-100"
+                               onclick="selectTicket(@ticket.Id)">
+                                Mua Ngay
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section id="register" class="contact-section">
+        <div class="container">
+            <div class="section-title text-center mb-50">
+                <h3>Đăng Ký</h3>
+            </div>
+
+            <div class="col-lg-8 mx-auto bg-white p-5 rounded shadow-sm">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <input class="form-input mb-3"
+                           value="@User.Identity.Name"
+                           readonly />
+
+                    <select id="ticketSelect" class="form-input mb-3">
+                        <option disabled selected>Chọn loại vé</option>
+                        @if (Model.TicketTypes != null)
+                        {
+                            foreach (var t in Model.TicketTypes)
+                            {
+                                <option value="@t.Id">@t.Name - @t.Price.ToString("N0")đ</option>
+                            }
+                        }
+                    </select>
+
+                    <button class="button w-100" onclick="alert('Đăng ký thành công!')">
+                        Xác Nhận Đăng Ký
+                    </button>
+                }
+                else
+                {
+                    <a asp-controller="Account"
+                       asp-action="Login"
+                       asp-route-returnUrl="@Context.Request.Path"
+                       class="button w-100">
+                        Đăng Nhập Để Đăng Ký
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<script>
+    function selectTicket(id) {
+        const select = document.getElementById('ticketSelect');
+        if (select) {
+            select.value = id;
+            const target = document.getElementById('register');
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>

@@ -1,0 +1,447 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\WebEvent\\EventManagementSystem\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/LAPTOP_R0RE9N3M/EventManagementSystem/True/SqlTable/dbo.AspNetUserTokens.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\account\\purchasesuccess.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\account\\purchasesuccess.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\account\\confirmemailsuccess.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\account\\confirmemailsuccess.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\account\\externalloginconfirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\account\\externalloginconfirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\account\\confirmemailfailed.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\account\\confirmemailfailed.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\account\\registerconfirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\account\\registerconfirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\account\\forgotpasswordconfirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\account\\forgotpasswordconfirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\account\\forgotpassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\account\\forgotpassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\account\\externalloginfailure.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\account\\externalloginfailure.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/LAPTOP_R0RE9N3M/EventManagementSystem/True/SqlTable/dbo.AspNetUsers.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\services\\implementations\\emailservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\services\\implementations\\emailservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\models\\emailsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\models\\emailsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\services\\interfaces\\iemailservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\services\\interfaces\\iemailservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\eventmanagementsystem.web.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\eventmanagementsystem.web.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\home\\events.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\home\\events.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\views\\home\\categories.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\views\\home\\categories.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\data\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\data\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|d:\\webevent\\eventmanagementsystem\\eventmanagementsystem.web\\models\\entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AFE2ABA3-0BBA-4F30-A86F-419029088E3A}|EventManagementSystem.Web\\EventManagementSystem.Web.csproj|solutionrelative:eventmanagementsystem.web\\models\\entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 8,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "dbo.AspNetUserTokens [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/LAPTOP_R0RE9N3M/EventManagementSystem/True/SqlTable/dbo.AspNetUserTokens.sql",
+              "ToolTip": "dbo.AspNetUserTokens [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-12-19T10:57:06.645Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ConfirmEmailSuccess.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ConfirmEmailSuccess.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Account\\ConfirmEmailSuccess.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ConfirmEmailSuccess.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Account\\ConfirmEmailSuccess.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-19T09:50:43.595Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ExternalLoginConfirmation.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ExternalLoginConfirmation.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Account\\ExternalLoginConfirmation.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ExternalLoginConfirmation.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Account\\ExternalLoginConfirmation.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-19T10:39:20.125Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PurchaseSuccess.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\PurchaseSuccess.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Account\\PurchaseSuccess.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\PurchaseSuccess.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Account\\PurchaseSuccess.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-19T09:51:23.869Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\appsettings.json",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\appsettings.json",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\appsettings.json",
+              "RelativeToolTip": "EventManagementSystem.Web\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-19T07:34:45.502Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ConfirmEmailFailed.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ConfirmEmailFailed.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Account\\ConfirmEmailFailed.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ConfirmEmailFailed.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Account\\ConfirmEmailFailed.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-19T09:51:00.918Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "RegisterConfirmation.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\RegisterConfirmation.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Account\\RegisterConfirmation.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\RegisterConfirmation.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Account\\RegisterConfirmation.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-19T09:50:21.284Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ForgotPasswordConfirmation.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ForgotPasswordConfirmation.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Account\\ForgotPasswordConfirmation.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ForgotPasswordConfirmation.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Account\\ForgotPasswordConfirmation.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-19T10:39:24.829Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ForgotPassword.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ForgotPassword.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Account\\ForgotPassword.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ForgotPassword.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Account\\ForgotPassword.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-19T10:39:23.706Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ExternalLoginFailure.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ExternalLoginFailure.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Account\\ExternalLoginFailure.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\ExternalLoginFailure.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Account\\ExternalLoginFailure.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-19T10:39:21.423Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "EmailSettings.cs",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Models\\EmailSettings.cs",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Models\\EmailSettings.cs",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Models\\EmailSettings.cs",
+              "RelativeToolTip": "EventManagementSystem.Web\\Models\\EmailSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-19T08:55:04.709Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "EmailServices.cs",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Services\\Implementations\\EmailServices.cs",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Services\\Implementations\\EmailServices.cs",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Services\\Implementations\\EmailServices.cs",
+              "RelativeToolTip": "EventManagementSystem.Web\\Services\\Implementations\\EmailServices.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAACAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-19T07:38:23.604Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Controllers\\AccountController.cs",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "EventManagementSystem.Web\\Controllers\\AccountController.cs",
+              "ViewState": "AgIAAHsAAAAAAAAAAAAAAJAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-19T07:47:01.316Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\appsettings.Development.json",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\appsettings.Development.json",
+              "RelativeToolTip": "EventManagementSystem.Web\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-19T10:10:04.817Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "dbo.AspNetUsers.sql",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/LAPTOP_R0RE9N3M/EventManagementSystem/True/SqlTable/dbo.AspNetUsers.sql",
+              "ToolTip": "ViewDataWindow_MSSQL__/LAPTOP_R0RE9N3M/EventManagementSystem/True/SqlTable/dbo.AspNetUsers.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-12-19T10:29:23.207Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "CategoriesController.cs",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Controllers\\CategoriesController.cs",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Controllers\\CategoriesController.cs",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Controllers\\CategoriesController.cs",
+              "RelativeToolTip": "EventManagementSystem.Web\\Controllers\\CategoriesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-19T10:22:10.28Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Program.cs",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Program.cs",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Program.cs",
+              "RelativeToolTip": "EventManagementSystem.Web\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-19T07:45:03.095Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "IEmailServices.cs",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Services\\Interfaces\\IEmailServices.cs",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Services\\Interfaces\\IEmailServices.cs",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Services\\Interfaces\\IEmailServices.cs",
+              "RelativeToolTip": "EventManagementSystem.Web\\Services\\Interfaces\\IEmailServices.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-19T07:37:42.929Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "EventManagementSystem.Web.csproj",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\EventManagementSystem.Web.csproj",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\EventManagementSystem.Web.csproj",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\EventManagementSystem.Web.csproj",
+              "RelativeToolTip": "EventManagementSystem.Web\\EventManagementSystem.Web.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-12-19T07:36:56.533Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Register.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\Register.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Account\\Register.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\Register.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Account\\Register.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAJgAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-18T07:09:48.74Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\Login.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Account\\Login.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Account\\Login.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Account\\Login.cshtml",
+              "ViewState": "AgIAAKUAAAAAAAAAAAAewMIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-18T07:09:35.618Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Controllers\\HomeController.cs",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "EventManagementSystem.Web\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAA3wEUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-18T06:34:38.659Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Events.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Home\\Events.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Home\\Events.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Home\\Events.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Home\\Events.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADYAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-18T06:31:17.851Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Category.cs",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Models\\Entities\\Category.cs",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Models\\Entities\\Category.cs",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Models\\Entities\\Category.cs",
+              "RelativeToolTip": "EventManagementSystem.Web\\Models\\Entities\\Category.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-18T06:25:49.938Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "SeedData.cs",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Data\\SeedData.cs",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Data\\SeedData.cs",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Data\\SeedData.cs",
+              "RelativeToolTip": "EventManagementSystem.Web\\Data\\SeedData.cs",
+              "ViewState": "AgIAAK4AAAAAAAAAAAAkwLsAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-18T06:24:27.777Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "Categories.cshtml",
+              "DocumentMoniker": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Home\\Categories.cshtml",
+              "RelativeDocumentMoniker": "EventManagementSystem.Web\\Views\\Home\\Categories.cshtml",
+              "ToolTip": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\Views\\Home\\Categories.cshtml",
+              "RelativeToolTip": "EventManagementSystem.Web\\Views\\Home\\Categories.cshtml",
+              "ViewState": "AgIAABUAAAAAAAAAAAAkwD0AAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-18T06:23:45.464Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

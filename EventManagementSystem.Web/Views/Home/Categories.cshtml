@@ -1,0 +1,62 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Category>
+
+@{
+    ViewData["Title"] = "Event Categories";
+}
+
+<div class="container-fluid pb-5 bg-primary hero-header">
+    <div class="container py-5">
+        <div class="row g-3 align-items-center text-white">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="display-1 mb-0 animated slideInLeft">Categories</h1>
+            </div>
+            <div class="col-lg-6 animated slideInRight">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center justify-content-lg-end mb-0">
+                        <li class="breadcrumb-item"><a class="text-primary" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="breadcrumb-item active text-secondary" aria-current="page">Categories</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+            <h6 class="text-primary section-title bg-white text-center px-3">Categories</h6>
+            <h1 class="display-6 mb-4">Explore Events by Category</h1>
+        </div>
+
+        <div class="row g-4">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var category in Model)
+                {
+                    <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="service-item text-center pt-3 shadow-sm rounded">
+                            <div class="p-4">
+                                @* Bạn có thể thay fa-calendar-check bằng fa-@category.Icon nếu đã thêm trường Icon *@
+                                <i class="fa fa-3x fa-calendar-check text-primary mb-4"></i>
+                                <h5 class="mb-3">@category.Name</h5>
+                                <p>@category.Description</p>
+                                
+                                <a class="btn btn-outline-primary rounded-pill px-4" 
+                                   asp-controller="Home" 
+                                   asp-action="Events" 
+                                   asp-route-categoryId="@category.Id">View Events</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center">
+                    <p>No categories available.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

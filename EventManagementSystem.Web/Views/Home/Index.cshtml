@@ -1,0 +1,843 @@
+﻿@using EventManagementSystem.Web.Models.ViewModels
+@model HomeViewModel
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Tính toán thời gian còn lại cho Spotlight
+    var timeSpan = Model.SpotlightEvent != null ? Model.SpotlightEvent.StartDate - DateTime.Now : TimeSpan.Zero;
+    var daysLeft = timeSpan.Days > 0 ? timeSpan.Days : 0;
+    var hoursLeft = timeSpan.Hours > 0 ? timeSpan.Hours : 0;
+
+    // Lấy giá vé thấp nhất
+    var minPrice = Model.SpotlightEvent != null && Model.SpotlightEvent.TicketTypes.Any()
+                   ? Model.SpotlightEvent.TicketTypes.Min(t => t.Price).ToString("N0")
+                   : "Liên hệ";
+}
+
+<main>
+    @*Section 1: Hero Header*@
+    <div class="container-fluid pb-5 hero-header bg-light mb-5">
+        <div class="container py-5">
+            <div class="row g-5 align-items-center mb-5">
+                <div class="col-lg-6">
+                    <h1 class="display-4 mb-4 animated slideInRight">
+                        Discover <span class="text-primary">Events</span> & Amazing Experiences
+                    </h1>
+                    <p class="mb-4 animated slideInRight text-muted lead">
+                        Thousands of music festivals, tech summits, workshops, and more are waiting for you. Book your tickets today!
+                    </p>
+
+                    <div class="bg-white rounded p-3 shadow-sm border animated slideInRight mb-4">
+                        <form action="@Url.Action("Events", "Home")" method="get">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-white border-0"><i class="fa fa-search text-muted"></i></span>
+                                <input type="text" name="searchString" class="form-control border-0 shadow-none" placeholder="Search events, artists, venues...">
+                                <button class="btn btn-primary px-4 rounded" type="submit">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="owl-carousel header-carousel animated fadeIn">
+                        <img class="img-fluid rounded shadow" src="~/img/hero-slider-1.jpg" alt="">
+                        <img class="img-fluid rounded shadow" src="~/img/hero-slider-2.jpg" alt="">
+                        <img class="img-fluid rounded shadow" src="~/img/hero-slider-3.jpg" alt="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-5 animated fadeIn">
+                <div class="col-md-6 col-lg-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 btn-square border border-2 border-white me-3 bg-white text-primary rounded-circle">
+                            <i class="fa fa-ticket-alt"></i>
+                        </div>
+                        <div>
+                            <h5 class="lh-base mb-0">E-Tickets</h5>
+                            <small class="text-muted">Instant QR Code</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 btn-square border border-2 border-white me-3 bg-white text-primary rounded-circle">
+                            <i class="fa fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <h5 class="lh-base mb-0">100% Secure</h5>
+                            <small class="text-muted">Safe Payment</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 btn-square border border-2 border-white me-3 bg-white text-primary rounded-circle">
+                            <i class="fa fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <h5 class="lh-base mb-0">Verified Events</h5>
+                            <small class="text-muted">Trusted Organizers</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 btn-square border border-2 border-white me-3 bg-white text-primary rounded-circle">
+                            <i class="fa fa-headset"></i>
+                        </div>
+                        <div>
+                            <h5 class="lh-base mb-0">24/7 Support</h5>
+                            <small class="text-muted">Always Here</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*Section 2: Browse by Category*@
+    @*<div class="container-xxl py-5">
+            <div class="container">
+                <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+                    <h6 class="text-primary section-title bg-white text-center px-3">Topics</h6>
+                    <h1 class="display-6 mb-4">Explore Events by Interest</h1>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-2 col-md-4 col-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <a class="cat-item d-block bg-light text-center rounded p-3" href="@Url.Action("Categories", "Home", new { searchString = "Technology" })">
+                            <div class="rounded p-4 mb-3 mx-auto" style="width: 80px; height: 80px; background: #e6f2ff;">
+                                <i class="fa fa-microchip fa-2x text-primary pt-2"></i>
+                            </div>
+                            <h6 class="mb-0">Technology</h6>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6 wow fadeInUp" data-wow-delay="0.2s">
+                        <a class="cat-item d-block bg-light text-center rounded p-3" href="@Url.Action("Categories", "Home", new { searchString = "Music" })">
+                            <div class="rounded p-4 mb-3 mx-auto" style="width: 80px; height: 80px; background: #ffe6e6;">
+                                <i class="fa fa-music fa-2x text-danger pt-2"></i>
+                            </div>
+                            <h6 class="mb-0">Music</h6>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6 wow fadeInUp" data-wow-delay="0.3s">
+                        <a class="cat-item d-block bg-light text-center rounded p-3" href="@Url.Action("Categories", "Home", new { searchString = "Food" })">
+                            <div class="rounded p-4 mb-3 mx-auto" style="width: 80px; height: 80px; background: #e6fffa;">
+                                <i class="fa fa-utensils fa-2x text-success pt-2"></i>
+                            </div>
+                            <h6 class="mb-0">Food & Drink</h6>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6 wow fadeInUp" data-wow-delay="0.4s">
+                        <a class="cat-item d-block bg-light text-center rounded p-3" href="@Url.Action("Categories", "Home", new { searchString = "Education" })">
+                            <div class="rounded p-4 mb-3 mx-auto" style="width: 80px; height: 80px; background: #fffbe6;">
+                                <i class="fa fa-graduation-cap fa-2x text-warning pt-2"></i>
+                            </div>
+                            <h6 class="mb-0">Education</h6>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6 wow fadeInUp" data-wow-delay="0.5s">
+                        <a class="cat-item d-block bg-light text-center rounded p-3" href="@Url.Action("Categories", "Home", new { searchString = "Business" })">
+                            <div class="rounded p-4 mb-3 mx-auto" style="width: 80px; height: 80px; background: #f0f5ff;">
+                                <i class="fa fa-chart-line fa-2x text-info pt-2"></i>
+                            </div>
+                            <h6 class="mb-0">Business</h6>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6 wow fadeInUp" data-wow-delay="0.6s">
+                        <a class="cat-item d-block bg-light text-center rounded p-3" href="@Url.Action("Categories", "Home", new { searchString = "Health" })">
+                            <div class="rounded p-4 mb-3 mx-auto" style="width: 80px; height: 80px; background: #fff0f6;">
+                                <i class="fa fa-heartbeat fa-2x text-danger pt-2"></i>
+                            </div>
+                            <h6 class="mb-0">Health</h6>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>
+            .cat-item {
+                transition: .5s;
+                text-decoration: none;
+                color: #333;
+            }
+
+                .cat-item:hover {
+                    box-shadow: 0 0 30px #cccccc;
+                    margin-top: -10px;
+                }
+        </style>*@
+
+
+    @*Section 2: Browse by Category (Image Style)*@
+    <!--<div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+                <h6 class="text-primary section-title bg-white text-center px-3">Topics</h6>
+                <h1 class="display-6 mb-4">Explore by Category</h1>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <a class="cat-img-item position-relative d-block overflow-hidden rounded" href="@Url.Action("Categories", "Home", new { searchString = "Technology" })">
+                        <img class="img-fluid w-100" src="~/img/project-5.jpg" alt="Technology">
+                        <div class="cat-overlay d-flex flex-column justify-content-center text-center p-4">
+                            <h3 class="text-white font-weight-bold mb-0">Technology</h3>
+                            <p class="text-white-50 mb-0">AI, Blockchain, Coding</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <a class="cat-img-item position-relative d-block overflow-hidden rounded" href="@Url.Action("Categories", "Home", new { searchString = "Music" })">
+                        <img class="img-fluid w-100" src="~/img/project-3.jpg" alt="Music">
+                        <div class="cat-overlay d-flex flex-column justify-content-center text-center p-4">
+                            <h3 class="text-white font-weight-bold mb-0">Music</h3>
+                            <p class="text-white-50 mb-0">Concerts, Festivals</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <a class="cat-img-item position-relative d-block overflow-hidden rounded" href="@Url.Action("Categories", "Home", new { searchString = "Food" })">
+                        <img class="img-fluid w-100" src="~/img/project-2.jpg" alt="Food">
+                        <div class="cat-overlay d-flex flex-column justify-content-center text-center p-4">
+                            <h3 class="text-white font-weight-bold mb-0">Food & Drink</h3>
+                            <p class="text-white-50 mb-0">Festivals, Tasting</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <a class="cat-img-item position-relative d-block overflow-hidden rounded" href="@Url.Action("Categories", "Home", new { searchString = "Education" })">
+                        <img class="img-fluid w-100" src="~/img/project-4.jpg" alt="Education">
+                        <div class="cat-overlay d-flex flex-column justify-content-center text-center p-4">
+                            <h3 class="text-white font-weight-bold mb-0">Education</h3>
+                            <p class="text-white-50 mb-0">Workshops, Seminars</p>
+                        </div>
+                    </a>
+                </div>
+                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <a class="cat-img-item position-relative d-block overflow-hidden rounded" href="@Url.Action("Categories", "Home", new { searchString = "Business" })">
+                        <img class="img-fluid w-100" src="~/img/project-1.jpg" alt="Business">
+                        <div class="cat-overlay d-flex flex-column justify-content-center text-center p-4">
+                            <h3 class="text-white font-weight-bold mb-0">Business</h3>
+                            <p class="text-white-50 mb-0">Networking, Finance</p>
+                        </div>
+                    </a>
+                </div>
+                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <a class="cat-img-item position-relative d-block overflow-hidden rounded" href="@Url.Action("Categories", "Home", new { searchString = "Health" })">
+                        <img class="img-fluid w-100" src="~/img/project-6.jpg" alt="Health">
+                        <div class="cat-overlay d-flex flex-column justify-content-center text-center p-4">
+                            <h3 class="text-white font-weight-bold mb-0">Health</h3>
+                            <p class="text-white-50 mb-0">Yoga, Mental Health</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .cat-img-item {
+            height: 250px; /* Chiều cao cố định */
+        }
+        .cat-img-item img {
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        /* Lớp phủ màu đen mờ để chữ trắng nổi bật */
+        .cat-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            transition: background 0.5s ease;
+        }
+        /* Hover vào thì zoom ảnh và làm tối nền thêm chút */
+        .cat-img-item:hover img {
+            transform: scale(1.1);
+        }
+        .cat-img-item:hover .cat-overlay {
+            background: rgba(0, 0, 0, 0.6);
+        }
+    </style>-->
+
+
+
+    @*Section 2: Browse by Category (Circle Style)*@
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+                <h6 class="text-primary section-title bg-white text-center px-3">Topics</h6>
+                <h1 class="display-6 mb-4">Explore Events by Interest</h1>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+
+                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.1s">
+                    <a href="@Url.Action("Categories", "Home", new { searchString = "Technology" })" class="cat-circle d-block text-decoration-none">
+                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                            <img class="img-fluid w-100 h-100" src="~/img/project-5.jpg" alt="Technology">
+                            <div class="circle-overlay"></div>
+                        </div>
+                        <h6 class="mb-0 text-dark fw-bold">Technology</h6>
+                    </a>
+                </div>
+
+                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.2s">
+                    <a href="@Url.Action("Categories", "Home", new { searchString = "Music" })" class="cat-circle d-block text-decoration-none">
+                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                            <img class="img-fluid w-100 h-100" src="~/img/project-3.jpg" alt="Music">
+                            <div class="circle-overlay"></div>
+                        </div>
+                        <h6 class="mb-0 text-dark fw-bold">Music</h6>
+                    </a>
+                </div>
+
+                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.3s">
+                    <a href="@Url.Action("Categories", "Home", new { searchString = "Food" })" class="cat-circle d-block text-decoration-none">
+                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                            <img class="img-fluid w-100 h-100" src="~/img/project-2.jpg" alt="Food">
+                            <div class="circle-overlay"></div>
+                        </div>
+                        <h6 class="mb-0 text-dark fw-bold">Food & Drink</h6>
+                    </a>
+                </div>
+
+                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.4s">
+                    <a href="@Url.Action("Categories", "Home", new { searchString = "Education" })" class="cat-circle d-block text-decoration-none">
+                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                            <img class="img-fluid w-100 h-100" src="~/img/project-4.jpg" alt="Education">
+                            <div class="circle-overlay"></div>
+                        </div>
+                        <h6 class="mb-0 text-dark fw-bold">Education</h6>
+                    </a>
+                </div>
+
+                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.5s">
+                    <a href="@Url.Action("Categories", "Home", new { searchString = "Business" })" class="cat-circle d-block text-decoration-none">
+                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                            <img class="img-fluid w-100 h-100" src="~/img/project-1.jpg" alt="Business">
+                            <div class="circle-overlay"></div>
+                        </div>
+                        <h6 class="mb-0 text-dark fw-bold">Business</h6>
+                    </a>
+                </div>
+
+                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.6s">
+                    <a href="@Url.Action("Categories", "Home", new { searchString = "Health" })" class="cat-circle d-block text-decoration-none">
+                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                            <img class="img-fluid w-100 h-100" src="~/img/project-6.jpg" alt="Health">
+                            <div class="circle-overlay"></div>
+                        </div>
+                        <h6 class="mb-0 text-dark fw-bold">Health</h6>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* CSS tạo hình tròn */
+        .circle-img {
+            width: 140px; /* Kích thước tròn */
+            height: 140px;
+            border-radius: 50%; /* Làm tròn */
+            border: 4px solid #fff; /* Viền trắng tách biệt */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .circle-img img {
+                object-fit: cover; /* Đảm bảo ảnh không bị méo */
+            }
+
+        /* Hiệu ứng Hover: Phóng to nhẹ và đổ bóng */
+        .cat-circle:hover .circle-img {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+            border-color: var(--primary); /* Đổi màu viền khi hover */
+        }
+
+        .cat-circle:hover h6 {
+            color: var(--primary) !important; /* Đổi màu chữ */
+        }
+    </style>
+
+
+    @*Section 3*@
+    @*@if (Model.SpotlightEvent != null)
+        {
+            <div class="container-fluid bg-dark py-5 my-5 wow fadeIn" data-wow-delay="0.1s"
+                 style="background: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url('@Model.SpotlightEvent.ImageUrl'); background-size: cover; background-position: center;">
+                <div class="container py-5">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 text-white">
+                            <div class="badge bg-danger text-uppercase px-3 py-2 mb-4">Sự Kiện Tâm Điểm</div>
+
+                            <h1 class="display-4 text-white mb-3">@Model.SpotlightEvent.Title</h1>
+
+                            <div class="d-flex align-items-center mb-4">
+                                <span class="me-4">
+                                    <i class="fa fa-calendar-alt text-primary me-2"></i>@Model.SpotlightEvent.StartDate.ToString("dd/MM/yyyy")
+                                </span>
+                                <span>
+                                    <i class="fa fa-map-marker-alt text-primary me-2"></i>@Model.SpotlightEvent.Location
+                                </span>
+                            </div>
+
+                            <div class="mb-4 text-white-50 lead" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                @Html.Raw(Model.SpotlightEvent.Description)
+                            </div>
+
+                            <div class="row g-3 mb-4 text-center">
+                                <div class="col-3">
+                                    <div class="bg-white text-dark rounded p-2">
+                                        <h3 class="mb-0 fw-bold">@daysLeft</h3>
+                                        <small>Ngày</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="bg-white text-dark rounded p-2">
+                                        <h3 class="mb-0 fw-bold">@hoursLeft</h3>
+                                        <small>Giờ</small>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="bg-white text-dark rounded p-2">
+                                        <h3 class="mb-0 fw-bold text-danger">HOT</h3>
+                                        <small>Sắp diễn ra</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3">
+                                <a href="@Url.Action("Detail", "Event", new { id = Model.SpotlightEvent.Id })" class="btn btn-primary py-3 px-5 fw-bold">
+                                    Mua Vé Ngay <i class="fa fa-arrow-right ms-2"></i>
+                                </a>
+                                <button class="btn btn-outline-light py-3 px-4"><i class="fa fa-play me-2"></i> Teaser</button>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5 offset-lg-1 d-none d-lg-block">
+                            <div class="position-relative">
+                                <img src="@Model.SpotlightEvent.ImageUrl" alt="@Model.SpotlightEvent.Title" class="img-fluid rounded shadow-lg"
+                                     style="border: 10px solid rgba(255,255,255,0.1); transform: rotate(3deg); max-height: 500px; width: 100%; object-fit: cover;">
+
+                                <div class="position-absolute bottom-0 start-0 bg-primary text-white p-3 rounded shadow-sm" style="transform: translate(-20px, 20px);">
+                                    <small class="d-block text-uppercase">Chỉ từ</small>
+                                    <span class="h4 fw-bold mb-0">@minPrice đ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }*@
+
+    @*Section 3: Spotlight Event*@
+    <div class="container-fluid bg-dark py-5 my-5 wow fadeIn" data-wow-delay="0.1s"
+         style="background: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.6)), url('/img/project-3.jpg'); background-size: cover; background-position: center;">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6 text-white">
+                    <div class="badge bg-danger text-uppercase px-3 py-2 mb-4">Spotlight Event</div>
+                    <h1 class="display-4 text-white mb-3">Global Tech Summit 2025</h1>
+
+                    <div class="d-flex align-items-center mb-4">
+                        <span class="me-4"><i class="fa fa-calendar-alt text-primary me-2"></i>20/11/2025</span>
+                        <span><i class="fa fa-map-marker-alt text-primary me-2"></i>SECC, HCMC</span>
+                    </div>
+
+                    <p class="mb-4 text-white-50 lead">
+                        Don't miss the chance to meet 50+ top speakers from Google, Microsoft, and Amazon.
+                        Experience the latest AI technology and expand your professional network.
+                    </p>
+
+                    <div class="row g-3 mb-4 text-center">
+                        <div class="col-3">
+                            <div class="bg-white text-dark rounded p-2">
+                                <h3 class="mb-0 fw-bold">05</h3>
+                                <small>Days</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="bg-white text-dark rounded p-2">
+                                <h3 class="mb-0 fw-bold">12</h3>
+                                <small>Hours</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="bg-white text-dark rounded p-2">
+                                <h3 class="mb-0 fw-bold">45</h3>
+                                <small>Mins</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <a href="#" class="btn btn-primary py-3 px-5 fw-bold">Get Tickets <i class="fa fa-arrow-right ms-2"></i></a>
+                        <a href="#" class="btn btn-outline-light py-3 px-4"><i class="fa fa-play me-2"></i> Watch Trailer</a>
+                    </div>
+                </div>
+
+                <div class="col-lg-5 offset-lg-1 d-none d-lg-block">
+                    <div class="position-relative">
+                        <img src="~/img/project-3.jpg" alt="Spotlight Event" class="img-fluid rounded shadow-lg"
+                             style="border: 10px solid rgba(255,255,255,0.1); transform: rotate(3deg);">
+
+                        <div class="position-absolute bottom-0 start-0 bg-primary text-white p-3 rounded shadow-sm" style="transform: translate(-20px, 20px);">
+                            <small class="d-block text-uppercase">From</small>
+                            <span class="h4 fw-bold mb-0">299.000đ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*Section 4: Curated Collections*@
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+                <h6 class="text-primary section-title bg-white text-center px-3">Suggestions</h6>
+                <h1 class="display-6 mb-4">What Experience Are You Looking For?</h1>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <a href="@Url.Action("Categories", "Home", new { searchString = "Weekend" })" class="collection-item position-relative d-block overflow-hidden rounded shadow-sm">
+                        <img class="img-fluid w-100" src="~/img/project-1.jpg" alt="Weekend" style="height: 300px; object-fit: cover; transition: 0.5s;">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-4"
+                             style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                            <h4 class="text-white mb-1">Weekend Vibes</h4>
+                            <p class="text-white-50 mb-0 small"><i class="fa fa-arrow-right me-2"></i>View List</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <a href="@Url.Action("Categories", "Home", new { searchString = "Workshop" })" class="collection-item position-relative d-block overflow-hidden rounded shadow-sm">
+                        <img class="img-fluid w-100" src="~/img/project-4.jpg" alt="Workshop" style="height: 300px; object-fit: cover; transition: 0.5s;">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-4"
+                             style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                            <h4 class="text-white mb-1">Self Improvement</h4>
+                            <p class="text-white-50 mb-0 small">Workshops & Courses</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <a href="@Url.Action("Categories", "Home", new { searchString = "Free" })" class="collection-item position-relative d-block overflow-hidden rounded shadow-sm">
+                        <img class="img-fluid w-100" src="~/img/project-6.jpg" alt="Free Events" style="height: 300px; object-fit: cover; transition: 0.5s;">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-4"
+                             style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                            <h4 class="text-white mb-1">Free Admission</h4>
+                            <p class="text-white-50 mb-0 small">Join for Free (0đ)</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*Section 5: How It Works*@
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+                <h6 class="text-primary section-title bg-white text-center px-3">Process</h6>
+                <h1 class="display-6 mb-4">Get Tickets & Join Easily</h1>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="team-item text-center p-4 h-100 border rounded bg-light shadow-sm hover-top">
+                        <div class="btn-square btn-light border-2 border-primary rounded-circle mx-auto mb-4" style="width: 80px; height: 80px;">
+                            <i class="fa fa-search fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="mb-3">1. Discover</h5>
+                        <p class="mb-0 text-muted">Find events you love based on interests, location, and schedule.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="team-item text-center p-4 h-100 border rounded bg-light shadow-sm hover-top">
+                        <div class="btn-square btn-light border-2 border-primary rounded-circle mx-auto mb-4" style="width: 80px; height: 80px;">
+                            <i class="fa fa-mouse-pointer fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="mb-3">2. Book Tickets</h5>
+                        <p class="mb-0 text-muted">Choose your ticket class, select seats, and book in just a few clicks.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="team-item text-center p-4 h-100 border rounded bg-light shadow-sm hover-top">
+                        <div class="btn-square btn-light border-2 border-primary rounded-circle mx-auto mb-4" style="width: 80px; height: 80px;">
+                            <i class="fa fa-credit-card fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="mb-3">3. Payment</h5>
+                        <p class="mb-0 text-muted">Secure payment gateways. Receive your E-Ticket instantly via Email.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
+                    <div class="team-item text-center p-4 h-100 border rounded bg-light shadow-sm hover-top">
+                        <div class="btn-square btn-light border-2 border-primary rounded-circle mx-auto mb-4" style="width: 80px; height: 80px;">
+                            <i class="fa fa-qrcode fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="mb-3">4. Check-in</h5>
+                        <p class="mb-0 text-muted">Arrive at the event and scan the QR code on your phone. No paper needed.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*Section 6: Trusted Partners*@
+    <div class="container-fluid bg-light my-5 py-5 wow fadeIn" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-5">
+                    <h6 class="text-primary text-uppercase mb-2" style="letter-spacing: 2px;">Partners</h6>
+                    <h1 class="display-6 mb-4">Events from Top Organizers</h1>
+                    <p class="mb-4">Eventus is proud to be the exclusive ticketing partner for the most prestigious brands, organizations, and artists. We ensure that every event on our platform is verified and authentic.</p>
+                    <a class="btn btn-primary py-3 px-5" href="@Url.Action("Categories", "Home")">Explore Now</a>
+                </div>
+                <div class="col-lg-7">
+                    <div class="row g-4 text-center">
+                        <div class="col-6 col-md-4 wow fadeIn" data-wow-delay="0.1s">
+                            <div class="bg-white p-4 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
+                                <h5 class="m-0 text-muted fw-bold">TEDx</h5>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 wow fadeIn" data-wow-delay="0.2s">
+                            <div class="bg-white p-4 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
+                                <h5 class="m-0 text-muted fw-bold">Forbes</h5>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 wow fadeIn" data-wow-delay="0.3s">
+                            <div class="bg-white p-4 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
+                                <h5 class="m-0 text-muted fw-bold">Vingroup</h5>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 wow fadeIn" data-wow-delay="0.4s">
+                            <div class="bg-white p-4 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
+                                <h5 class="m-0 text-muted fw-bold">Sun World</h5>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 wow fadeIn" data-wow-delay="0.5s">
+                            <div class="bg-white p-4 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
+                                <h5 class="m-0 text-muted fw-bold">TicketBox</h5>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 wow fadeIn" data-wow-delay="0.6s">
+                            <div class="bg-white p-4 rounded shadow-sm h-100 d-flex align-items-center justify-content-center">
+                                <h5 class="m-0 text-muted fw-bold">Vietcetera</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .collection-item:hover img {
+            transform: scale(1.1); /* Slight zoom on hover */
+        }
+    </style>
+
+
+    @*Section 7: Testimonials*@
+    <div class="container-xxl py-5">
+        <div class="container py-5">
+            <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+                <h6 class="text-primary section-title bg-white text-center px-3">Testimonials</h6>
+                <h1 class="display-6 mb-4">What Our Clients Say!</h1>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-12 col-lg-9">
+                    <div class="owl-carousel testimonial-carousel wow fadeIn" data-wow-delay="0.2s">
+
+                        <div class="testimonial-item">
+                            <div class="row g-5 align-items-center">
+                                <div class="col-md-6">
+                                    <div class="testimonial-img">
+                                        <img class="img-fluid" src="~/img/testimonial-1.jpg" alt="User Review 1">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="testimonial-text pb-5 pb-md-0">
+                                        <div class="mb-3">
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                        </div>
+                                        <h3 class="mb-3">Great Experience</h3>
+                                        <p class="mb-4">
+                                            "I booked tickets for the Medinova conference via Eventus and was very impressed with the quick process. E-tickets were sent to email instantly, and check-in at the event took just seconds. Very professional!"
+                                        </p>
+                                        <h5 class="mb-1">Nguyen Thu Ha</h5>
+                                        <small class="text-muted">Doctor, Hanoi</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="testimonial-item">
+                            <div class="row g-5 align-items-center">
+                                <div class="col-md-6">
+                                    <div class="testimonial-img">
+                                        <img class="img-fluid" src="~/img/testimonial-2.jpg" alt="User Review 2">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="testimonial-text pb-5 pb-md-0">
+                                        <div class="mb-3">
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                        </div>
+                                        <h3 class="mb-3">Enthusiastic Support</h3>
+                                        <p class="mb-4">
+                                            "It was my first time buying tickets online so I was a bit confused, but the Eventus support team guided me very patiently. The Chefer event was truly a memorable culinary experience. Thanks Eventus!"
+                                        </p>
+                                        <h5 class="mb-1">Tran Minh Tuan</h5>
+                                        <small class="text-muted">Food Blogger, HCMC</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="testimonial-item">
+                            <div class="row g-5 align-items-center">
+                                <div class="col-md-6">
+                                    <div class="testimonial-img">
+                                        <img class="img-fluid" src="~/img/testimonial-3.jpg" alt="User Review 3">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="testimonial-text pb-5 pb-md-0">
+                                        <div class="mb-3">
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star text-warning"></i>
+                                            <i class="fa fa-star-half-alt text-warning"></i>
+                                        </div>
+                                        <h3 class="mb-3">Diverse Platform</h3>
+                                        <p class="mb-4">
+                                            "Eventus is where I find interesting events every weekend. From skill workshops to live concerts, everything is here. The website interface is beautiful and easy to use."
+                                        </p>
+                                        <h5 class="mb-1">Le Bao Chau</h5>
+                                        <small class="text-muted">Student, Da Nang</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*Section 8: Newsletter*@
+    <div class="container-fluid bg-primary newsletter p-0">
+        <div class="container p-0">
+            <div class="row g-0 align-items-center">
+                <div class="col-md-5 ps-lg-0 text-start wow fadeIn" data-wow-delay="0.2s">
+                    <img class="img-fluid w-100" src="~/img/newsletter.jpg" alt="Newsletter">
+                </div>
+                <div class="col-md-7 py-5 newsletter-text wow fadeIn" data-wow-delay="0.5s">
+                    <div class="p-5">
+                        <h1 class="mb-5">
+                            Subscribe to Our <span class="text-uppercase text-primary bg-white px-2">Newsletter</span>
+                        </h1>
+                        <div class="position-relative w-100 mb-2">
+                            <input class="form-control border-0 w-100 ps-4 pe-5" type="text"
+                                   placeholder="Enter your email address" style="height: 60px;">
+                            <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-2 me-2">
+                                <i class="fa fa-paper-plane text-primary fs-4"></i>
+                            </button>
+                        </div>
+                        <small class="text-white-50">Don't miss out on the latest updates and exclusive offers.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section scripts {
+
+    <script src="@Url.Content("~/js/custom-events.js")"></script>
+
+    <style>
+        /* 1. Bo tròn các khối nội dung (Card) */
+        .cat-item, .team-item, .collection-item, .bg-white.shadow-sm {
+            border-radius: 20px !important;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.03) !important; /* Viền siêu mờ thay vì viền đậm */
+        }
+
+        /* 2. Nút bấm & Input hình viên thuốc (Pill) */
+        .btn-primary, .btn-outline-primary, .btn-light, .btn-outline-light {
+            border-radius: 50px !important;
+            padding: 10px 30px; /* Nút to hơn chút cho dễ bấm */
+        }
+
+        .form-control {
+            border-radius: 50px !important;
+        }
+
+        /* 3. Xử lý thanh tìm kiếm (Input Group) */
+        .input-group.input-group-lg {
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08); /* Bóng nổi 3D */
+            border: 1px solid #eee;
+        }
+
+        .input-group-lg .form-control, .input-group-lg .input-group-text, .input-group-lg .btn {
+            border-radius: 0 !important; /* Reset radius bên trong group */
+            border: none !important;
+        }
+
+        /* 4. Hình ảnh bo góc */
+        img.rounded, .testimonial-img img {
+            border-radius: 20px !important;
+        }
+
+        /* 5. Các ô tròn icon (Category, Step) */
+        .rounded-circle {
+            border-radius: 50% !important; /* Tròn tuyệt đối */
+        }
+
+        /* 6. Hiệu ứng bóng đổ mềm (Soft Shadow) */
+        .shadow-sm {
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+        }
+
+        /* 7. Chỉnh lại Poster sự kiện Spotlight cho nghệ thuật hơn */
+        .container-fluid.bg-dark img.rounded.shadow-lg {
+            border-radius: 25px !important;
+            border: none !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
+        }
+
+        /* 8. Tem giá tiền (Badge) */
+        .badge, .position-absolute.bg-primary {
+            border-radius: 12px !important;
+        }
+    </style>
+}

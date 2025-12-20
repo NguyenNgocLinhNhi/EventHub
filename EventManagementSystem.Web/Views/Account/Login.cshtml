@@ -1,0 +1,195 @@
+﻿@using EventManagementSystem.Web.Models
+@using EventManagementSystem.Web.Models.ViewModels
+@model LoginViewModel
+
+@{
+    ViewBag.Title = "Log in";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<style>
+    /* === HEADER & CARD STYLES === */
+    /* Dùng chung tông màu với trang Register nhưng đổi chiều gradient xíu cho lạ mắt */
+    .bg-login-header {
+        background: linear-gradient(135deg, #2c5364, #203a43, #0f2027);
+        color: white;
+    }
+
+    .header-title {
+        color: #ffffff !important;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        letter-spacing: 1px;
+    }
+
+    .card-login {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+
+    .form-control-lg {
+        border-radius: 0.5rem;
+        font-size: 1rem;
+    }
+
+    /* === BUTTON STYLES === */
+    .btn-login {
+        background-color: #004d40; /* Màu xanh thương hiệu */
+        border-color: #004d40;
+        border-radius: 0.5rem;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+        .btn-login:hover {
+            background-color: #00695c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+    /* === SOCIAL BUTTON STYLES (Copy từ Register sang để đồng bộ) === */
+    .btn-social {
+        color: white !important;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        padding: 10px 20px;
+        min-width: 140px;
+        transition: transform 0.2s;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-google {
+        background-color: #db4437;
+    }
+
+    .btn-facebook {
+        background-color: #4267B2;
+    }
+
+    .btn-social:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .btn-social i {
+        margin-right: 8px;
+    }
+
+    /* === DIVIDER & UTILS === */
+    .divider-text {
+        position: relative;
+        text-align: center;
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+
+        .divider-text span {
+            padding: 7px;
+            font-size: 12px;
+            position: relative;
+            z-index: 2;
+            background-color: #fff;
+            color: #a0a0a0;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .divider-text:after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            border-bottom: 1px solid #ddd;
+            top: 55%;
+            left: 0;
+            z-index: 1;
+        }
+
+    /* Checkbox đẹp hơn */
+    .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #004d40;
+        border-color: #004d40;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-5">
+            <div class="card card-login">
+
+                <div class="card-header bg-login-header text-center py-4">
+                    <h3 class="mb-1 header-title">Welcome Back</h3>
+                    <p class="small mb-0 text-white-50">Please log in to your account</p>
+                </div>
+
+                <div class="card-body p-5">
+                    <section id="loginForm">
+                        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { role = "form" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger small" })
+
+                            <div class="form-group mb-3">
+                                @Html.LabelFor(m => m.Email, new { @class = "font-weight-bold text-muted small text-uppercase" })
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-lg", placeholder = "name@example.com" })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    @Html.LabelFor(m => m.Password, new { @class = "font-weight-bold text-muted small text-uppercase mb-0" })
+                                    @* Link Quên mật khẩu nằm gọn ngay đây cho tiện *@
+                                    @Html.ActionLink("Forgot password?", "ForgotPassword", null, new { @class = "small text-primary" })
+                                </div>
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control form-control-lg", placeholder = "Enter password" })
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                            </div>
+
+                            <div class="form-group mb-4">
+                                <div class="custom-control custom-checkbox">
+                                    @Html.CheckBoxFor(m => m.RememberMe, new { @class = "custom-control-input", id = "customCheck1" })
+                                    <label class="custom-control-label small text-muted" for="customCheck1">Remember me on this device</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-login btn-lg btn-block w-100 text-white">
+                                    LOG IN
+                                </button>
+                            </div>
+                        }
+                    </section>
+
+                    <div class="divider-text">
+                        <span>OR LOG IN WITH</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <section id="socialLoginForm">
+                                <partial name="_ExternalLoginsListPartial"
+                                         model="ViewBag.ExternalLogins" />
+                            </section>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted small">Don't have an account?</span>
+                        <a href="@Url.Action("Register", "Account")" class="font-weight-bold text-dark ml-1">Create an account</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+     <partial name="_ValidationScriptsPartial" />
+}
+}

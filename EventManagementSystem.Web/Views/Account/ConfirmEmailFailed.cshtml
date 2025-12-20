@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Xác nhận thất bại";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="fw-bold text-danger">Xác nhận thất bại</h2>
+                    <p class="text-muted mt-3">
+                        Liên kết xác nhận không hợp lệ hoặc đã hết hạn. Vui lòng thử đăng ký lại hoặc liên hệ hỗ trợ.
+                    </p>
+                    <hr />
+                    <a asp-action="Register" asp-controller="Account" class="btn btn-danger px-4">Thử lại</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

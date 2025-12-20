@@ -1,0 +1,117 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Event>
+
+@{
+    var categoryName = ViewBag.CategoryName as string;
+    ViewData["Title"] = "Upcoming Events";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pb-5 bg-primary hero-header">
+    <div class="container py-5">
+        <div class="row g-3 align-items-center">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="display-1 mb-0 animated slideInLeft">
+                    @(!string.IsNullOrEmpty(categoryName) ? categoryName : "Events")
+                </h1>
+            </div>
+            <div class="col-lg-6 animated slideInRight">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center justify-content-lg-end mb-0">
+                        <li class="breadcrumb-item"><a class="text-primary" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="breadcrumb-item"><a class="text-primary" asp-controller="Home" asp-action="Categories">Categories</a></li>
+                        <li class="breadcrumb-item text-secondary active" aria-current="page">Events</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+            <h6 class="text-primary section-title bg-white text-center px-3">Events</h6>
+            <h1 class="display-6 mb-4">
+                @(!string.IsNullOrEmpty(categoryName) ? $"Explore {categoryName} Events" : "Explore Our Latest Events")
+            </h1>
+        </div>
+
+        @* Thanh tìm kiếm *@
+        <div class="row mb-5 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="col-md-8 mx-auto">
+                <form asp-controller="Home" asp-action="Events" method="get">
+                    <input type="hidden" name="categoryId" value="@ViewBag.CurrentCategoryId" />
+
+                    <div class="input-group">
+                        <input type="text" name="searchString" class="form-control p-3"
+                               placeholder="Search events by name or location..."
+                               value="@ViewData["CurrentFilter"]">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fa fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </form>
+                @if (ViewBag.CurrentCategoryId != null || !string.IsNullOrEmpty(ViewBag.CurrentFilter as string))
+                {
+                    <div class="text-center mt-3">
+                        <a asp-action="Events" class="text-secondary small text-decoration-none">
+                            <i class="fa fa-times-circle"></i> Clear all filters
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="project-item g-0 bg-light overflow-hidden rounded h-100 position-relative shadow-sm">
+                            <div class="project-img position-relative">
+                                @* Dùng asp-action và asp-route-id thay cho Url.Action *@
+                                <a asp-controller="Event" asp-action="Detail" asp-route-id="@item.Id" class="d-block">
+                                    <img class="img-fluid w-100"
+                                         src="@(string.IsNullOrEmpty(item.ImageUrl) ? Url.Content("~/img/event-default.jpg") : item.ImageUrl)"
+                                         alt="@item.Title"
+                                         style="height: 250px; object-fit: cover;">
+                                </a>
+
+                                <div class="bg-primary rounded text-white position-absolute top-0 start-0 m-3 py-1 px-3 fw-bold" style="pointer-events: none;">
+                                    @(item.Category?.Name ?? "General")
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="d-flex justify-content-between mb-3 text-muted small">
+                                    <span class="border-end me-3 pe-3">
+                                        <i class="fa fa-calendar-alt text-primary me-2"></i>@item.StartDate.ToString("dd/MM/yyyy")
+                                    </span>
+                                    <span class="text-truncate" style="max-width: 120px;">
+                                        <i class="fa fa-map-marker-alt text-primary me-2"></i>@item.Location
+                                    </span>
+                                </div>
+
+                                <h5 class="mb-3 text-truncate" title="@item.Title">
+                                    <a asp-controller="Event" asp-action="Detail" asp-route-id="@item.Id" class="text-dark text-decoration-none">@item.Title</a>
+                                </h5>
+
+                                <a class="text-uppercase text-primary fw-bold" asp-controller="Event" asp-action="Detail" asp-route-id="@item.Id">
+                                    View Detail <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <i class="fa fa-search-minus fa-4x text-light mb-3"></i>
+                    <p class="fs-5 text-muted">No events found matching your criteria.</p>
+                    <a asp-action="Events" class="btn btn-outline-primary rounded-pill">View All Events</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

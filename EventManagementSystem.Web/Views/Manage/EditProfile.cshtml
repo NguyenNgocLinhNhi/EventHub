@@ -1,0 +1,33 @@
+@model EventManagementSystem.Web.Models.ViewModels.IndexViewModel
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 1rem;">
+                <h3 class="fw-bold text-center mb-4">Edit Profile</h3>
+                <form asp-action="EditProfile" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label small fw-bold text-uppercase">Full Name</label>
+                        <input asp-for="FullName" class="form-control form-control-lg" placeholder="Enter your name" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Email" class="form-label small fw-bold text-uppercase">Email (Read Only)</label>
+                        <input asp-for="Email" class="form-control form-control-lg bg-light" readonly />
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill">Save Changes</button>
+                        <a asp-action="Index" class="btn btn-link text-muted">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

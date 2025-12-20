@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Authentication
+@model IEnumerable<AuthenticationScheme>
+
+@if (Model != null && Model.Any())
+{
+    <form asp-controller="Account" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
+        <div>
+            <p>
+                @foreach (var provider in Model)
+                {
+                    <button type="submit" class="btn btn-social @(provider.Name == "Google" ? "btn-google" : "btn-facebook") m-1" 
+                            name="provider" value="@provider.Name" 
+                            title="Log in using your @provider.DisplayName account">
+                        <i class="fab fa-@(provider.Name.ToLower())"></i> @provider.DisplayName
+                    </button>
+                }
+            </p>
+        </div>
+    </form>
+}

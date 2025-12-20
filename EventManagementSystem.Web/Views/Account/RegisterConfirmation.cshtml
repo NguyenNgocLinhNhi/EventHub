@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Xác nhận đăng ký";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-envelope-check text-primary" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="fw-bold text-dark">Kiểm tra Email của bạn</h2>
+                    <p class="text-muted mt-3">
+                        Hệ thống đã gửi một liên kết xác nhận đến địa chỉ email bạn đã đăng ký. 
+                        Vui lòng kiểm tra hộp thư (và cả thư mục **Spam**) để kích hoạt tài khoản.
+                    </p>
+                    <hr class="my-4">
+                    <p class="small text-secondary">Sau khi xác nhận, bạn có thể đăng nhập để tham gia sự kiện.</p>
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-primary px-4 mt-2">Quay lại trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+}

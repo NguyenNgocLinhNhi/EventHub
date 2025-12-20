@@ -1,0 +1,24 @@
+﻿<!-- Trang báo lỗi khi đăng nhập Google/FB thất bại -->
+
+@{
+    ViewBag.Title = "Login Failure";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger shadow-sm text-center p-5" style="border-radius: 1rem;">
+                <div class="card-body">
+                    <i class="fas fa-exclamation-triangle text-danger mb-3" style="font-size: 4rem;"></i>
+                    <h2 class="text-danger font-weight-bold">Login Failed</h2>
+                    <p class="text-muted mt-3">
+                        Unsuccessful login with service. Please try again later or use another account.
+                    </p>
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-danger mt-3 px-4 rounded-pill">
+                        Back to Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-EventManagementSystem.Web-3ead56f6-8ced-4f23-b781-c35f6dcf06db</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Templates\Nova\assets\.DS_Store" />
+    <None Include="wwwroot\Templates\Nova\assets\img\.DS_Store" />
+    <None Include="wwwroot\Templates\Nova\assets\img\about\.DS_Store" />
+    <None Include="wwwroot\Templates\Nova\assets\js\.DS_Store" />
+    <None Include="wwwroot\Templates\Yummy\assets\.DS_Store" />
+    <None Include="wwwroot\Templates\Yummy\assets\img\.DS_Store" />
+    <None Include="wwwroot\Templates\Yummy\assets\vendor\.DS_Store" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.14.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.20" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.20" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.20" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,174 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutKnightOne.cshtml";
+}
+
+<!-- HERO -->
+<section id="hero" class="hero section dark-background">
+    <img src="@(string.IsNullOrEmpty(Model.ImageUrl)
+                 ? "/templates/knightone/assets/img/hero-bg.jpg"
+                 : Model.ImageUrl)" alt="">
+
+    <div class="container d-flex flex-column align-items-center text-center">
+        <p class="text-uppercase fw-bold mb-2">
+            @Model.Category?.Name
+        </p>
+
+        <h2 class="mb-3">@Model.Title</h2>
+
+        <p class="opacity-75 mb-4">
+            <i class="bi bi-geo-alt"></i> @Model.Location
+            |
+            <i class="bi bi-calendar-event"></i>
+            @Model.StartDate.ToString("dd/MM/yyyy")
+        </p>
+
+        <a href="#register"
+           class="btn btn-primary rounded-pill px-5 py-2">
+            Đăng Ký Tham Gia
+        </a>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="about section">
+    <div class="container section-title">
+        <h2>Giới Thiệu</h2>
+        <p>Tổng quan về sự kiện</p>
+    </div>
+
+    <div class="container">
+        <div style="font-size:1.1rem;line-height:1.8">
+            @Html.Raw(Model.Description)
+        </div>
+    </div>
+</section>
+
+<!-- SCHEDULE -->
+@if (Model.Schedules?.Any() == true)
+{
+    <section id="schedule" class="section bg-light">
+        <div class="container section-title">
+            <h2>Lịch Trình</h2>
+        </div>
+
+        <div class="container">
+            @foreach (var item in Model.Schedules.OrderBy(s => s.StartTime))
+            {
+                <div class="border-start border-primary ps-4 mb-4">
+                    <span class="badge bg-primary mb-2">
+                        @item.StartTime.ToString("HH:mm")
+                        -
+                        @item.EndTime.ToString("HH:mm")
+                    </span>
+
+                    <h5>@item.Title</h5>
+                    <p class="text-muted">
+                        <i class="bi bi-geo-alt"></i> @item.Location
+                    </p>
+                    <p>@item.Description</p>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+<!-- SPEAKERS -->
+@if (Model.Speakers?.Any() == true)
+{
+    <section id="team" class="section">
+        <div class="container section-title">
+            <h2>Diễn Giả</h2>
+        </div>
+
+        <div class="container">
+            <div class="row g-4">
+                @foreach (var sp in Model.Speakers)
+                {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card border-0 shadow-sm">
+                            <img src="@sp.ImageUrl"
+                                 class="card-img-top"
+                                 style="height:260px;object-fit:cover">
+
+                            <div class="card-body text-center">
+                                <h6>@sp.Name</h6>
+                                <p class="text-primary mb-1">@sp.JobTitle</p>
+
+                                @if (!string.IsNullOrEmpty(sp.SocialUrl))
+                                {
+                                    <a href="@sp.SocialUrl" target="_blank">
+                                        <i class="bi bi-link-45deg"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<!-- REGISTER -->
+<section id="register" class="section bg-secondary text-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="bg-white text-dark rounded p-5">
+
+                    <div class="text-center mb-4">
+                        <h3 class="text-primary">Đăng Ký Tham Gia</h3>
+                        <p>Vui lòng điền thông tin bên dưới</p>
+                    </div>
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <input class="form-control"
+                                           value="@User.Identity.Name"
+                                           readonly />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <select class="form-select">
+                                        <option disabled selected>
+                                            Chọn loại vé
+                                        </option>
+
+                                        @foreach (var t in Model.TicketTypes ?? Enumerable.Empty<EventManagementSystem.Web.Models.Entities.TicketType>())
+                                        {
+                                            <option value="@t.Id">
+                                                @t.Name - @t.Price.ToString("N0")đ
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="button"
+                                            class="btn btn-primary w-100 py-2">
+                                        Gửi Đăng Ký
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account"
+                           asp-action="Login"
+                           asp-route-returnUrl="@Context.Request.Path"
+                           class="btn btn-primary w-100 rounded-pill py-2">
+                            Đăng Nhập Để Tham Gia
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

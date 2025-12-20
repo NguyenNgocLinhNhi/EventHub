@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Xác nhận thành công";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="fw-bold text-success">Xác nhận thành công!</h2>
+                    <p class="text-muted mt-3">
+                        Email của bạn đã được xác thực. Bây giờ bạn có thể đăng nhập vào hệ thống để bắt đầu mua vé sự kiện.
+                    </p>
+                    <div class="mt-4">
+                        <a asp-action="Login" asp-controller="Account" class="btn btn-success btn-lg px-5">Đăng nhập ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

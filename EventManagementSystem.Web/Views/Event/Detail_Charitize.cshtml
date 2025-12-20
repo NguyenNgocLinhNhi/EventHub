@@ -1,0 +1,231 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutCharitize.cshtml";
+}
+
+<style>
+    .section-title {
+        font-family: 'Josefin Sans', sans-serif;
+        color: #FDBE33;
+    }
+
+    .display-header {
+        font-family: 'Josefin Sans', sans-serif;
+        font-weight: 700;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .ticket-card {
+        transition: 0.3s;
+        border: none;
+    }
+
+        .ticket-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+    .schedule-item {
+        border-left: 4px solid #FDBE33;
+        padding-left: 20px;
+        margin-bottom: 30px;
+    }
+</style>
+
+<!-- HERO -->
+<div class="container-fluid p-0 mb-5">
+    <div class="position-relative">
+        <img class="w-100"
+             src="@(string.IsNullOrEmpty(Model.ImageUrl)
+                                 ? "/templates/charitize/img/carousel-1.jpg"
+                                 : Model.ImageUrl)"
+             style="height: 100vh; object-fit: cover; filter: brightness(0.6);">
+
+        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center"
+             style="background: rgba(0,0,0,0.3);">
+            <div class="container text-center">
+                <p class="text-primary fw-bold text-uppercase mb-2">
+                    @Model.Category?.Name
+                </p>
+
+                <h1 class="display-1 mb-4 display-header">
+                    @Model.Title
+                </h1>
+
+                <p class="fs-4 text-white mb-4">
+                    <i class="fa fa-map-marker-alt me-2"></i> @Model.Location
+                    |
+                    <i class="fa fa-clock me-2"></i>
+                    @Model.StartDate.ToString("dd/MM/yyyy")
+                </p>
+
+                <a href="#register" class="btn btn-primary py-3 px-5 me-3">
+                    Đăng Ký Tham Gia
+                </a>
+                <a href="#about" class="btn btn-outline-light py-3 px-5">
+                    Tìm Hiểu Thêm
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ABOUT -->
+<div class="container-fluid py-5" id="about">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6">
+                <img class="img-fluid w-100"
+                     src="/templates/charitize/img/about.jpg">
+            </div>
+
+            <div class="col-lg-6">
+                <h1 class="display-5 mb-4 section-title text-dark">
+                    Về Chiến Dịch
+                </h1>
+
+                <div class="fs-5 mb-4 text-secondary">
+                    @Html.Raw(Model.Description)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCHEDULE -->
+@if (Model.Schedules?.Any() == true)
+{
+    <div class="container-fluid py-5 bg-light" id="schedule">
+        <div class="container">
+            <h1 class="display-5 text-center mb-5 section-title text-dark">
+                Lịch Trình
+            </h1>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    @foreach (var item in Model.Schedules.OrderBy(s => s.StartTime))
+                    {
+                        <div class="schedule-item bg-white p-4 rounded shadow-sm mb-4">
+                            <span class="badge bg-primary mb-2">
+                                @item.StartTime.ToString("HH:mm")
+                                -
+                                @item.EndTime.ToString("HH:mm")
+                            </span>
+
+                            <h4>@item.Title</h4>
+                            <p class="text-muted">
+                                <i class="fa fa-map-marker-alt me-2"></i>
+                                @item.Location
+                            </p>
+                            <p>@item.Description</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- SPEAKERS -->
+@if (Model.Speakers?.Any() == true)
+{
+    <div class="container-fluid py-5" id="team">
+        <div class="container">
+            <h1 class="display-5 text-center mb-5 section-title text-dark">
+                Đồng Hành Cùng Chúng Tôi
+            </h1>
+
+            <div class="row g-4">
+                @foreach (var sp in Model.Speakers)
+                {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="team-item rounded overflow-hidden">
+                            <img class="img-fluid" src="@sp.ImageUrl">
+
+                            <div class="bg-light text-center p-4">
+                                <h5>@sp.Name</h5>
+                                <p class="text-primary">@sp.JobTitle</p>
+
+                                <a class="btn btn-square"
+                                   href="@sp.SocialUrl">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<!-- REGISTER -->
+<div class="container-fluid py-5 bg-secondary" id="register">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="bg-white rounded p-5">
+
+                    <div class="text-center mb-5">
+                        <h1 class="display-5 text-primary">
+                            Đăng Ký Tham Gia
+                        </h1>
+                        <p class="text-secondary">
+                            Hãy chung tay cùng chúng tôi tạo nên sự thay đổi.
+                        </p>
+                    </div>
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form>
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+                                    <input class="form-control"
+                                           value="@User.Identity.Name"
+                                           readonly />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <select class="form-select">
+                                        <option disabled selected>
+                                            Chọn loại vé
+                                        </option>
+
+                                        @foreach (var t in Model.TicketTypes ?? Enumerable.Empty<EventManagementSystem.Web.Models.Entities.TicketType>())
+                                        {
+                                            <option value="@t.Id">
+                                                @t.Name - @t.Price.ToString("N0")đ
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <button class="btn btn-primary w-100 py-3"
+                                            type="button">
+                                        Gửi Đăng Ký
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <a asp-controller="Account"
+                               asp-action="Login"
+                               asp-route-returnUrl="@Context.Request.Path"
+                               class="btn btn-primary w-100 py-3 rounded-pill">
+                                Đăng Nhập Để Tham Gia
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

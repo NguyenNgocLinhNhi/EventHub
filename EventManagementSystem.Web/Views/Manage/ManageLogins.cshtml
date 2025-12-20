@@ -1,0 +1,71 @@
+﻿@model EventManagementSystem.Web.Models.ViewModels.ManageLoginsViewModel
+@using Microsoft.AspNetCore.Authentication
+
+@{
+    ViewData["Title"] = "Manage your external logins";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm" style="border-radius: 1rem;">
+                <div class="card-header bg-white py-4 text-center">
+                    <h3 class="fw-bold">External Logins</h3>
+                    <p class="text-success">@ViewData["StatusMessage"]</p>
+                </div>
+                <div class="card-body p-4">
+                    @if (Model.CurrentLogins?.Count > 0)
+                    {
+                        <h5 class="mb-3 fw-bold">Registered Logins</h5>
+                        <table class="table table-hover align-middle">
+                            <tbody>
+                                @foreach (var account in Model.CurrentLogins)
+                                {
+                                    <tr>
+                                        <td><i class="fas fa-link me-2 text-primary"></i> @account.LoginProvider</td>
+                                        <td class="text-end">
+                                            @if (Model.ShowRemoveButton)
+                                            {
+                                                <form asp-action="RemoveLogin" method="post">
+                                                    <input asp-for="@account.LoginProvider" name="LoginProvider" type="hidden" />
+                                                    <input asp-for="@account.ProviderKey" name="ProviderKey" type="hidden" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3" title="Remove this login">Remove</button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-light text-dark">Primary Account</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+
+                    @if (Model.OtherLogins?.Count > 0)
+                    {
+                        <hr class="my-4" />
+                        <h5 class="mb-3 fw-bold">Add another service</h5>
+                        <form asp-action="LinkLogin" method="post" class="form-horizontal">
+                            <div id="socialLoginList">
+                                <p>
+                                    @foreach (var p in Model.OtherLogins)
+                                    {
+                                        <button type="submit" class="btn btn-outline-primary rounded-pill px-4 me-2 mb-2" name="provider" value="@p.Value" title="Log in using your @p.Text account">
+                                            <i class="fab fa-@(p.Text.ToLower()) me-2"></i> @p.Text
+                                        </button>
+                                    }
+                                </p>
+                            </div>
+                        </form>
+                    }
+                </div>
+                <div class="card-footer bg-light text-center py-3">
+                    <a asp-action="Index" class="btn btn-link text-muted">Back to Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["Title"] = "About Us"; // .NET Core ưu tiên dùng ViewData hoặc tệp _ViewStart
+    Layout = "_Layout"; // Thường không cần đường dẫn đầy đủ nếu nằm trong Views/Shared
+}
+
+<div class="container-fluid pb-5 bg-primary hero-header">
+    <div class="container py-5">
+        <div class="row g-3 align-items-center">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="display-1 mb-0 animated slideInLeft">About Us</h1>
+            </div>
+            <div class="col-lg-6 animated slideInRight">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center justify-content-lg-end mb-0">
+                        <li class="breadcrumb-item"><a class="text-primary" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="breadcrumb-item text-secondary active" aria-current="page">About</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                <div class="about-img position-relative overflow-hidden p-5 pe-0">
+                    <img class="img-fluid w-100" src="~/img/about-1.jpg" alt="About Eventus">
+                </div>
+            </div>
+            <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                <h1 class="display-5 mb-4">We Are The Best Event Planner & Organizer</h1>
+                <p class="mb-4">Eventus is a comprehensive platform designed to streamline the event management process. From corporate conferences to music festivals, we provide the tools you need to succeed.</p>
+                <p><i class="fa fa-check text-primary me-3"></i>Seamless Registration Process</p>
+                <p><i class="fa fa-check text-primary me-3"></i>Real-time Analytics & Reporting</p>
+                <p><i class="fa fa-check text-primary me-3"></i>Customizable Event Pages</p>
+                <a class="btn btn-primary py-3 px-5 mt-3" asp-controller="Home" asp-action="Services">Read More</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+            <h6 class="text-primary section-title bg-white text-center px-3">Our Team</h6>
+            <h1 class="display-6 mb-4">Meet Our Expert Team</h1>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="team-item text-center p-4">
+                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="~/img/team-1.jpg" alt="Member Name">
+                    <div class="team-text">
+                        <div class="team-title">
+                            <h5>Full Name</h5>
+                            <span>Event Manager</span>
+                        </div>
+                        <div class="team-social">
+                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="team-item text-center p-4">
+                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="~/img/team-2.jpg" alt="Member Name">
+                    <div class="team-text">
+                        <div class="team-title">
+                            <h5>Full Name</h5>
+                            <span>Marketing Head</span>
+                        </div>
+                        <div class="team-social">
+                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="team-item text-center p-4">
+                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="~/img/team-3.jpg" alt="Member Name">
+                    <div class="team-text">
+                        <div class="team-title">
+                            <h5>Full Name</h5>
+                            <span>Tech Lead</span>
+                        </div>
+                        <div class="team-social">
+                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

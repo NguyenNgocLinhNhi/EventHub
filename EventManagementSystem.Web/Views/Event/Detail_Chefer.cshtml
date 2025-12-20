@@ -1,0 +1,209 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+@{
+    // Sử dụng null-coalescing để đảm bảo Title không null
+    ViewData["Title"] = Model?.Title ?? "Chi tiết sự kiện";
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutChefer.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+@if (Model == null)
+{
+    <div class="container py-5 text-center">
+        <h3>Không tìm thấy thông tin sự kiện.</h3>
+        <a href="/" class="btn btn-warning">Quay lại trang chủ</a>
+    </div>
+}
+else
+{
+    <style>
+        :root {
+            --gold: #D4A762;
+            --dark-bg: #111111;
+            --text-dark: #333333;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .section-title {
+            font-family: 'Oswald', sans-serif;
+            color: var(--gold);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-bottom: 3px solid var(--gold);
+            padding-bottom: 5px;
+        }
+
+        .display-header {
+            font-family: 'Oswald', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+        }
+
+        .ticket-item {
+            transition: .3s;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+            .ticket-item:hover {
+                border-color: var(--gold);
+                transform: translateY(-5px);
+            }
+
+        .schedule-item {
+            border-left: 3px solid var(--gold);
+            padding-left: 25px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+            .schedule-item::before {
+                content: "";
+                width: 15px;
+                height: 15px;
+                background: var(--gold);
+                border-radius: 50%;
+                position: absolute;
+                left: -9px;
+                top: 0;
+            }
+
+        .price-tag {
+            font-size: 2rem;
+            font-family: 'Oswald', sans-serif;
+            color: var(--gold);
+        }
+    </style>
+
+    <div class="container-fluid p-0 bg-dark text-secondary"
+         style="background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.8)),
+             url('@(string.IsNullOrEmpty(Model.ImageUrl) ? "/templates/chefer/img/hero-1.jpg" : Model.ImageUrl)')
+             center/cover no-repeat; min-height:100vh; display:flex; align-items:center">
+
+        <div class="container">
+            <p class="text-uppercase fw-bold text-white mb-2">
+                <i class="fa fa-star text-warning me-2"></i> @(Model.Category?.Name ?? "Sự kiện")
+            </p>
+
+            <h1 class="display-header mb-4">@Model.Title</h1>
+
+            <div class="d-flex gap-4 text-white fs-5 mb-5">
+                <span><i class="fa fa-map-marker-alt text-warning"></i> @(Model.Location ?? "Địa điểm chưa cập nhật")</span>
+                <span><i class="fa fa-clock text-warning"></i> @Model.StartDate.ToString("HH:mm - dd/MM/yyyy")</span>
+            </div>
+
+            <a href="#register" class="btn btn-warning px-5 py-3 rounded-pill">Đặt Bàn Ngay</a>
+            <a href="#about" class="btn btn-outline-light px-5 py-3 rounded-pill ms-2">Chi Tiết</a>
+        </div>
+    </div>
+
+    <div class="container-fluid py-5 bg-white" id="about">
+        <div class="container text-center">
+            <h5 class="section-title mb-3">Câu Chuyện</h5>
+            <h1 class="display-3 text-dark mb-4">@Model.Title</h1>
+
+            <div class="mx-auto text-dark" style="max-width:900px; text-align:justify">
+                @Html.Raw(Model.Description ?? "Thông tin đang được cập nhật...")
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Speakers != null && Model.Speakers.Any())
+    {
+        <div class="container-fluid py-5 bg-dark">
+            <div class="container">
+                <h1 class="text-white text-center mb-5">Bếp Trưởng Tài Ba</h1>
+
+                <div class="row g-4">
+                    @foreach (var sp in Model.Speakers)
+                    {
+                        <div class="col-lg-3 col-md-6">
+                            <img src="@(sp.ImageUrl ?? "/images/default-chef.jpg")" class="img-fluid rounded mb-3" style="height:350px;object-fit:cover" alt="@sp.Name">
+                            <h4 class="text-white">@sp.Name</h4>
+                            <p class="text-warning">@sp.JobTitle</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="container-fluid py-5 bg-dark" id="pricing">
+        <div class="container">
+            <h1 class="text-white text-center mb-5">Chọn Hạng Vé</h1>
+
+            <div class="row g-4">
+                @foreach (var t in Model.TicketTypes ?? Enumerable.Empty<EventManagementSystem.Web.Models.Entities.TicketType>())
+                {
+                    <div class="col-lg-6">
+                        <div class="ticket-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h3 class="text-white">@t.Name</h3>
+                                <small class="text-secondary">Còn @t.Quantity vé</small>
+                            </div>
+                            <div class="price-tag">
+                                @(t.Price == 0 ? "Free" : t.Price.ToString("N0") + "đ")
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid py-5 bg-dark" id="register">
+        <div class="container">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div class="bg-secondary p-5 rounded">
+                    <h3 class="text-white text-center mb-4">Phiếu Đăng Ký</h3>
+
+                    <select id="ticketSelect" class="form-select mb-3">
+                        <option disabled selected>Chọn hạng vé</option>
+                        @* ✅ FIX LỖI CS8602 bằng cách kiểm tra null trước khi lặp *@
+                        @if (Model.TicketTypes != null)
+                        {
+                            foreach (var t in Model.TicketTypes)
+                            {
+                                <option value="@t.Id">@t.Name - @t.Price.ToString("N0")đ</option>
+                            }
+                        }
+                    </select>
+
+                    <button class="btn btn-warning w-100 py-3" onclick="alert('Tính năng đang phát triển!')">Thanh Toán</button>
+                </div>
+            }
+            else
+            {
+                <a asp-controller="Account"
+                   asp-action="Login"
+                   asp-route-returnUrl="@Context.Request.Path"
+                   class="btn btn-outline-light w-100 py-3 rounded-pill">
+                    Đăng Nhập Để Đặt Bàn
+                </a>
+            }
+        </div>
+    </div>
+}
+
+<script>
+    function selectTicket(id) {
+        const select = document.getElementById('ticketSelect');
+        if (select) {
+            select.value = id;
+            const regSection = document.getElementById('register');
+            if (regSection) regSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>

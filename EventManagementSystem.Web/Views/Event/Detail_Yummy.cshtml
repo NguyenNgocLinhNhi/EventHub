@@ -1,0 +1,279 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+@{
+    // Sử dụng null-coalescing để đảm bảo Title không null
+    ViewData["Title"] = Model?.Title ?? "Chi tiết sự kiện";
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutYummy.cshtml";
+}
+
+@if (Model == null)
+{
+    <div class="container py-5 text-center">
+        <h3>Không tìm thấy thông tin sự kiện.</h3>
+        <a href="/" class="btn btn-primary">Quay lại trang chủ</a>
+    </div>
+}
+else
+{
+    <section id="hero" class="hero section light-background">
+        <div class="container">
+            <div class="row gy-4 justify-content-center justify-content-lg-between">
+                <div class="col-lg-5 order-2 order-lg-1 d-flex flex-column justify-content-center">
+                    <h2 style="color: var(--color-primary);">
+                        @* Thêm ? để tránh lỗi null nếu Category chưa được Include *@
+                        @(Model.Category?.Name ?? "Sự kiện")
+                    </h2>
+
+                    <h1 style="font-size: 3rem;">
+                        @Model.Title
+                    </h1>
+
+                    <p>
+                        <i class="bi bi-geo-alt-fill text-danger"></i> @(Model.Location ?? "Chưa xác định") <br />
+                        <i class="bi bi-calendar-event-fill text-danger"></i>
+                        @Model.StartDate.ToString("HH:mm - dd/MM/yyyy")
+                    </p>
+
+                    <div class="d-flex">
+                        <a href="#menu" class="btn-get-started">Mua Vé Ngay</a>
+                        <a href="#about" class="glightbox btn-watch-video d-flex align-items-center">
+                            <i class="bi bi-play-circle"></i>
+                            <span>Xem Chi Tiết</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-5 order-1 order-lg-2 hero-img">
+                    <img src="@(string.IsNullOrEmpty(Model.ImageUrl)
+                                                              ? "/templates/yummy/assets/img/hero-img.png"
+                                                              : Model.ImageUrl)"
+                     class="img-fluid animated"
+                     style="border-radius:20px" alt="@Model.Title" />
+            </div>
+        </div>
+    </div>
+</section>
+
+    <section id="about" class="about section">
+        <div class="container section-title">
+            <h2>Giới Thiệu</h2>
+            <p><span>Thông Tin</span> <span class="description-title">Về Sự Kiện</span></p>
+        </div>
+
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-lg-7">
+                    <img src="/templates/yummy/assets/img/about.jpg" class="img-fluid mb-4" alt="About" />
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="fst-italic">
+                        @* Kiểm tra chuỗi rỗng trước khi Raw *@
+                        @Html.Raw(Model.Description ?? "Đang cập nhật nội dung...")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="stats" class="stats section dark-background">
+        <img src="/templates/yummy/assets/img/stats-bg.jpg" class="stats-bg" alt="Stats BG" />
+        <div class="container position-relative">
+            <div class="row gy-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-item text-center">
+                        <span class="purecounter"
+                              data-purecounter-start="0"
+                              data-purecounter-end="@(Model.TicketTypes?.Sum(t => t.Quantity) ?? 0)">
+                        </span>
+                        <p>Vé Phát Hành</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-item text-center">
+                        <span class="purecounter"
+                              data-purecounter-start="0"
+                              data-purecounter-end="@(Model.Speakers?.Count() ?? 0)">
+                        </span>
+                        <p>Khách Mời</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-item text-center">
+                        <span class="purecounter"
+                              data-purecounter-start="0"
+                              data-purecounter-end="@(Model.Schedules?.Count() ?? 0)">
+                        </span>
+                        <p>Hoạt Động</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-item text-center">
+                        <span class="purecounter"
+                              data-purecounter-start="0"
+                              data-purecounter-end="@(Model.Sponsors?.Count() ?? 0)">
+                        </span>
+                        <p>Nhà Tài Trợ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="menu section">
+        <div class="container section-title">
+            <h2>Vé Tham Dự</h2>
+            <p><span>Chọn Hạng Vé</span> <span class="description-title">Phù Hợp</span></p>
+        </div>
+
+        <div class="container">
+            <div class="row gy-5 justify-content-center">
+                @* Đảm bảo TicketTypes không null trước khi lặp *@
+            @foreach (var ticket in Model.TicketTypes ?? Enumerable.Empty<EventManagementSystem.Web.Models.Entities.TicketType>())
+                {
+                    <div class="col-lg-4 menu-item">
+                        <img src="/templates/yummy/assets/img/menu/menu-item-1.png" class="menu-img img-fluid" alt="@ticket.Name" />
+                        <h4>@ticket.Name</h4>
+                        <p>Số lượng còn: @ticket.Quantity</p>
+                        <p class="price">
+                            @(ticket.Price == 0 ? "Miễn Phí" : ticket.Price.ToString("N0") + "đ")
+                        </p>
+
+                        <button class="btn btn-danger rounded-pill w-100"
+                                onclick="selectTicket(@ticket.Id)">
+                            Chọn Vé
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    @if (Model.Schedules != null && Model.Schedules.Any())
+    {
+        <section id="events" class="events section">
+            <div class="container section-title">
+                <h2>Lịch Trình</h2>
+                <p><span>Timeline</span> <span class="description-title">Chi Tiết</span></p>
+            </div>
+
+            <div class="swiper init-swiper">
+                <div class="swiper-wrapper">
+                    @foreach (var item in Model.Schedules.OrderBy(s => s.StartTime))
+                    {
+                        <div class="swiper-slide event-item"
+                             style="background-image:url('/templates/yummy/assets/img/events-1.jpg')">
+                            <h3>@item.Title</h3>
+                            <div class="price">@item.StartTime.ToString("HH:mm")</div>
+                            <p class="description">
+                                <strong>@item.Location</strong><br />
+                                @item.Description
+                            </p>
+                        </div>
+                    }
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </section>
+    }
+
+    @if (Model.Speakers != null && Model.Speakers.Any())
+    {
+        <section id="chefs" class="chefs section">
+            <div class="container section-title">
+                <h2>Khách Mời</h2>
+                <p><span>Gặp Gỡ</span> <span class="description-title">Diễn Giả</span></p>
+            </div>
+
+            <div class="container">
+                <div class="row gy-4 justify-content-center">
+                    @foreach (var sp in Model.Speakers)
+                    {
+                        <div class="col-lg-4">
+                            <div class="team-member">
+                                <div class="member-img">
+                                    <img src="@(sp.ImageUrl ?? "/images/default-speaker.jpg")"
+                                         class="img-fluid"
+                                         style="height:400px;object-fit:cover" alt="@sp.Name" />
+                                </div>
+                                <div class="member-info">
+                                    <h4>@sp.Name</h4>
+                                    <span>@sp.JobTitle</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <section id="book-a-table" class="book-a-table section">
+        <div class="container section-title">
+            <h2>Đăng Ký</h2>
+            <p><span>Giữ Chỗ</span> <span class="description-title">Ngay Hôm Nay</span></p>
+        </div>
+
+        <div class="container">
+            <div class="row g-0">
+                <div class="col-lg-4 reservation-img"
+                     style="background-image:url('/templates/yummy/assets/img/reservation.jpg')">
+                </div>
+
+                <div class="col-lg-8 reservation-form-bg p-5">
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <input class="form-control mb-3"
+                               value="@User.Identity.Name"
+                               readonly />
+
+                        <select id="ticketSelect" class="form-control mb-3">
+                            <option disabled selected>Chọn loại vé</option>
+                            @if (Model.TicketTypes != null)
+                            {
+                                foreach (var t in Model.TicketTypes)
+                                {
+                                    <option value="@t.Id">
+                                        @t.Name - @t.Price.ToString("N0")đ
+                                    </option>
+                                }
+                            }
+                        </select>
+
+                        <button class="btn btn-danger rounded-pill px-5"
+                                onclick="alert('Đăng ký thành công!')">
+                            Xác Nhận Đăng Ký
+                        </button>
+                    }
+                    else
+                    {
+                        <div class="text-center">
+                            <p>Vui lòng đăng nhập để đăng ký</p>
+                            <a asp-controller="Account"
+                               asp-action="Login"
+                               asp-route-returnUrl="@Context.Request.Path"
+                               class="btn btn-danger rounded-pill px-5">
+                                Đăng Nhập
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<script>
+    function selectTicket(id) {
+        const select = document.getElementById('ticketSelect');
+        if (select) {
+            select.value = id;
+            const element = document.getElementById('book-a-table');
+            if(element) element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>

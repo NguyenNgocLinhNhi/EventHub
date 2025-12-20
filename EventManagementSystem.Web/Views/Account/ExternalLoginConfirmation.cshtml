@@ -1,0 +1,109 @@
+﻿@model EventManagementSystem.Web.Models.ViewModels.ExternalLoginConfirmationViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<style>
+    .bg-register-header {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+    }
+
+    .header-title {
+        color: #ffffff !important;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        letter-spacing: 1px;
+    }
+
+    .card-register {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+
+    .form-control-lg {
+        border-radius: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .btn-register {
+        background-color: #004d40;
+        border-color: #004d40;
+        border-radius: 0.5rem;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+        .btn-register:hover {
+            background-color: #00695c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card card-register">
+
+                <div class="card-header bg-register-header text-center py-4">
+                    <h3 class="mb-1 header-title">Complete Registration</h3>
+                    <p class="small mb-0 text-white-50">
+                        Associate your @ViewData["LoginProvider"] account
+                    </p>
+                </div>
+
+                <div class="card-body p-5">
+
+                    <div class="alert alert-info text-center small mb-4">
+                        <i class="fas fa-check-circle me-1"></i>
+                        You've successfully authenticated with
+                        <strong>@ViewData["LoginProvider"]</strong>.
+                        <br />
+                        Please enter an email for this site below.
+                    </div>
+
+                    <form asp-action="ExternalLoginConfirmation"
+                          asp-controller="Account"
+                          asp-route-returnUrl="@ViewData["ReturnUrl"]"
+                          method="post"
+                          role="form">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger small">
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Email"
+                                   class="fw-bold text-muted small text-uppercase"></label>
+
+                            <input asp-for="Email"
+                                   class="form-control form-control-lg"
+                                   placeholder="name@example.com" />
+
+                            <span asp-validation-for="Email"
+                                  class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit"
+                                    class="btn btn-register btn-lg w-100 text-white">
+                                COMPLETE REGISTRATION
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

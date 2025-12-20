@@ -1,0 +1,71 @@
+﻿@model EventManagementSystem.Web.Models.ViewModels.VerifyCodeViewModel
+
+@{
+    ViewData["Title"] = "Verify";
+}
+
+<!-- Trang này dùng cho xác thực -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm" style="border-radius: 1rem;">
+                <div class="card-header bg-white text-center py-4 border-bottom-0">
+                    <i class="fas fa-sms text-primary mb-2" style="font-size: 3rem;"></i>
+                    <h3 class="fw-bold">Enter Code</h3>
+                    <p class="text-muted small mb-0">
+                        We sent a verification code to your device
+                    </p>
+                </div>
+
+                <div class="card-body p-4 pt-0">
+                    <form asp-action="VerifyCode"
+                          asp-controller="Account"
+                          asp-route-returnUrl="@Model.ReturnUrl"
+                          method="post"
+                          role="form">
+
+                        @Html.AntiForgeryToken()
+
+                        <!-- Hidden fields -->
+                        <input asp-for="Provider" type="hidden" />
+                        <input asp-for="RememberMe" type="hidden" />
+
+                        <!-- Validation -->
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger small text-center mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            <input asp-for="Code"
+                                   class="form-control form-control-lg text-center"
+                                   placeholder="------"
+                                   style="letter-spacing: 5px; font-weight: bold;" />
+                            <span asp-validation-for="Code"
+                                  class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4 text-center">
+                            <div class="form-check d-inline-block">
+                                <input asp-for="RememberBrowser"
+                                       class="form-check-input"
+                                       id="remBrowser" />
+                                <label class="form-check-label small text-muted"
+                                       for="remBrowser">
+                                    Remember this browser
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary btn-lg w-100 rounded-pill">
+                            Verify
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

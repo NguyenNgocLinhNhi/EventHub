@@ -1,0 +1,308 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+@{
+    // Đảm bảo ViewData["Title"] không bị gán null
+    ViewData["Title"] = Model?.Title ?? "Chi tiết sự kiện";
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutMedinova.cshtml";
+}
+
+@if (Model == null)
+{
+    <div class="container py-5 text-center">
+        <h3>Không tìm thấy thông tin sự kiện.</h3>
+        <a href="/" class="btn btn-primary">Quay lại trang chủ</a>
+    </div>
+}
+else
+{
+    <style>
+        .schedule-box {
+            border-left: 4px solid #13C5DD;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+
+            .schedule-box:hover {
+                background: #fff;
+                box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+                transform: translateX(10px);
+            }
+
+        .time-badge {
+            background: #1D2A4D;
+            color: white;
+            padding: 5px 15px;
+            font-weight: bold;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        .speaker-img-container {
+            height: 300px;
+            overflow: hidden;
+        }
+
+            .speaker-img-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: 0.5s;
+            }
+
+        .team-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .sponsor-item {
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+            .sponsor-item:hover {
+                border-color: #13C5DD;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+
+        .sponsor-logo {
+            height: 80px;
+            object-fit: contain;
+            filter: grayscale(100%);
+            transition: 0.3s;
+        }
+
+        .sponsor-item:hover .sponsor-logo {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+        }
+
+        .price-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            height: 100%;
+        }
+
+            .price-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            }
+
+        .price-header {
+            background: #1D2A4D;
+            padding: 30px;
+            color: white;
+        }
+
+        .price-amount {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #13C5DD;
+        }
+    </style>
+
+    <div class="container-fluid bg-primary py-5 mb-5 hero-header"
+         style="background: linear-gradient(rgba(15,32,39,.8), rgba(32,58,67,.8)),
+             url('@(string.IsNullOrEmpty(Model.ImageUrl)
+                         ? "/templates/medinova/img/hero.jpg"
+                         : Model.ImageUrl)') center/cover no-repeat;">
+    <div class="container py-5 text-center">
+        <h5 class="text-white text-uppercase">@(Model.Category?.Name ?? "Sự kiện")</h5>
+        <h1 class="display-1 text-white">@Model.Title</h1>
+
+            <h4 class="text-white mt-3">
+                <i class="fa fa-map-marker-alt me-2"></i>@(Model.Location ?? "Địa điểm chưa xác định")
+            </h4>
+
+            <h4 class="text-white">
+                <i class="fa fa-clock me-2"></i>
+                @Model.StartDate.ToString("HH:mm - dd/MM/yyyy")
+            </h4>
+
+            <a href="#pricing" class="btn btn-light rounded-pill py-3 px-5 mt-3">
+                Mua Vé Ngay
+            </a>
+        </div>
+    </div>
+
+    <div class="container-fluid py-5" id="about">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h1 class="display-4">Giới thiệu sự kiện</h1>
+            </div>
+            <div class="bg-light rounded p-5 fs-5 text-secondary">
+                @Html.Raw(Model.Description ?? "Thông tin đang được cập nhật...")
+            </div>
+        </div>
+    </div>
+
+@if (Model.Speakers != null && Model.Speakers.Any())
+    {
+        <div class="container-fluid py-5" id="speakers">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h1 class="display-4">Diễn giả</h1>
+                </div>
+
+                <div class="row g-4">
+                    @foreach (var speaker in Model.Speakers)
+                    {
+                        <div class="col-lg-4">
+                            <div class="team-item bg-light rounded overflow-hidden">
+                                <div class="speaker-img-container">
+                                    <img src="@(speaker.ImageUrl ?? "/images/default-avatar.png")" alt="@speaker.Name">
+                                </div>
+                                <div class="p-4">
+                                    <h4>@speaker.Name</h4>
+                                    <h6 class="text-primary">@speaker.JobTitle</h6>
+                                    @if (!string.IsNullOrEmpty(speaker.SocialUrl))
+                                    {
+                                        <a href="@speaker.SocialUrl" target="_blank">
+                                            <i class="fab fa-linkedin"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.Schedules != null && Model.Schedules.Any())
+    {
+        <div class="container-fluid py-5 bg-primary" id="schedule">
+            <div class="container">
+                <h1 class="text-white text-center mb-5">Lịch trình</h1>
+
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        @foreach (var item in Model.Schedules.OrderBy(s => s.StartTime))
+                        {
+                            <div class="schedule-box p-4 rounded">
+                                <div class="d-flex justify-content-between">
+                                    <span class="time-badge">
+                                        @item.StartTime.ToString("HH:mm")
+                                        -
+                                        @item.EndTime.ToString("HH:mm")
+                                    </span>
+                                    <small class="fw-bold">
+                                        <i class="fa fa-map-marker-alt"></i>
+                                        @(item.Location ?? "Tại hội trường")
+                                    </small>
+                                </div>
+                                <h4 class="mt-2">@item.Title</h4>
+                                <p>@item.Description</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (Model.Sponsors != null && Model.Sponsors.Any())
+    {
+        <div class="container-fluid py-5" id="sponsors">
+            <div class="container">
+                <h1 class="text-center mb-5">Nhà tài trợ</h1>
+
+                <div class="row g-4 justify-content-center">
+                    @foreach (var sponsor in Model.Sponsors)
+                    {
+                        <div class="col-md-3">
+                            <div class="sponsor-item text-center">
+                                <img src="@(sponsor.LogoUrl ?? "/images/default-logo.png")" class="sponsor-logo img-fluid" alt="@sponsor.Name" />
+                                <h5 class="mt-3">@sponsor.Name</h5>
+                                <small class="text-primary">@sponsor.Rank</small>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="container-fluid py-5 bg-light" id="pricing">
+        <div class="container">
+            <h1 class="text-center mb-5">Vé tham dự</h1>
+
+            <div class="row g-5 justify-content-center">
+                @foreach (var ticket in Model.TicketTypes ?? Enumerable.Empty<EventManagementSystem.Web.Models.Entities.TicketType>())
+                {
+                    <div class="col-lg-4">
+                        <div class="price-card text-center pb-5">
+                            <div class="price-header">
+                                <h3>@ticket.Name</h3>
+                            </div>
+                            <div class="py-4">
+                                <h1 class="price-amount">
+                                    @(ticket.Price == 0 ? "Miễn Phí" : ticket.Price.ToString("N0") + "đ")
+                                </h1>
+                            </div>
+                            <p>Còn lại: <strong>@ticket.Quantity</strong> vé</p>
+                            <a href="#register"
+                               class="btn btn-primary rounded-pill px-5"
+                               onclick="selectTicket(@ticket.Id)">
+                                Chọn Vé
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid bg-primary py-5" id="register">
+        <div class="container">
+            <div class="col-lg-8 mx-auto bg-white rounded p-5">
+
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <input class="form-control mb-3"
+                           value="@User.Identity.Name"
+                           readonly />
+
+                    <select id="ticketSelect" class="form-select mb-3">
+                        <option disabled selected>-- Chọn loại vé --</option>
+                        @if (Model.TicketTypes != null)
+                        {
+                            foreach (var t in Model.TicketTypes)
+                            {
+                                <option value="@t.Id">@t.Name - @t.Price.ToString("N0")đ</option>
+                            }
+                        }
+                    </select>
+
+                    <button class="btn btn-dark w-100 py-3">
+                        XÁC NHẬN & THANH TOÁN
+                    </button>
+                }
+                else
+                {
+                    <a asp-controller="Account"
+                       asp-action="Login"
+                       asp-route-returnUrl="@Context.Request.Path"
+                       class="btn btn-primary w-100 py-3 rounded-pill">
+                        Đăng Nhập Ngay
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function selectTicket(id) {
+        const select = document.getElementById('ticketSelect');
+        if (select) {
+            select.value = id;
+            const regSection = document.getElementById('register');
+            if (regSection) regSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
