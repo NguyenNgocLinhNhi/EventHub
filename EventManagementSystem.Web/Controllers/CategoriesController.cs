@@ -5,6 +5,7 @@ using EventManagementSystem.Web.Models.Entities;
 namespace EventManagementSystem.Web.Controllers
 {
     // [Authorize(Roles = "Admin")]
+    //AHIHI
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;

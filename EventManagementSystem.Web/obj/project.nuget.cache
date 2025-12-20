@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "EjSk8LaUYDw=",
+  "dgSpecHash": "rwM5rJcKsXw=",
   "success": true,
-  "projectFilePath": "D:\\WebEvent\\EventManagementSystem\\EventManagementSystem.Web\\EventManagementSystem.Web.csproj",
+  "projectFilePath": "D:\\Web_EventHub\\EventHub\\EventManagementSystem.Web\\EventManagementSystem.Web.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Asus\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Asus\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
