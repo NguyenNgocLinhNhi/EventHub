@@ -8,21 +8,19 @@ namespace EventManagementSystem.Web.Models.Entities
         [Key]
         public int Id { get; set; }
 
-        // ====== RELATION: BOOKING ======
         [Required]
         public int BookingId { get; set; }
+        public virtual Booking Booking { get; set; } = null!;
 
-        public Booking Booking { get; set; } = null!;     // FIX
-
-        // ====== RELATION: TICKET TYPE ======
         [Required]
         public int TicketTypeId { get; set; }
+        public virtual TicketType TicketType { get; set; } = null!;
 
-        public TicketType TicketType { get; set; } = null!; // FIX
+        // BỔ SUNG: Lưu vị trí ghế cho từng vé
+        public string? SeatNumber { get; set; }
 
-        // ====== BUSINESS DATA ======
         [Required]
-        public int Quantity { get; set; }
+        public int Quantity { get; set; } = 1;
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; }

@@ -1,0 +1,43 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Schedule>
+
+<div class="container-fluid py-5" id="schedule">
+    <div class="container">
+        <div class="text-center mx-auto wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px;">
+            <p class="section-title bg-white text-center text-primary px-3">Lịch trình</p>
+            <h1 class="display-6 mb-5">Chi tiết các hoạt động</h1>
+        </div>
+        <div class="row g-4">
+            @if (Model != null && Model.Any())
+            {
+                var sortedSchedules = Model.OrderBy(s => s.StartTime);
+                foreach (var item in sortedSchedules)
+                {
+                    <div class="col-12 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="d-flex align-items-center border-start border-5 border-primary bg-light p-4">
+                            <div class="flex-shrink-0 text-center" style="width: 120px;">
+                                <h5 class="text-primary mb-0">@item.StartTime.ToString("HH:mm")</h5>
+                                <small class="text-uppercase">Đến @item.EndTime.ToString("HH:mm")</small>
+                            </div>
+                            <div class="ms-4">
+                                <h4 class="mb-2">@item.Title</h4>
+                                <div class="d-flex flex-wrap">
+                                    @if (!string.IsNullOrEmpty(item.Location))
+                                    {
+                                        <small class="me-3"><i class="fa fa-map-marker-alt text-primary me-2"></i>@item.Location</small>
+                                    }
+                                    <small><i class="fa fa-info-circle text-primary me-2"></i>@item.Description</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center">
+                    <p>Đang cập nhật lịch trình chi tiết...</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,29 +1,250 @@
-﻿@{
-    ViewData["Title"] = "My Events";
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Booking>
+@{
+    ViewData["Title"] = "Lịch sử vé của tôi";
+    Layout = "_Layout";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
 }
 
+<style>
+    /* Giới hạn chiều rộng danh sách để thu gọn thẻ lại ở giữa trang */
+    .ticket-list-wrapper {
+        max-width: 900px; 
+        margin: 0 auto;   
+    }
+
+    /* Thanh danh sách vé - Thiết kế nền trắng, viền xanh #006D5B, bo góc */
+    .ticket-item {
+        display: flex;
+        align-items: center;
+        background: #ffffff;
+        border: 2px solid #006D5B; 
+        margin-bottom: 25px;
+        border-radius: 20px; 
+        overflow: hidden;
+        transition: 0.3s;
+    }
+
+    .ticket-item:hover {
+        transform: scale(1.01);
+        box-shadow: 0 5px 15px rgba(0, 109, 91, 0.15);
+    }
+
+    /* KHUNG CHỨA ẢNH - Kéo dài chiều rộng ra 220px */
+    .event-img-container {
+        width: 220px; 
+        height: 160px; 
+        flex-shrink: 0;
+        padding: 10px;
+    }
+
+    .event-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px; 
+    }
+
+    /* Nội dung chính - Chữ xanh trên nền trắng */
+    .event-info-main {
+        flex-grow: 1;
+        background: #ffffff; 
+        color: #006D5B; 
+        padding: 15px 25px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .event-name {
+        font-size: 1.2rem;
+        font-weight: 800;
+        margin-bottom: 5px;
+        color: #006D5B;
+        text-transform: uppercase;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .booking-meta {
+        font-size: 0.9rem;
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        color: #444; 
+    }
+
+    .booking-meta i { 
+        margin-right: 10px; 
+        color: #006D5B; 
+        width: 18px; 
+    }
+
+    .booking-meta strong {
+        color: #006D5B; 
+        margin-left: 4px;
+    }
+
+    /* Phần trạng thái bên phải */
+    .status-container {
+        width: 180px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        border-left: 1px dashed #006D5B;
+    }
+
+    .event-status-text {
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        padding: 4px 12px;
+        border-radius: 50px;
+    }
+
+    .status-confirmed { background: #ecfdf5; color: #059669; border: 1px solid #059669; }
+    .status-pending { background: #fffbeb; color: #d97706; border: 1px solid #d97706; }
+    .status-cancelled { background: #fef2f2; color: #dc2626; border: 1px solid #dc2626; }
+
+    .btn-view-ticket {
+        background: #006D5B; 
+        color: white;
+        padding: 6px 18px;
+        font-size: 0.8rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 109, 91, 0.2);
+    }
+
+    .btn-view-ticket:hover {
+        background: #004d40;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Bộ phân trang (Pagination) */
+    .pagination-wrapper {
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .pagination-item {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        border: 2px solid #006D5B;
+        color: #006D5B;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .pagination-item.active { background: #006D5B; color: white; }
+    .pagination-item:hover:not(.active) { background: #f0fdfa; transform: translateY(-2px); }
+    .pagination-item.disabled { border-color: #ddd; color: #ddd; pointer-events: none; }
+
+    @@media (max-width: 768px) {
+        .ticket-list-wrapper { max-width: 100%; }
+        .ticket-item { flex-direction: column; border-radius: 15px; }
+        .event-img-container { width: 100%; height: 200px; }
+        .status-container { width: 100%; border-left: none; border-top: 1px dashed #006D5B; }
+    }
+</style>
+
 <div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark">My Events</h2>
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary rounded-pill px-4">
-            <i class="fas fa-plus me-2"></i> Join New Event
-        </a>
+    <div class="mb-5 text-center">
+        <h2 class="fw-bold" style="color: #006D5B;">
+            <i class="fa fa-ticket-alt me-2"></i>VÉ ĐÃ ĐĂNG KÝ
+        </h2>
+        <div class="mx-auto" style="width: 60px; height: 4px; background: #006D5B; border-radius: 2px;"></div>
     </div>
 
-    <div class="row g-4">
-        @* Ví dụ 1 sự kiện *@
-        <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm h-100" style="border-radius: 1rem;">
-                <img src="~/Content/Theme/img/project-1.jpg" class="card-img-top" style="height: 200px; object-fit: cover; border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
-                <div class="card-body p-4">
-                    <div class="badge bg-primary mb-2">Business</div>
-                    <h5 class="fw-bold mb-2">Economic Forum 2025</h5>
-                    <p class="text-muted small mb-3">
-                        <i class="far fa-clock me-1"></i> Dec 20, 2025 • 09:00 AM
-                    </p>
-                    <a href="#" class="btn btn-outline-dark btn-sm rounded-pill w-100">View Details</a>
-                </div>
+    @if (!Model.Any())
+    {
+        <div class="ticket-list-wrapper">
+            <div class="text-center py-5 shadow-sm rounded-4 bg-white border">
+                <i class="fa fa-folder-open fs-1 mb-3" style="color: #ccc;"></i>
+                <p class="text-muted fs-5">Lịch sử của bạn đang trống.</p>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4 py-2 mt-2" style="background: #006D5B; border: none;">Tìm sự kiện ngay</a>
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="ticket-list-wrapper">
+            @foreach (var booking in Model)
+            {
+                <div class="ticket-item shadow-sm">
+                    @* 1. Ảnh đại diện sự kiện - Rộng 220px *@
+                    <div class="event-img-container">
+                        <img src="@(string.IsNullOrEmpty(booking.Event?.ImageUrl) ? "/Templates/charitize/img/carousel-1.jpg" : booking.Event.ImageUrl)" 
+                             alt="@booking.Event?.Title">
+                    </div>
+
+                    @* 2. Thông tin chính *@
+                    <div class="event-info-main">
+                        <div class="event-name">@booking.Event?.Title</div>
+                        <div class="booking-meta">
+                            <i class="fa fa-calendar-check"></i> Ngày đặt: <strong>@booking.BookingDate.ToString("dd/MM/yyyy")</strong>
+                        </div>
+                        <div class="booking-meta">
+                            <i class="fa fa-chair"></i> Vị trí: <strong>@string.Join(", ", booking.BookingDetails.Select(d => d.SeatNumber))</strong>
+                        </div>
+                        <div class="booking-meta">
+                            <i class="fa fa-tag"></i> Tổng cộng: <strong>@booking.TotalAmount.ToString("N0")đ</strong>
+                        </div>
+                    </div>
+
+                    @* 3. Trạng thái và Nút chi tiết *@
+                    <div class="status-container">
+                        <div class="event-status-text @(booking.Status == "Confirmed" ? "status-confirmed" : booking.Status == "Pending" ? "status-pending" : "status-cancelled")">
+                            @if (booking.Status == "Confirmed") { <span>Đã hoàn tất</span> }
+                            else if (booking.Status == "Pending") { <span>Đang xử lý</span> }
+                            else { <span>Đã hủy</span> }
+                        </div>
+                        <a asp-controller="Booking" asp-action="BookingSuccess" asp-route-id="@booking.Id" class="btn-view-ticket">
+                            CHI TIẾT VÉ
+                        </a>
+                    </div>
+                </div>
+            }
+
+            @* BỘ PHÂN TRANG *@
+            @if (totalPages > 1)
+            {
+                <div class="pagination-wrapper">
+                    <a href="@Url.Action("MyEvents", new { page = currentPage - 1 })" 
+                       class="pagination-item @(currentPage == 1 ? "disabled" : "")">
+                        <i class="fa fa-chevron-left"></i>
+                    </a>
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <a href="@Url.Action("MyEvents", new { page = i })" 
+                           class="pagination-item @(i == currentPage ? "active" : "")">
+                            @i
+                        </a>
+                    }
+
+                    <a href="@Url.Action("MyEvents", new { page = currentPage + 1 })" 
+                       class="pagination-item @(currentPage == totalPages ? "disabled" : "")">
+                        <i class="fa fa-chevron-right"></i>
+                    </a>
+                </div>
+            }
+        </div>
+    }
 </div>

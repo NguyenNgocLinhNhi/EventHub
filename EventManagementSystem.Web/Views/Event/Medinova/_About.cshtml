@@ -1,0 +1,33 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+<div class="container-fluid py-5" id="about">
+    <div class="container">
+        <div class="row gx-5">
+            <div class="col-lg-5 mb-5 mb-lg-0" style="min-height: 500px;">
+                <div class="position-relative h-100">
+                    <img class="position-absolute w-100 h-100 rounded" src="/Templates/Medinova/img/about.jpg" style="object-fit: cover;">
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="mb-4">
+                    <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Về hội nghị</h5>
+                    <h1 class="display-4">Chăm sóc y khoa tốt nhất cho cộng đồng</h1>
+                </div>
+                <p>@Html.Raw(Model.Description)</p>
+                <div class="row g-3 pt-3">
+                    <div class="col-sm-6 col-12">
+                        <div class="bg-light text-center rounded py-4 px-3 border-start border-5 border-primary">
+                            <i class="fa fa-calendar-alt fa-2x text-primary mb-3"></i>
+                            <h6>Bắt đầu: @($"{Model.StartDate:dd/MM/yyyy HH:mm}")</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-12">
+                        <div class="bg-light text-center rounded py-4 px-3 border-start border-5 border-secondary">
+                            <i class="fa fa-map-marker-alt fa-2x text-primary mb-3"></i>
+                            <h6>@Model.Location</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

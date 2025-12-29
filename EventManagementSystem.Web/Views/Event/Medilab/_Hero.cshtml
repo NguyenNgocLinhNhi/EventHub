@@ -1,0 +1,48 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+<section id="hero" class="hero section light-background">
+    <img src="@(Model.ImageUrl ?? "/Templates/Medilab/assets/img/hero-bg.jpg")" alt="" data-aos="fade-in">
+    <div class="container position-relative">
+        <div class="welcome position-relative" data-aos="fade-down" data-aos-delay="100">
+            <h2>CHÀO MỪNG BẠN ĐẾN VỚI</h2>
+            <p>@Model.Title</p>
+        </div>
+        <div class="content row gy-4">
+            <div class="col-lg-4 d-flex align-items-stretch">
+                <div class="why-box" data-aos="zoom-out" data-aos-delay="200">
+                    <h3>Tại sao tham gia?</h3>
+                    <p>@Html.Raw(Model.Description)</p>
+                    <div class="text-center">
+                        <a href="#about" class="more-btn"><span>Xem chi tiết</span> <i class="bi bi-chevron-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 d-flex align-items-stretch">
+                <div class="d-flex flex-column justify-content-center w-100">
+                    <div class="row gy-4">
+                        <div class="col-xl-4">
+                            <div class="icon-box" data-aos="zoom-out" data-aos-delay="300">
+                                <i class="bi bi-geo-alt"></i>
+                                <h4>Địa điểm</h4>
+                                <p>@Model.Location</p>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="icon-box" data-aos="zoom-out" data-aos-delay="400">
+                                <i class="bi bi-calendar-check"></i>
+                                <h4>Thời gian</h4>
+                                <p>Bắt đầu: @Model.StartDate.ToString("dd/MM/yyyy")</p>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="icon-box" data-aos="zoom-out" data-aos-delay="500">
+                                <i class="bi bi-tag"></i>
+                                <h4>Chủ đề</h4>
+                                <p>@Model.Category?.Name</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -50,16 +50,26 @@
             text-decoration: none;
         }
 
-            .btn-home-back:hover {
-                background: #1977cc;
-                color: white;
-            }
+        .btn-home-back:hover {
+            background: #1977cc;
+            color: white;
+        }
+
+        /* Giới hạn độ dài tiêu đề sự kiện trên mobile */
+        .sitename {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     </style>
 </head>
 
 <body class="index-page">
 
-    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back"><i class="bi bi-arrow-left"></i></a>
+    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Quay về trang chủ">
+        <i class="bi bi-arrow-left"></i>
+    </a>
 
     <div class="topbar d-flex align-items-center">
         <div class="container d-flex justify-content-center justify-content-md-between">
@@ -68,7 +78,7 @@
                 <i class="bi bi-phone d-flex align-items-center ms-4"><span>1900 1234</span></i>
             </div>
             <div class="social-links d-none d-md-flex align-items-center">
-                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
                 <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
                 <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
             </div>
@@ -79,22 +89,37 @@
         <div class="branding d-flex align-items-center">
             <div class="container position-relative d-flex align-items-center justify-content-between">
                 <a href="#hero" class="logo d-flex align-items-center me-auto">
-                    <h1 class="sitename" style="font-size: 1.8rem;">@ViewBag.Title</h1>
+                    <h1 class="sitename">@Model.Title</h1>
                 </a>
 
                 <nav id="navmenu" class="navmenu">
                     <ul>
-                        <li><a href="#hero" class="active">Trang chủ<br></a></li>
+                        <li><a href="#hero" class="active">Trang chủ</a></li>
                         <li><a href="#about">Giới thiệu</a></li>
-                        <li><a href="#speakers">Diễn giả</a></li>
-                        <li><a href="#schedule">Lịch trình</a></li>
-                        <li><a href="#gallery">Đối tác</a></li>
-                        <li><a href="#contact">Đăng ký</a></li>
+
+                        @* Hiển thị Diễn giả/Bác sĩ nếu có dữ liệu *@
+                        @if (Model.Speakers != null && Model.Speakers.Any())
+                        {
+                            <li><a href="#speakers">Diễn giả</a></li>
+                        }
+
+                        @* Hiển thị Lịch trình nếu có dữ liệu *@
+                        @if (Model.Schedules != null && Model.Schedules.Any())
+                        {
+                            <li><a href="#schedule">Lịch trình</a></li>
+                        }
+
+                        @* Hiển thị Đối tác (Sponsors) nếu có dữ liệu - dùng ID gallery *@
+                        @if (Model.Sponsors != null && Model.Sponsors.Any())
+                        {
+                            <li><a href="#sponsors">Đối tác</a></li>
+                        }
+
                     </ul>
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
 
-                <a class="cta-btn d-none d-sm-block" href="#appointment">Đăng Ký Ngay</a>
+                <a class="cta-btn d-none d-sm-block" href="#tickets">Mua Vé Ngay</a>
             </div>
         </div>
     </header>
@@ -104,7 +129,22 @@
     </main>
 
     <footer id="footer" class="footer light-background">
-        <div class="container copyright text-center mt-4">
+        <div class="container footer-top py-4">
+            <div class="row gy-4">
+                <div class="col-lg-6 col-md-12 footer-about">
+                    <a href="#hero" class="logo d-flex align-items-center">
+                        <span class="sitename">Eventus - @Model.Title</span>
+                    </a>
+                    <p>Hệ thống quản lý sự kiện chuyên nghiệp cho lĩnh vực @(Model.Category?.Name ?? "Y tế & Khoa học").</p>
+                </div>
+                <div class="col-lg-6 col-md-12 text-md-end">
+                    <p><strong>Địa điểm:</strong> @Model.Location</p>
+                    <p><strong>Thời gian:</strong> @($"{Model.StartDate:dd/MM/yyyy}")</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="container copyright text-center mt-4 border-top pt-4">
             <p>© <span>Copyright</span> <strong class="px-1 sitename">Eventus</strong> <span>All Rights Reserved</span></p>
         </div>
     </footer>

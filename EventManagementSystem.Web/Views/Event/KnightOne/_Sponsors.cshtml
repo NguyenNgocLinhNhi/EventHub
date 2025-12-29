@@ -1,0 +1,26 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Sponsor>
+<section id="sponsors" class="clients section">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Đối tác & Tài trợ</h2>
+    </div>
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+        @if (Model != null && Model.Any())
+        {
+            var grouped = Model.GroupBy(s => s.Rank).OrderBy(g => g.Key);
+            foreach (var group in grouped)
+            {
+                <h5 class="text-center text-uppercase text-secondary mb-4">Hạng @group.Key</h5>
+                <div class="row g-0 clients-wrap justify-content-center mb-5">
+                    @foreach (var sponsor in group)
+                    {
+                        <div class="col-xl-3 col-md-4 client-logo">
+                            <a href="@(sponsor.WebsiteUrl ?? "#")" target="_blank">
+                                <img src="@sponsor.LogoUrl" class="img-fluid" alt="@sponsor.Name" title="@sponsor.Name">
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</section>

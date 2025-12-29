@@ -1,0 +1,34 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Sponsor>
+
+<div class="container-fluid py-5" id="sponsors">
+    <div class="container">
+        <div class="text-center mx-auto wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px;">
+            <p class="section-title bg-dark text-center text-primary px-3">Đối tác</p>
+            <h1 class="display-6 mb-5 text-white">Đơn vị đồng hành & Tài trợ</h1>
+        </div>
+        
+        @if (Model != null && Model.Any())
+        {
+            var groupedSponsors = Model.GroupBy(s => s.Rank).OrderBy(g => g.Key);
+
+            foreach (var group in groupedSponsors)
+            {
+                <div class="mb-5 text-center">
+                    <h4 class="text-uppercase text-primary mb-4">Hạng @group.Key</h4>
+                    <div class="row g-4 justify-content-center">
+                        @foreach (var sponsor in group)
+                        {
+                            <div class="col-lg-2 col-md-3 col-6 wow fadeIn" data-wow-delay="0.1s">
+                                <div class="sponsor-item p-4 h-100 d-flex align-items-center justify-content-center border rounded" style="background: #111111;">
+                                    <a href="@(string.IsNullOrEmpty(sponsor.WebsiteUrl) ? "#" : sponsor.WebsiteUrl)" target="_blank">
+                                        <img class="img-fluid" src="@sponsor.LogoUrl" alt="@sponsor.Name" title="@sponsor.Name" style="filter: brightness(0) invert(1);">
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

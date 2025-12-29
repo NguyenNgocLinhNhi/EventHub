@@ -1,0 +1,30 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Schedule>
+<section id="schedule" class="services section light-background">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Lịch trình</h2>
+        <p>Các mốc thời gian quan trọng diễn ra trong sự kiện</p>
+    </div>
+    <div class="container">
+        <div class="row gy-4">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model.OrderBy(s => s.StartTime))
+                {
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="service-item position-relative">
+                            <div class="icon"><i class="bi bi-clock"></i></div>
+                            <h3>@item.StartTime.ToString("HH:mm") - @item.EndTime.ToString("HH:mm")</h3>
+                            <h4>@item.Title</h4>
+                            <p>@item.Description</p>
+                            <small class="text-primary"><i class="bi bi-geo-alt"></i> @item.Location</small>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center"><p>Đang cập nhật lịch trình...</p></div>
+            }
+        </div>
+    </div>
+</section>

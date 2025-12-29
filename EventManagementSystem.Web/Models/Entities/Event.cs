@@ -55,5 +55,7 @@ namespace EventManagementSystem.Web.Models.Entities
 
         public ICollection<Sponsor> Sponsors { get; set; }
             = new List<Sponsor>();
+
+        public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
 }

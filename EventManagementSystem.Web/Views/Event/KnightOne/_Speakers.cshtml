@@ -1,0 +1,40 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Speaker>
+<section id="speakers" class="team section">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Diễn giả</h2>
+        <p>Gặp gỡ những chuyên gia đồng hành cùng sự kiện</p>
+    </div>
+    <div class="container">
+        <div class="row gy-4 justify-content-center">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var s in Model)
+                {
+                    <div class="col-lg-3 col-md-6 d-flex align-items-stretch" data-aos="fade-up">
+                        <div class="team-member">
+                            <div class="member-img">
+                                <img src="@(s.ImageUrl ?? "/Templates/Knightone/assets/img/team/team-1.jpg")" class="img-fluid" alt="@s.Name">
+                                <div class="social">
+                                    @if (!string.IsNullOrEmpty(s.SocialUrl))
+                                    {
+                                        <a href="@s.SocialUrl" target="_blank"><i class="bi bi-facebook"></i></a>
+                                    }
+                                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                                    <a href=""><i class="bi bi-linkedin"></i></a>
+                                </div>
+                            </div>
+                            <div class="member-info">
+                                <h4>@s.Name</h4>
+                                <span>@s.JobTitle</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center"><p>Thông tin diễn giả sẽ được bổ sung sau.</p></div>
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,23 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+@{
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutKnightOne.cshtml";
+    ViewData["Title"] = Model.Title;
+}
+
+@* 1. Hero Section *@
+@await Html.PartialAsync("~/Views/Event/KnightOne/_Hero.cshtml", Model)
+
+@* 2. About Section *@
+@await Html.PartialAsync("~/Views/Event/KnightOne/_About.cshtml", Model)
+
+@* 3. Schedules Section *@
+@await Html.PartialAsync("~/Views/Event/KnightOne/_Schedules.cshtml", Model.Schedules)
+
+@* 4. Speakers Section *@
+@await Html.PartialAsync("~/Views/Event/KnightOne/_Speakers.cshtml", Model.Speakers)
+
+@* 5. Tickets Section *@
+@await Html.PartialAsync("~/Views/Event/KnightOne/_Tickets.cshtml", Model.TicketTypes)
+
+@* 6. Sponsors Section *@
+@await Html.PartialAsync("~/Views/Event/KnightOne/_Sponsors.cshtml", Model.Sponsors)

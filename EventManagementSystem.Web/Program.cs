@@ -44,6 +44,7 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 builder.Services.AddTransient<IEmailService, EmailService>();
 var app = builder.Build();
 
+
 // ===================== PIPELINE =====================
 if (app.Environment.IsDevelopment())
 {
@@ -78,7 +79,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        SeedData.Initialize(context); // G?i hàm kh?i t?o
+        SeedData.Initialize(context); 
     }
     catch (Exception ex)
     {

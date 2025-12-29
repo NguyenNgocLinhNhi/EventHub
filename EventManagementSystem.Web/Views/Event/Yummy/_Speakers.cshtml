@@ -1,0 +1,35 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Speaker>
+<section id="speakers" class="chefs section">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Đội Ngũ</h2>
+        <p><span>Diễn Giả</span> <span class="description-title">Chuyên Nghiệp</span></p>
+    </div>
+    <div class="container">
+        <div class="row gy-4 justify-content-center">
+            @if (Model != null)
+            {
+                foreach (var s in Model)
+                {
+                    <div class="col-lg-4 d-flex align-items-stretch" data-aos="fade-up">
+                        <div class="team-member">
+                            <div class="member-img">
+                                <img src="@(s.ImageUrl ?? "/Templates/Yummy/assets/img/chefs/chefs-1.jpg")" class="img-fluid" alt="@s.Name">
+                                <div class="social">
+                                    @if (!string.IsNullOrEmpty(s.SocialUrl))
+                                    {
+                                        <a href="@s.SocialUrl"><i class="bi bi-facebook"></i></a>
+                                    }
+                                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                                </div>
+                            </div>
+                            <div class="member-info">
+                                <h4>@s.Name</h4>
+                                <span>@s.JobTitle</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>

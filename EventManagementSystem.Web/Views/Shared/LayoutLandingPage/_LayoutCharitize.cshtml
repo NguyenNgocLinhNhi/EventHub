@@ -82,14 +82,35 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav me-auto">
+                        @* Quay lại phần đầu trang (Hero) *@
                         <a href="#hero" class="nav-item nav-link active">Trang chủ</a>
+
+                        @* Liên kết đến Section _About.cshtml *@
                         <a href="#about" class="nav-item nav-link">Giới thiệu</a>
-                        <a href="#causes" class="nav-item nav-link">Hoạt động</a>
-                        <a href="#schedule" class="nav-item nav-link">Lịch trình</a>
-                        <a href="#team" class="nav-item nav-link">Tình nguyện viên</a>
-                        <a href="#register" class="nav-item nav-link">Đăng ký</a>
+
+                        @* Liên kết đến Section _Schedules.cshtml (Chỉ hiển thị nếu có lịch trình) *@
+                        @if (Model.Schedules != null && Model.Schedules.Any())
+                        {
+                            <a href="#schedule" class="nav-item nav-link">Lịch trình</a>
+                        }
+
+                        @* Liên kết đến Section _Speakers.cshtml (Diễn giả/Đại sứ) *@
+                        @if (Model.Speakers != null && Model.Speakers.Any())
+                        {
+                            <a href="#speakers" class="nav-item nav-link">Diễn giả</a>
+                        }
+
+                        @* Liên kết đến Section _Sponsors.cshtml (Nhà tài trợ) *@
+                        @if (Model.Sponsors != null && Model.Sponsors.Any())
+                        {
+                            <a href="#sponsors" class="nav-item nav-link">Đối tác</a>
+                        }
+
+                        @* Liên kết đến Section _Tickets.cshtml (Đặt vé/Quyên góp) *@
+                        <a href="#tickets" class="nav-item nav-link">Đặt vé</a>
                     </div>
                     <div class="d-none d-lg-flex ms-auto align-items-center">
+                        @* Hiển thị tên sự kiện từ Model  *@
                         <span class="text-white me-3 fw-bold">@Model.Title</span>
                         <a class="btn btn-square btn-dark ms-2" href="#"><i class="fab fa-facebook-f"></i></a>
                     </div>

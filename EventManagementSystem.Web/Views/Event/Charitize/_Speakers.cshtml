@@ -1,0 +1,51 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Speaker>
+
+<div class="container-fluid py-5" id="speakers">
+    <div class="container">
+        <div class="text-center mx-auto wow fadeIn" data-wow-delay="0.1s" style="max-width: 500px;">
+            <p class="section-title bg-white text-center text-primary px-3">Diễn giả</p>
+            <h1 class="display-6 mb-4">Gặp gỡ những người truyền cảm hứng</h1>
+        </div>
+        
+        <div class="row g-4">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var speaker in Model)
+                {
+                    <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="team-item d-flex h-100 p-4 border rounded shadow-sm">
+                            <div class="team-detail pe-4">
+                                @* Hiển thị ảnh diễn giả, nếu null dùng ảnh mặc định *@
+                                <img class="img-fluid mb-4 rounded" 
+                                     src="@(string.IsNullOrEmpty(speaker.ImageUrl) ? "/Templates/Charitize/img/team-1.jpg" : speaker.ImageUrl)" 
+                                     alt="@speaker.Name" 
+                                     style="width: 150px; height: 150px; object-fit: cover;">
+                                
+                                <h3>@speaker.Name</h3>
+                                <span class="text-primary fw-bold">@speaker.JobTitle</span> @* Chức vụ từ Speaker.cs *@
+                            </div>
+                            
+                            @* Phần mạng xã hội dựa trên SocialUrl trong Model *@
+                            <div class="team-social bg-light d-flex flex-column justify-content-center flex-shrink-0 p-4">
+                                @if (!string.IsNullOrEmpty(speaker.SocialUrl))
+                                {
+                                    <a class="btn btn-square btn-primary my-2" href="@speaker.SocialUrl" target="_blank">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                }
+                                <a class="btn btn-square btn-primary my-2" href="#"><i class="fab fa-twitter"></i></a>
+                                <a class="btn btn-square btn-primary my-2" href="#"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center">
+                    <p class="text-muted italic">Thông tin diễn giả đang được cập nhật...</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

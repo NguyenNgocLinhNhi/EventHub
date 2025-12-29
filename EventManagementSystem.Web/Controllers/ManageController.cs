@@ -1,11 +1,14 @@
-﻿using EventManagementSystem.Web.Models.Entities;
+﻿using EventManagementSystem.Web.Data;
+using EventManagementSystem.Web.Models.Entities;
 using EventManagementSystem.Web.Models.Identity;
-using EventManagementSystem.Web.Models.ViewModels;
+using EventManagementSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace EventManagementSystem.Web.Controllers
 {
@@ -14,25 +17,73 @@ namespace EventManagementSystem.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _context;
 
         public ManageController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
+        }
+
+        // ===================== MY EVENTS (LỊCH SỬ ĐẶT VÉ) =====================
+        // Xử lý phân trang và tự động liên kết vé cũ dựa trên Email
+        [HttpGet]
+        public async Task<IActionResult> MyEvents(int page = 1)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            // 1. LOGIC LIÊN KẾT VÉ GỐC: Tìm vé "vãng lai" (UserId == null) có email trùng khớp
+            var anonymousBookings = await _context.Bookings
+                .Where(b => b.CustomerEmail == user.Email && b.UserId == null)
+                .ToListAsync();
+
+            if (anonymousBookings.Any())
+            {
+                foreach (var booking in anonymousBookings)
+                {
+                    booking.UserId = user.Id;
+                }
+                await _context.SaveChangesAsync();
+            }
+
+            // 2. KHỞI TẠO TRUY VẤN LẤY VÉ ĐÃ LIÊN KẾT
+            var query = _context.Bookings
+                .Include(b => b.Event)
+                .Include(b => b.BookingDetails)
+                .Where(b => b.UserId == user.Id) // Chỉ cần lọc theo UserId vì bước trên đã liên kết xong
+                .OrderByDescending(b => b.BookingDate);
+
+            // 3. XỬ LÝ PHÂN TRANG
+            int pageSize = 10;
+            int totalItems = await query.CountAsync();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            if (page < 1) page = 1;
+            if (totalPages > 0 && page > totalPages) page = totalPages;
+
+            var bookings = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
+            return View(bookings);
         }
 
         // ===================== INDEX =====================
         public async Task<IActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.SetTwoFactorSuccess ? "Two-factor authentication enabled."
-                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
-                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
-                : message == ManageMessageId.Error ? "An error has occurred."
+                message == ManageMessageId.ChangePasswordSuccess ? "Mật khẩu đã được thay đổi thành công."
+                : message == ManageMessageId.SetPasswordSuccess ? "Mật khẩu đã được thiết lập."
+                : message == ManageMessageId.Error ? "Đã xảy ra lỗi trong quá trình xử lý."
                 : "";
 
             var user = await _userManager.GetUserAsync(User);
@@ -135,7 +186,6 @@ namespace EventManagementSystem.Web.Controllers
             if (user == null) return RedirectToAction("Login", "Account");
 
             var result = await _userManager.ChangePasswordAsync(user, model.OldPassword ?? "", model.NewPassword ?? "");
-
             if (!result.Succeeded)
             {
                 AddErrors(result);
@@ -225,6 +275,7 @@ namespace EventManagementSystem.Web.Controllers
         }
 
         // ===================== EDIT PROFILE =====================
+        [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -248,8 +299,8 @@ namespace EventManagementSystem.Web.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return RedirectToAction("Login", "Account");
 
-            // ✅ SỬA LỖI CS8601: Sử dụng toán tử ?? để đảm bảo không gán null
             user.FullName = model.FullName ?? "";
+            user.PhoneNumber = model.PhoneNumber;
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -258,7 +309,7 @@ namespace EventManagementSystem.Web.Controllers
                 return View(model);
             }
 
-            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error }); // Hoặc tạo MessageId mới cho UpdateSuccess
+            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangePasswordSuccess });
         }
 
         // ===================== HELPERS =====================

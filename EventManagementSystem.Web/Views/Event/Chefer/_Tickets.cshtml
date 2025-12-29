@@ -1,0 +1,24 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.TicketType>
+<div class="container-fluid menu py-5 px-0" id="tickets">
+    <div class="mb-5 text-center" style="max-width: 700px; margin: auto;">
+        <h5 class="section-title text-primary">Giá vé tham dự</h5>
+        <h1 class="display-3 mb-0">Chọn gói trải nghiệm ẩm thực</h1>
+    </div>
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            @foreach (var ticket in Model) {
+                <div class="col-lg-4">
+                    <div class="bg-dark text-center p-5 rounded">
+                        <h3 class="text-primary mb-4">@ticket.Name</h3>
+                        <h1 class="display-4 text-white mb-4">@ticket.Price.ToString("N0")</h1>
+                        <p class="text-secondary mb-4">Số lượng còn lại: @ticket.Quantity vé</p>
+                        @* Nút đặt vé *@
+                                <a href="@Url.Action("BookingProcess", "Booking", new { id = ticket.EventId })" class="btn btn-primary w-100 py-3">
+                                    <i class="fa fa-shopping-cart me-2"></i>ĐẶT VÉ NGAY
+                                </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -16,7 +16,6 @@ namespace EventManagementSystem.Web.Controllers
 
         public async Task<IActionResult> Detail(int id)
         {
-            // Eager Loading để nạp đầy đủ thông tin liên quan
             var eventEntity = await _context.Events
                 .Include(e => e.TicketTypes)
                 .Include(e => e.Category)
@@ -25,26 +24,12 @@ namespace EventManagementSystem.Web.Controllers
                 .Include(e => e.Sponsors)
                 .FirstOrDefaultAsync(e => e.Id == id);
 
-            if (eventEntity == null)
-            {
-                return NotFound();
-            }
+            if (eventEntity == null) return NotFound();
 
-            // ✅ SỬA LỖI CS8600: Sử dụng toán tử ?? để gán giá trị mặc định nếu LandingPage null
-            // Cách này vừa xóa cảnh báo vừa làm code gọn hơn
             string landingPageName = eventEntity.LandingPage ?? "Medinova";
 
-            // Nếu landingPageName là chuỗi rỗng (""), vẫn dùng mặc định "Medinova"
-            if (string.IsNullOrWhiteSpace(landingPageName))
-            {
-                landingPageName = "Medinova";
-            }
-
-            ViewBag.TemplateName = landingPageName;
-
-            string viewName = $"Detail_{landingPageName}";
-
-            return View(viewName, eventEntity);
+            // Đường dẫn trỏ thẳng vào folder sự kiện để lấy file chính
+            return View($"~/Views/Event/{landingPageName}/Detail_{landingPageName}.cshtml", eventEntity);
         }
     }
 }

@@ -1,0 +1,118 @@
+﻿@using System.Globalization
+@{
+    Layout = "_Layout";
+    var culture = new CultureInfo("vi-VN");
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h3 class="fw-bold mb-4 text-uppercase text-center">Xác Nhận & Thanh Toán</h3>
+            
+            <div class="row g-4">
+                <div class="col-md-5">
+                    <div class="card shadow-sm border-0 p-4" style="border-radius: 15px; background-color: #f8f9fa;">
+                        <h5 class="fw-bold mb-4 border-bottom pb-2">Thông Tin Đơn Hàng</h5>
+                        
+                        <div class="mb-3">
+                            <label class="text-muted small d-block">Sự kiện</label>
+                            <span class="fw-bold text-dark">@ViewBag.EventTitle</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="text-muted small d-block">Khách hàng</label>
+                            <span class="fw-bold">@ViewBag.CustomerName</span>
+                        </div>
+
+                         <div class="mb-3">
+                            <label class="text-muted small d-block">Email</label>
+                            <span class="fw-bold">@ViewBag.CustomerEmail</span>
+                        </div>
+
+                         <div class="mb-3">
+                            <label class="text-muted small d-block">Số điện thoại</label>
+                            <span class="fw-bold">@ViewBag.PhoneNumber</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="text-muted small d-block">Vị trí ghế</label>
+                            <span class="badge bg-primary fs-6">@ViewBag.SelectedSeats</span>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <span class="fs-5 fw-bold">Tổng tiền</span>
+                            <span class="fs-4 fw-bold text-danger">@ViewBag.TotalAmount.ToString("C0", culture)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="card shadow-sm border-0 p-4" style="border-radius: 15px;">
+                        <h5 class="fw-bold mb-4">Chọn Phương Thức Thanh Toán</h5>
+                        
+                        <form asp-action="ConfirmPayment" method="post">
+                            <input type="hidden" name="eventId" value="@ViewBag.EventId" />
+                            <input type="hidden" name="customerName" value="@ViewBag.CustomerName" />
+                            <input type="hidden" name="customerEmail" value="@ViewBag.CustomerEmail" />
+                            <input type="hidden" name="phoneNumber" value="@ViewBag.PhoneNumber" />
+                            <input type="hidden" name="selectedSeats" value="@ViewBag.SelectedSeats" />
+                            <input type="hidden" name="totalAmount" value="@ViewBag.TotalAmount" />
+
+                            <div class="payment-options d-flex flex-column gap-3">
+                                <label class="payment-item p-3 border rounded d-flex align-items-center cursor-pointer">
+                                    <input type="radio" name="paymentMethod" value="MoMo" class="me-3" checked>
+                                    <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" width="40" class="rounded me-3">
+                                    <div>
+                                        <div class="fw-bold">Ví Điện Tử MoMo</div>
+                                        <small class="text-muted">Thanh toán nhanh qua ứng dụng MoMo</small>
+                                    </div>
+                                </label>
+
+                                <label class="payment-item p-3 border rounded d-flex align-items-center cursor-pointer">
+                                    <input type="radio" name="paymentMethod" value="BankTransfer" class="me-3">
+                                    <div class="bg-light rounded p-2 me-3">
+                                        <i class="fa fa-university text-success fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Chuyển Khoản Ngân Hàng</div>
+                                        <small class="text-muted">Quét mã QR để chuyển khoản nhanh</small>
+                                    </div>
+                                </label>
+
+                                <label class="payment-item p-3 border rounded d-flex align-items-center cursor-pointer">
+                                    <input type="radio" name="paymentMethod" value="CreditCard" class="me-3">
+                                    <div class="bg-light rounded p-2 me-3">
+                                        <i class="fa fa-credit-card text-primary fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Thẻ Quốc Tế (Visa/Mastercard)</div>
+                                        <small class="text-muted">Hỗ trợ tất cả ngân hàng tại Việt Nam</small>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="mt-5 d-flex gap-3">
+                                <a href="javascript:history.back()" class="btn btn-outline-secondary w-100 py-3 fw-bold">
+                                    QUAY LẠI
+                                </a>
+                                <button type="submit" class="btn btn-success w-100 py-3 fw-bold shadow-sm" style="background-color: #006D5B;">
+                                    XÁC NHẬN THANH TOÁN
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .payment-item { cursor: pointer; transition: 0.3s; }
+    .payment-item:hover { background-color: #f1f8f6; border-color: #006D5B !important; }
+    .payment-item input[type="radio"]:checked + img + div, 
+    .payment-item input[type="radio"]:checked + div + div { color: #006D5B; }
+    .cursor-pointer { cursor: pointer; }
+</style>

@@ -1,0 +1,23 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+<div class="container-fluid p-5 mb-5 bg-dark text-secondary" id="hero">
+    <div class="row g-5 py-5">
+        <div class="col-12 wow fadeIn" data-wow-delay="0.1s">
+            <h1 class="display-1 text-secondary text-center mb-0">@Model.Title</h1>
+        </div>
+        <div class="col-lg-4 wow fadeIn" data-wow-delay="0.1s">
+            <img class="img-fluid rounded mb-3" src="@Model.ImageUrl">
+            <p><i class="bi bi-arrow-down animate-up-down" style="font-size: 3rem;"></i></p>
+            <p class="mb-0">@Model.Location</p>
+        </div>
+        <div class="col-lg-4 wow fadeIn" data-wow-delay="0.3s" style="min-height: 500px;">
+            <div class="position-relative h-100">
+                <img class="position-absolute w-100 h-100 rounded" src="~/Templates/Chefer/img/hero-1.jpg" style="object-fit: cover;">
+            </div>
+        </div>
+        <div class="col-lg-4 wow fadeIn" data-wow-delay="0.5s">
+            <p>@Html.Raw(Model.Description)</p>
+            <p><i class="bi bi-arrow-up animate-up-down" style="font-size: 3rem;"></i></p>
+            <img class="img-fluid rounded" src="~/Templates/Chefer/img/hero-3.jpg">
+        </div>
+    </div>
+</div>

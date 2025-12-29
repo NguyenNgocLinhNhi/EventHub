@@ -1,0 +1,39 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Sponsor>
+
+<section id="sponsors" class="gallery section light-background">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Đơn vị đồng hành</h2>
+        <p>Các tổ chức tài trợ và hợp tác chiến lược</p>
+    </div>
+    <div class="container" data-aos="fade-up">
+        @if (Model != null && Model.Any())
+        {
+            var groupedSponsors = Model.GroupBy(s => s.Rank).OrderBy(g => g.Key);
+
+            foreach (var group in groupedSponsors)
+            {
+                <div class="mb-5 text-center">
+                    <h5 class="text-uppercase text-secondary mb-4" style="letter-spacing: 2px;">Hạng @group.Key</h5>
+                    <div class="row g-4 justify-content-center">
+                        @foreach (var sponsor in group)
+                        {
+                            <div class="col-lg-3 col-md-4">
+                                <div class="gallery-item text-center p-4 h-100 d-flex flex-column align-items-center justify-content-center border rounded bg-white shadow-sm">
+                                    <a href="@(string.IsNullOrEmpty(sponsor.WebsiteUrl) ? "#" : sponsor.WebsiteUrl)" target="_blank">
+                                        <img src="@sponsor.LogoUrl" alt="@sponsor.Name" class="img-fluid" 
+                                             style="max-height: 80px; filter: grayscale(100%); transition: 0.3s;">
+                                    </a>
+                                    <p class="small text-dark fw-bold mt-3 mb-0">@sponsor.Name</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5 text-muted">Danh sách đối tác đang được cập nhật.</div>
+        }
+    </div>
+</section>

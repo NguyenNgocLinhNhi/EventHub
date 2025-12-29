@@ -25,44 +25,17 @@
     <link href="~/Templates/Chefer/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
     <link href="~/Templates/Chefer/css/bootstrap.min.css" rel="stylesheet">
-
     <link href="~/Templates/Chefer/css/style.css" rel="stylesheet">
 
     <style>
-        /* CSS bổ sung */
-        body {
-            overflow-x: hidden;
-        }
-
-        .sticky-top {
-            top: 0;
-            position: fixed;
-            width: 100%;
-            z-index: 999;
-        }
-
+        body { overflow-x: hidden; }
         .btn-home-back {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 9999;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-            text-decoration: none;
+            position: fixed; top: 20px; left: 20px; z-index: 9999;
+            background: rgba(0,0,0,0.5); color: white; border-radius: 50%;
+            width: 40px; height: 40px; display: flex; align-items: center;
+            justify-content: center; transition: 0.3s; text-decoration: none;
         }
-
-            .btn-home-back:hover {
-                background: #d4a762;
-                color: white;
-            }
-        /* Màu vàng Chefer */
+        .btn-home-back:hover { background: #d4a762; color: white; }
     </style>
 </head>
 
@@ -74,16 +47,16 @@
     <div class="container-fluid bg-dark px-0">
         <div class="row gx-0">
             <div class="col-lg-3 bg-primary d-none d-lg-block">
-                <a href="#hero" class="navbar-brand">
-                    <h1 class="m-0 text-uppercase text-primary" style="font-size: 1.5rem;">
-                        <i class="fa fa-calendar-check me-2"></i> @ViewBag.Title
+                <a href="#hero" class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
+                    <h1 class="m-0 text-uppercase text-white" style="font-size: 1.5rem;">
+                        <i class="fa fa-utensils me-2"></i> CHEFER
                     </h1>
                 </a>
             </div>
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg navbar-dark p-3 p-lg-0 px-lg-5" style="background: #111111;">
-                    <a href="index.html" class="navbar-brand d-block d-lg-none">
-                        <h1 class="m-0 display-4 text-primary text-uppercase">@ViewBag.Title</h1>
+                    <a href="#hero" class="navbar-brand d-block d-lg-none">
+                        <h1 class="m-0 display-4 text-primary text-uppercase">@Model.Title</h1>
                     </a>
                     <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>
@@ -92,48 +65,71 @@
                         <div class="navbar-nav mr-auto py-0">
                             <a href="#hero" class="nav-item nav-link active">Trang chủ</a>
                             <a href="#about" class="nav-item nav-link">Giới thiệu</a>
-                            <a href="#speakers" class="nav-item nav-link">Khách mời</a>
-                            <a href="#schedule" class="nav-item nav-link">Lịch trình</a>
-                            <a href="#pricing" class="nav-item nav-link">Vé</a>
-                            <a href="#register" class="nav-item nav-link">Đăng ký</a>
+
+                            @* Menu động: Chỉ hiện nếu có Lịch trình *@
+                            @if (Model.Schedules != null && Model.Schedules.Any())
+                            {
+                                <a href="#schedule" class="nav-item nav-link">Lịch trình</a>
+                            }
+
+                            @* Menu động: Chỉ hiện nếu có Diễn giả (Đầu bếp) *@
+                            @if (Model.Speakers != null && Model.Speakers.Any())
+                            {
+                                <a href="#speakers" class="nav-item nav-link">Đầu bếp</a>
+                            }
+
+                            @* Menu động: Chỉ hiện nếu có Nhà tài trợ (Đối tác) *@
+                            @if (Model.Sponsors != null && Model.Sponsors.Any())
+                            {
+                                <a href="#sponsors" class="nav-item nav-link">Đối tác</a>
+                            }
+
+                            <a href="#tickets" class="nav-item nav-link">Đặt vé</a>
+                        </div>
+                        <div class="d-none d-lg-flex align-items-center py-2">
+                             <span class="text-white me-3 fw-bold">@Model.Title</span>
+                             <a class="btn btn-outline-secondary btn-square rounded-circle ms-2" href=""><i class="fab fa-facebook-f"></i></a>
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
     </div>
+
     @RenderBody()
 
+    @* Footer phần Thông tin liên hệ *@
     <div class="container-fluid bg-dark text-secondary px-5 mt-5">
-        <div class="row gx-5">
-            <div class="col-lg-8 col-md-6">
-                <div class="row gx-5">
-                    <div class="col-lg-4 col-md-12 pt-5 mb-5">
-                        <h3 class="text-light mb-4">Liên Hệ</h3>
-                        <div class="d-flex mb-2">
-                            <i class="bi bi-geo-alt text-primary me-2"></i>
-                            <p class="mb-0">123 Street, New York, USA</p>
-                        </div>
-                        <div class="d-flex mb-2">
-                            <i class="bi bi-envelope-open text-primary me-2"></i>
-                            <p class="mb-0">info@eventus.com</p>
-                        </div>
-                    </div>
+        <div class="row gx-5 py-5">
+            <div class="col-lg-4 col-md-6">
+                <h3 class="text-light mb-4">Thông Tin Sự Kiện</h3>
+                <div class="d-flex mb-2">
+                    <i class="bi bi-geo-alt text-primary me-2"></i>
+                    <p class="mb-0">@Model.Location</p>
+                </div>
+                <div class="d-flex mb-2">
+                    <i class="bi bi-calendar-event text-primary me-2"></i>
+                    <p class="mb-0">Bắt đầu: @($"{Model.StartDate:dd/MM/yyyy HH:mm}")</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <h3 class="text-light mb-4">Liên Kết Nhanh</h3>
+                <div class="d-flex flex-column justify-content-start">
+                    <a class="text-secondary mb-2" href="#hero">Trang chủ</a>
+                    <a class="text-secondary mb-2" href="#about">Giới thiệu</a>
+                    <a class="text-secondary mb-2" href="#tickets">Đặt vé ngay</a>
                 </div>
             </div>
         </div>
     </div>
-    <div class="container-fluid bg-dark text-secondary px-5">
-        <div class="row gx-5">
-            <div class="col-lg-8">
-                <div class="py-lg-4 text-center">
-                    <p class="text-secondary mb-0">&copy; <a class="text-light fw-bold" href="#">Eventus</a>. All Rights Reserved.</p>
-                </div>
-            </div>
-        </div>
+
+    <div class="container-fluid bg-dark text-secondary text-center border-top border-secondary py-4">
+        <p class="mb-0">&copy; <a class="text-light fw-bold" href="#">Eventus</a>. All Rights Reserved.</p>
     </div>
+
     <a href="#" class="btn btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
+    @* Scripts *@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/Templates/Chefer/lib/wow/wow.min.js"></script>
@@ -141,7 +137,6 @@
     <script src="~/Templates/Chefer/lib/waypoints/waypoints.min.js"></script>
     <script src="~/Templates/Chefer/lib/counterup/counterup.min.js"></script>
     <script src="~/Templates/Chefer/lib/owlcarousel/owl.carousel.min.js"></script>
-
     <script src="~/Templates/Chefer/js/main.js"></script>
 </body>
 </html>

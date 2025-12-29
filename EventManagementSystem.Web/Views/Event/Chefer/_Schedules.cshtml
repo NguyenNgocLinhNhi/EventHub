@@ -1,0 +1,43 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Schedule>
+
+<div class="container-fluid py-5 bg-dark" id="schedule">
+    <div class="container">
+        <div class="mb-5 text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px; margin: auto;">
+            <h5 class="section-title text-primary">Lịch trình</h5>
+            <h1 class="display-3 text-white mb-0">Tiến trình sự kiện</h1>
+        </div>
+        <div class="row g-4">
+            @if (Model != null && Model.Any())
+            {
+                var sortedSchedules = Model.OrderBy(s => s.StartTime);
+                @foreach (var item in sortedSchedules)
+                {
+                    <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="d-flex align-items-center p-4 rounded" style="background: #111111; border: 1px solid #333;">
+                            <div class="flex-shrink-0 text-center border-end border-primary pe-4" style="width: 100px;">
+                                <h4 class="text-primary mb-0">@item.StartTime.ToString("HH:mm")</h4>
+                                <small class="text-secondary">Đến @item.EndTime.ToString("HH:mm")</small>
+                            </div>
+                            <div class="ms-4">
+                                <h4 class="text-white mb-2">@item.Title</h4>
+                                @if (!string.IsNullOrEmpty(item.Location))
+                                {
+                                    <p class="text-secondary mb-1 small">
+                                        <i class="fa fa-map-marker-alt text-primary me-2"></i>@item.Location
+                                    </p>
+                                }
+                                <p class="text-secondary mb-0 small">@item.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center text-secondary py-5">
+                    <p class="fs-4 italic">Lịch trình ẩm thực đang được hoàn thiện...</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

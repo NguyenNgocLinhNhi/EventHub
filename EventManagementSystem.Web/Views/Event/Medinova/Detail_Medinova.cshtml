@@ -1,0 +1,23 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+@{
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutMedinova.cshtml";
+    ViewData["Title"] = Model.Title;
+}
+
+@* 1. Hero Section *@
+@await Html.PartialAsync("~/Views/Event/Medinova/_Hero.cshtml", Model)
+
+@* 2. About Section *@
+@await Html.PartialAsync("~/Views/Event/Medinova/_About.cshtml", Model)
+
+@* 3. Schedules Section (Thay cho Service) *@
+@await Html.PartialAsync("~/Views/Event/Medinova/_Schedules.cshtml", Model.Schedules)
+
+@* 4. Speakers Section (Đội ngũ chuyên gia) *@
+@await Html.PartialAsync("~/Views/Event/Medinova/_Speakers.cshtml", Model.Speakers)
+
+@* 5. Tickets Section (Gói tham dự) *@
+@await Html.PartialAsync("~/Views/Event/Medinova/_Tickets.cshtml", Model.TicketTypes)
+
+@* 6. Sponsors Section (Nhà tài trợ) *@
+@await Html.PartialAsync("~/Views/Event/Medinova/_Sponsors.cshtml", Model.Sponsors)

@@ -1,11 +1,13 @@
-﻿using EventManagementSystem.Web.Models.Identity;
-using EventManagementSystem.Web.Models.ViewModels;
+﻿using EventManagementSystem.Web.Data; 
+using EventManagementSystem.Web.Models.Identity;
+using EventManagementSystem.Web.Services;
+using EventManagementSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using EventManagementSystem.Web.Services;
 
 namespace EventManagementSystem.Web.Controllers
 {
@@ -14,15 +16,18 @@ namespace EventManagementSystem.Web.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
+        private readonly ApplicationDbContext _context; // Thêm DbContext để quản lý dữ liệu vé 
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IEmailService emailService)
+            IEmailService emailService,
+            ApplicationDbContext context) // Inject DbContext vào Constructor 
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailService = emailService;
+            _context = context;
         }
 
         // ===================== LOGIN (GET) =====================
@@ -46,7 +51,6 @@ namespace EventManagementSystem.Web.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
-                    // Kiểm tra xem email đã được xác nhận chưa
                     if (!await _userManager.IsEmailConfirmedAsync(user))
                     {
                         ModelState.AddModelError(string.Empty, "Bạn cần xác nhận email trước khi đăng nhập.");
@@ -87,18 +91,24 @@ namespace EventManagementSystem.Web.Controllers
 
                 if (result.Succeeded)
                 {
-                    // 1. Tạo Token xác nhận email
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-                    // 2. Tạo link kích hoạt
                     var callbackUrl = Url.Action("ConfirmEmail", "Account",
                         new { userId = user.Id, token = token }, protocol: Request.Scheme);
 
-                    // 3. Gửi Email (Bất kỳ ai cũng nhận được qua IEmailService)
-                    await _emailService.SendEmailAsync(model.Email, "Xác nhận tài khoản của bạn",
-                        $"Vui lòng xác nhận tài khoản bằng cách <a href='{callbackUrl}'>bấm vào đây</a>.");
+                    string subject = "Kích hoạt tài khoản Event Management";
+                    string body = $@"
+                        <div style='font-family: Arial; padding: 20px; border: 1px solid #eee;'>
+                            <h2 style='color: #007bff;'>Chào mừng bạn đến với hệ thống sự kiện!</h2>
+                            <p>Cảm ơn bạn đã đăng ký. Vui lòng nhấn vào nút bên dưới để xác nhận email và bắt đầu sử dụng tài khoản:</p>
+                            <div style='text-align: center; margin: 30px 0;'>
+                                <a href='{callbackUrl}' style='background-color: #28a745; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>XÁC NHẬN TÀI KHOẢN</a>
+                            </div>
+                            <p style='color: #666; font-size: 12px;'>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email.</p>
+                        </div>";
 
-                    // 4. CHUYỂN HƯỚNG ĐẾN TRANG THÔNG BÁO (Quan trọng)
+                   // Gửi email kích hoạt duy nhất một lần với giao diện đẹp 
+                    await _emailService.SendEmailAsync(model.Email, subject, body);
+
                     return RedirectToAction("RegisterConfirmation");
                 }
 
@@ -110,9 +120,6 @@ namespace EventManagementSystem.Web.Controllers
             return View(model);
         }
 
-        // ===================== TRANG THÔNG BÁO SAU ĐĂNG KÝ =====================
-        // ===================== CONFIRM EMAIL =====================
-
         [AllowAnonymous]
         public IActionResult RegisterConfirmation()
         {
@@ -120,30 +127,31 @@ namespace EventManagementSystem.Web.Controllers
         }
 
         // ===================== XÁC NHẬN EMAIL =====================
-        [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
             if (userId == null || token == null) return BadRequest();
-
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return NotFound();
 
-            // 1. Thực hiện xác nhận Token từ Email
             var result = await _userManager.ConfirmEmailAsync(user, token);
-
             if (result.Succeeded)
             {
-                // 2. TỰ ĐỘNG ĐĂNG NHẬP: Sau khi xác nhận thành công, cho phép đăng nhập luôn
-                // isPersistent: true giúp hệ thống nhớ phiên đăng nhập (lần sau không cần đăng nhập lại ngay)
-                await _signInManager.SignInAsync(user, isPersistent: true);
+                // Đồng bộ hóa: Tìm vé cũ đặt qua Email này nhưng chưa có UserId
+                var orphanBookings = await _context.Bookings
+                    .Where(b => b.CustomerEmail == user.Email && b.UserId == null)
+                    .ToListAsync();
 
-                // Chuyển hướng về trang chủ hoặc trang thông báo thành công
+                foreach (var b in orphanBookings)
+                {
+                    b.UserId = user.Id;
+                }
+                await _context.SaveChangesAsync();
+
+                await _signInManager.SignInAsync(user, isPersistent: true);
                 return RedirectToAction("Index", "Home");
             }
-
-            return View("ConfirmEmailFailed");
+            return View("Error");
         }
-
 
         // ===================== LOGOUT =====================
         [HttpPost]
@@ -154,7 +162,6 @@ namespace EventManagementSystem.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // ===================== HELPER =====================
         private IActionResult RedirectToLocal(string? returnUrl)
         {
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))

@@ -1,7 +1,7 @@
 using EventManagementSystem.Web.Data;
 using EventManagementSystem.Web.Models;
 using EventManagementSystem.Web.Models.Entities;
-using EventManagementSystem.Web.Models.ViewModels;
+using EventManagementSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

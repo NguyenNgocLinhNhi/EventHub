@@ -1,0 +1,32 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+<section id="about" class="about section">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Về Chúng Tôi</h2>
+        <p><span>Tìm hiểu thêm</span> <span class="description-title">Về Sự Kiện</span></p>
+    </div>
+    <div class="container">
+        <div class="row gy-4">
+            <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
+                <img src="/Templates/Yummy/assets/img/about.jpg" class="img-fluid mb-4 rounded shadow" alt="About Event">
+                <div class="book-a-table">
+                    <h3>Địa điểm tổ chức</h3>
+                    <p>@Model.Location</p>
+                </div>
+            </div>
+            <div class="col-lg-5" data-aos="fade-up" data-aos-delay="250">
+                <div class="content ps-0 ps-lg-5">
+                    <div class="mb-4">
+                        @Html.Raw(Model.Description ?? "Thông tin chi tiết đang được cập nhật...")
+                    </div>
+                    <ul>
+                        <li><i class="bi bi-check-circle-fill"></i> <span>Thời gian bắt đầu: @Model.StartDate.ToString("HH:mm - dd/MM/yyyy")</span></li>
+                        @if (Model.EndDate.HasValue)
+                        {
+                            <li><i class="bi bi-check-circle-fill"></i> <span>Thời gian kết thúc: @Model.EndDate.Value.ToString("HH:mm - dd/MM/yyyy")</span></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

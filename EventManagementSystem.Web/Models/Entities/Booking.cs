@@ -19,16 +19,23 @@ namespace EventManagementSystem.Web.Models.Entities
 
         [Required]
         [StringLength(20)]
-        public string Status { get; set; } = null!;
+        public string Status { get; set; } = "Pending";
 
-        // ====== RELATION: USER ======
+        // BỔ SUNG: Khóa ngoại liên kết tới Event
         [Required]
-        public string UserId { get; set; } = null!;
+        public int EventId { get; set; }
+        [ForeignKey("EventId")]
+        public virtual Event Event { get; set; } = null!;
 
-        public ApplicationUser User { get; set; } = null!;
+        public string? UserId { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
-        // ====== RELATION: BOOKING DETAILS ======
-        public ICollection<BookingDetail> BookingDetails { get; set; }
-            = new List<BookingDetail>();
+        [Required]
+        public string CustomerName { get; set; } = null!;
+        [Required]
+        public string CustomerEmail { get; set; } = null!;
+        public string? PhoneNumber { get; set; }
+
+        public virtual ICollection<BookingDetail> BookingDetails { get; set; } = new List<BookingDetail>();
     }
 }

@@ -27,7 +27,6 @@ namespace EventManagementSystem.Web.Models.Entities
         [Required]
         public int EventId { get; set; }
 
-        // ✅ Sửa: Dùng toán tử ! (null-forgiving) vì EF Core sẽ tự nạp dữ liệu này
         public virtual Event Event { get; set; } = default!;
 
         // ===== RELATION: BOOKING DETAILS =====

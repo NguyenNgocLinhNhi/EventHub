@@ -1,0 +1,26 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Sponsor>
+<section id="sponsors" class="gallery section">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Đối Tác</h2>
+        <p><span>Đơn Vị</span> <span class="description-title">Đồng Hành</span></p>
+    </div>
+    <div class="container" data-aos="fade-up">
+        <div class="row g-4 justify-content-center align-items-center">
+            @if (Model != null) {
+                foreach (var sponsor in Model) {
+                    <div class="col-lg-2 col-md-4 col-6 text-center">
+                        <a href="@(sponsor.WebsiteUrl ?? "#")" target="_blank">
+                            <img src="@sponsor.LogoUrl" class="img-fluid grayscale-img" alt="@sponsor.Name" style="max-height: 80px;">
+                        </a>
+                        <p class="small mt-2 text-muted">@sponsor.Rank</p>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    .grayscale-img { filter: grayscale(100%); transition: 0.3s; }
+    .grayscale-img:hover { filter: grayscale(0%); transform: scale(1.1); }
+</style>

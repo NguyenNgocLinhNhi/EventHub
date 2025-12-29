@@ -1,0 +1,23 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+@{
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutCharitize.cshtml";
+    ViewData["Title"] = Model.Title;
+}
+
+@* 1. Hero *@
+@await Html.PartialAsync("~/Views/Event/Charitize/_Hero.cshtml", Model)
+
+@* 2. About (Đã sửa lỗi ToString tại đây) *@
+@await Html.PartialAsync("~/Views/Event/Charitize/_About.cshtml", Model)
+
+@* 3. Schedule (MỚI BỔ SUNG) *@
+@await Html.PartialAsync("~/Views/Event/Charitize/_Schedules.cshtml", Model.Schedules)
+
+@* 4. Speakers *@
+@await Html.PartialAsync("~/Views/Event/Charitize/_Speakers.cshtml", Model.Speakers)
+
+@* 5. Sponsors (MỚI BỔ SUNG) *@
+@await Html.PartialAsync("~/Views/Event/Charitize/_Sponsors.cshtml", Model.Sponsors)
+
+@* 6. Tickets *@
+@await Html.PartialAsync("~/Views/Event/Charitize/_Tickets.cshtml", Model.TicketTypes)
