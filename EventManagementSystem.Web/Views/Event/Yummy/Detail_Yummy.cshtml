@@ -1,0 +1,23 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+@{
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutYummy.cshtml";
+    ViewData["Title"] = Model.Title;
+}
+
+@* 1. Hero Section - Banner đầu trang *@
+@await Html.PartialAsync("~/Views/Event/Yummy/_Hero.cshtml", Model)
+
+@* 2. About Section - Giới thiệu sự kiện *@
+@await Html.PartialAsync("~/Views/Event/Yummy/_About.cshtml", Model)
+
+@* 3. Schedules Section - Lịch trình sự kiện *@
+@await Html.PartialAsync("~/Views/Event/Yummy/_Schedules.cshtml", Model.Schedules)
+
+@* 4. Speakers Section - Chuyên gia/Đầu bếp *@
+@await Html.PartialAsync("~/Views/Event/Yummy/_Speakers.cshtml", Model.Speakers)
+
+@* 5. Tickets Section - Các loại vé tham dự *@
+@await Html.PartialAsync("~/Views/Event/Yummy/_Tickets.cshtml", Model.TicketTypes)
+
+@* 6. Sponsors Section - Đơn vị đồng hành *@
+@await Html.PartialAsync("~/Views/Event/Yummy/_Sponsors.cshtml", Model.Sponsors)

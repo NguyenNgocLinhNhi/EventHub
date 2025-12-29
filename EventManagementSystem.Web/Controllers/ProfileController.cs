@@ -1,6 +1,6 @@
 ﻿using EventManagementSystem.Web.Models;
 using EventManagementSystem.Web.Models.Identity;
-using EventManagementSystem.Web.Models.ViewModels;
+using EventManagementSystem.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

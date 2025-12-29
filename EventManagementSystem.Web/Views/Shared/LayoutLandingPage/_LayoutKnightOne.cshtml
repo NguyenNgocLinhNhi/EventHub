@@ -28,7 +28,6 @@
     <link href="~/Templates/KnightOne/assets/css/main.css" rel="stylesheet">
 
     <style>
-        /* Fix lỗi hiển thị */
         body {
             overflow-x: hidden;
         }
@@ -50,37 +49,63 @@
             text-decoration: none;
         }
 
-            .btn-home-back:hover {
-                background: #007bff;
-                color: white;
-            }
+        .btn-home-back:hover {
+            background: #007bff;
+            color: white;
+        }
+        
+        /* Đảm bảo logo/sitename không bị quá dài */
+        .header .logo h1 {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 
 <body class="index-page">
 
-    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back"><i class="bi bi-arrow-left"></i></a>
+    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Quay về trang chủ">
+        <i class="bi bi-arrow-left"></i>
+    </a>
 
     <header id="header" class="header d-flex align-items-center fixed-top">
         <div class="container position-relative d-flex align-items-center justify-content-between">
 
             <a href="#hero" class="logo d-flex align-items-center me-auto me-xl-0">
-                <h1 class="sitename" style="font-size: 1.5rem;">@ViewBag.Title</h1>
+                <h1 class="sitename">@Model.Title</h1>
             </a>
 
             <nav id="navmenu" class="navmenu">
                 <ul>
                     <li><a href="#hero" class="active">Trang chủ</a></li>
                     <li><a href="#about">Giới thiệu</a></li>
-                    <li><a href="#schedule">Lịch trình</a></li>
-                    <li><a href="#speakers">Diễn giả</a></li>
-                    <li><a href="#pricing">Vé tham dự</a></li>
-                    <li><a href="#contact">Đăng ký</a></li>
+
+                    @* Hiển thị Lịch trình nếu có dữ liệu *@
+                    @if (Model.Schedules != null && Model.Schedules.Any())
+                    {
+                        <li><a href="#schedule">Lịch trình</a></li>
+                    }
+
+                    @* Hiển thị Diễn giả nếu có dữ liệu *@
+                    @if (Model.Speakers != null && Model.Speakers.Any())
+                    {
+                        <li><a href="#speakers">Diễn giả</a></li>
+                    }
+
+                    @* Hiển thị Đối tác nếu có dữ liệu *@
+                    @if (Model.Sponsors != null && Model.Sponsors.Any())
+                    {
+                        <li><a href="#sponsors">Đối tác</a></li>
+                    }
+
+                    <li><a href="#tickets">Vé tham dự</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
 
-            <a class="cta-btn" href="#contact">Mua Vé Ngay</a>
+            <a class="cta-btn" href="#tickets">Mua Vé Ngay</a>
 
         </div>
     </header>
@@ -92,7 +117,13 @@
     <footer id="footer" class="footer dark-background">
         <div class="container">
             <h3 class="sitename">Eventus</h3>
-            <p>Nền tảng quản lý và tổ chức sự kiện chuyên nghiệp hàng đầu Việt Nam.</p>
+            <p>Nền tảng quản lý và tổ chức sự kiện chuyên nghiệp hàng đầu cho "@Model.Title".</p>
+            <div class="social-links d-flex justify-content-center mb-3">
+                <a href=""><i class="bi bi-twitter-x"></i></a>
+                <a href=""><i class="bi bi-facebook"></i></a>
+                <a href=""><i class="bi bi-instagram"></i></a>
+                <a href=""><i class="bi bi-linkedin"></i></a>
+            </div>
             <div class="container">
                 <div class="copyright">
                     <span>Copyright</span> <strong class="px-1 sitename">Eventus</strong> <span>All Rights Reserved</span>
@@ -117,4 +148,5 @@
     <script src="~/Templates/KnightOne/assets/js/main.js"></script>
 
 </body>
+
 </html>

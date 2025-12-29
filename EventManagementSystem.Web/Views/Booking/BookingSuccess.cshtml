@@ -1,0 +1,77 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Booking
+@{
+    ViewData["Title"] = "Thanh toán thành công";
+    Layout = "_Layout";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5 no-print">
+        <div class="display-3 text-success animate__animated animate__bounceIn">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <h2 class="fw-bold mt-2">Đặt vé thành công!</h2>
+        <p class="text-muted">Thông tin <b>@Model.BookingDetails.Count vé</b> đã được gửi về email <b>@Model.CustomerEmail</b>.</p>
+    </div>
+
+    <div class="row justify-content-center g-4">
+        @* Hiển thị danh sách vé rời dựa trên số lượng ghế đã đặt  *@
+        @foreach (var detail in Model.BookingDetails)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="ticket shadow-sm mb-4 animate__animated animate__fadeInUp">
+                    <div class="ticket-header p-3 text-white text-center" style="background: #006D5B;">
+                        <h6 class="text-uppercase mb-0 fw-bold">@Model.Event?.Title</h6> [cite: 123]
+                        <small>Mã đơn: #@Model.Id</small> [cite: 155]
+                    </div>
+
+                    <div class="ticket-body p-4 bg-white position-relative">
+                        <div class="text-center mb-3">
+                            <label class="text-muted small d-block">VỊ TRÍ GHẾ</label>
+                            <h2 class="fw-bold text-primary">@(detail.SeatNumber ?? "N/A")</h2> [cite: 161]
+                        </div>
+                        
+                        <div class="border-top pt-3">
+                            <p class="mb-1"><b>Khách hàng:</b> @Model.CustomerName</p> [cite: 156]
+                            <p class="mb-0 small"><b>Ngày đặt:</b> @Model.BookingDate.ToString("dd/MM/yyyy")</p> [cite: 157]
+                        </div>
+
+                        <div class="ticket-divider my-3" style="border-top: 2px dashed #ddd;"></div> [cite: 171, 172]
+
+                        <div class="text-center">
+                            @* QR Code độc lập cho từng ghế dựa trên ID chi tiết vé *@
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=TICKET_DET_@detail.Id" 
+                                 [cite_start]class="img-fluid border p-1" style="max-width: 120px;" alt="Checkin QR" /> 
+                            <p class="small text-muted mt-2">Mã soát vé: <br><b>TICKET-@detail.Id</b></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @* Các nút điều hướng sau khi hoàn tất [cite: 166] *@
+    <div class="text-center mt-5 no-print">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary px-4 py-2 me-2">Về trang chủ</a>
+        <button onclick="window.print()" class="btn btn-dark px-4 py-2">In tất cả vé</button> [cite: 167]
+    </div>
+</div>
+
+<style>
+    /* CSS đồng bộ với yêu cầu vé rời [cite: 167 - 176] */
+    .ticket { border-radius: 12px; overflow: hidden; border: 1px solid #eee; transition: 0.3s; }
+    .ticket:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+    .ticket-header { background: #006D5B; border-bottom: 2px dashed #ffffff50; }
+    .ticket-divider { position: relative; border-top: 2px dashed #ddd; }
+    .ticket-divider::before, .ticket-divider::after {
+        content: ""; position: absolute; top: -10px; width: 20px; height: 20px;
+        background-color: #f8f9fa; border-radius: 50%;
+    }
+    .ticket-divider::before { left: -30px; border-right: 1px solid #eee; }
+    .ticket-divider::after { right: -30px; border-left: 1px solid #eee; }
+
+    @@media print {
+        .no-print { display: none !important; }
+        .col-md-6 { width: 50%; float: left; padding: 10px; }
+        .ticket { break-inside: avoid; border: 1px solid #000; }
+    }
+</style>

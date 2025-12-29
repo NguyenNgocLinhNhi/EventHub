@@ -1,0 +1,32 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Speaker>
+<section id="speakers" class="doctors section">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Diễn giả & Chuyên gia</h2>
+        <p>Những người dẫn dắt các phiên thảo luận chuyên sâu</p>
+    </div>
+    <div class="container">
+        <div class="row gy-4 justify-content-center">
+            @if (Model != null && Model.Any()) {
+                foreach (var s in Model) {
+                    <div class="col-lg-6" data-aos="fade-up">
+                        <div class="team-member d-flex align-items-start border p-3 rounded">
+                            <div class="pic">
+                                <img src="@(s.ImageUrl ?? "/Templates/Medilab/assets/img/doctors/doctors-1.jpg")" class="img-fluid rounded-circle" style="width:150px; height:150px; object-fit:cover;" alt="@s.Name">
+                            </div>
+                            <div class="member-info ps-4">
+                                <h4>@s.Name</h4>
+                                <span>@s.JobTitle</span>
+                                <div class="social mt-2">
+                                    @if (!string.IsNullOrEmpty(s.SocialUrl)) {
+                                        <a href="@s.SocialUrl" class="me-2"><i class="bi bi-facebook text-primary"></i></a>
+                                    }
+                                    <a href=""><i class="bi bi-linkedin text-info"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>

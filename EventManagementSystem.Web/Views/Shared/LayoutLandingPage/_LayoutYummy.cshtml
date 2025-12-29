@@ -13,7 +13,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>@ViewBag.Title - Eventus</title>
 
-    <link href="~/Content/Templates/Yummy/assets/img/favicon.png" rel="icon">
+    <link href="~/Templates/Yummy/assets/img/favicon.png" rel="icon">
 
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
@@ -39,7 +39,7 @@
             left: 20px;
             z-index: 9999;
             background: rgba(206, 18, 18, 0.1);
-            color: var(--color-primary);
+            color: #ce1212;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -50,39 +50,71 @@
             text-decoration: none;
         }
 
-            .btn-home-back:hover {
-                background: var(--color-primary);
-                color: white;
-            }
+        .btn-home-back:hover {
+            background: #ce1212;
+            color: white;
+        }
+
+        /* Giới hạn độ dài tiêu đề sitename trên Navbar */
+        .header .logo h1 {
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 1.5rem;
+        }
     </style>
 </head>
 
 <body class="index-page">
 
-    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back"><i class="bi bi-arrow-left"></i></a>
+    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Quay về trang chủ">
+        <i class="bi bi-arrow-left"></i>
+    </a>
 
     <header id="header" class="header d-flex align-items-center sticky-top">
         <div class="container position-relative d-flex align-items-center justify-content-between">
 
             <a href="#hero" class="logo d-flex align-items-center me-auto me-xl-0">
-                <h1 class="sitename" style="font-size: 1.8rem;">Eventus</h1>
+                <h1 class="sitename">@Model.Title</h1>
                 <span>.</span>
             </a>
 
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li><a href="#hero" class="active">Trang chủ<br></a></li>
+                    <li><a href="#hero" class="active">Trang chủ</a></li>
                     <li><a href="#about">Giới thiệu</a></li>
-                    <li><a href="#stats">Thống kê</a></li>
-                    <li><a href="#menu">Vé tham dự</a></li>
-                    <li><a href="#events">Lịch trình</a></li>
-                    <li><a href="#chefs">Khách mời</a></li>
+                    
+                    @* Chỉ hiển thị Lịch trình nếu có dữ liệu [cite: 75] *@
+                    @if (Model.Schedules != null && Model.Schedules.Any())
+                    {
+                        <li><a href="#schedule">Lịch trình</a></li>
+                    }
+
+                    @* Chỉ hiển thị Khách mời/Diễn giả nếu có dữ liệu [cite: 57] *@
+                    @if (Model.Speakers != null && Model.Speakers.Any())
+                    {
+                        <li><a href="#speakers">Khách mời</a></li>
+                    }
+
+                    @* Chỉ hiển thị Đối tác nếu có dữ liệu [cite: 67] *@
+                    @if (Model.Sponsors != null && Model.Sponsors.Any())
+                    {
+                        <li><a href="#sponsors">Đối tác</a></li>
+                    }
+
+                    @* Chỉ hiển thị Vé tham dự nếu có dữ liệu [cite: 90] *@
+                    @if (Model.TicketTypes != null && Model.TicketTypes.Any())
+                    {
+                        <li><a href="#tickets">Vé tham dự</a></li>
+                    }
+
                     <li><a href="#contact">Liên hệ</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
 
-            <a class="btn-getstarted" href="#book-a-table">Đăng Ký Ngay</a>
+            <a class="btn-getstarted" href="#tickets">Đặt vé</a>
 
         </div>
     </header>
@@ -92,10 +124,42 @@
     </main>
 
     <footer id="footer" class="footer dark-background">
+        <div class="container">
+            <div class="row gy-3">
+                <div class="col-lg-4 col-md-6 d-flex">
+                    <i class="bi bi-geo-alt icon"></i>
+                    <div>
+                        <h4>Địa điểm</h4>
+                        <p>@Model.Location</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 d-flex">
+                    <i class="bi bi-clock icon"></i>
+                    <div>
+                        <h4>Thời gian</h4>
+                        <p>
+                            <strong>Bắt đầu:</strong> <span>@Model.StartDate.ToString("dd/MM/yyyy HH:mm")</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <h4>Theo dõi chúng tôi</h4>
+                    <div class="social-links d-flex">
+                        <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="container copyright text-center mt-4">
             <p>© <span>Copyright</span> <strong class="px-1 sitename">Eventus</strong> <span>All Rights Reserved</span></p>
             <div class="credits">
-                Designed by <a href="#">Your Name</a>
+                Hệ thống quản lý sự kiện chuyên nghiệp cho <strong>@Model.Title</strong>
             </div>
         </div>
     </footer>
@@ -114,4 +178,5 @@
     <script src="~/Templates/Yummy/assets/js/main.js"></script>
 
 </body>
+
 </html>

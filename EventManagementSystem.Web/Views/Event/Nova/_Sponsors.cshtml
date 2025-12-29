@@ -1,0 +1,44 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Sponsor>
+
+<section id="sponsors" class="clients-logo-section pt-100 pb-100 border-top">
+    <div class="container">
+        <div class="section-title text-center mb-50">
+            <h3>Đơn Vị Đồng Hành</h3>
+        </div>
+        @if (Model != null && Model.Any())
+        {
+            @* Khai báo biến bên trong khối @if để đảm bảo scope chính xác *@
+            var groupedSponsors = Model.GroupBy(s => s.Rank).OrderBy(g => g.Key);
+
+            foreach (var group in groupedSponsors)
+            {
+                <div class="mb-5 text-center">
+                    <h5 class="text-muted mb-4 text-uppercase" style="letter-spacing: 2px;">Hạng @group.Key</h5>
+                    <div class="row justify-content-center align-items-center">
+                        @foreach (var sponsor in group)
+                        {
+                            <div class="col-lg-2 col-md-3 col-6 text-center mb-4">
+                                <div class="p-3 border rounded bg-white shadow-sm h-100 d-flex align-items-center justify-content-center">
+                                    <a href="@(string.IsNullOrEmpty(sponsor.WebsiteUrl) ? "#" : sponsor.WebsiteUrl)" target="_blank">
+                                        <img src="@sponsor.LogoUrl" 
+                                             class="img-fluid opacity-75 grayscale" 
+                                             style="max-height: 60px; transition: 0.3s;" 
+                                             alt="@sponsor.Name"
+                                             onmouseover="this.style.filter='grayscale(0%)'; this.className='img-fluid opacity-100'"
+                                             onmouseout="this.style.filter='grayscale(100%)'; this.className='img-fluid opacity-75 grayscale'">
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5 text-muted">
+                <p>Danh sách đối tác đang được cập nhật.</p>
+            </div>
+        }
+    </div>
+</section>

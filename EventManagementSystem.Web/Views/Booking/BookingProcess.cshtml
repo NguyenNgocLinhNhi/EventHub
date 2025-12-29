@@ -1,0 +1,211 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using EventManagementSystem.Web.Models.Identity
+@model EventManagementSystem.Web.Models.Entities.Event
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    Layout = "_Layout";
+    var user = User.Identity.IsAuthenticated ? await UserManager.GetUserAsync(User) : null;
+
+    // Lấy danh sách loại vé của sự kiện này
+    var ticketTypes = Model.TicketTypes?.OrderByDescending(t => t.Price).ToList() ?? new List<EventManagementSystem.Web.Models.Entities.TicketType>();
+
+    // Lấy danh sách ghế đã đặt từ Controller
+    var bookedSeats = ViewBag.BookedSeats as List<string> ?? new List<string>();
+}
+
+<style>
+    /* CSS Định nghĩa giao diện sơ đồ ghế */
+    .seat { width: 35px; height: 35px; margin: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; border-radius: 4px; color: white; transition: 0.2s; border: 1px solid rgba(0,0,0,0.1); }
+    
+    /* Màu sắc theo phân vùng */
+    .type-0 { background-color: #A855F7; } /* VIP */
+    .type-1 { background-color: #3B82F6; } /* Standard */
+    .type-2 { background-color: #EAB308; } /* Economy */
+
+    /* Trạng thái ghế */
+    .booked { background-color: #cbd5e1 !important; cursor: not-allowed !important; color: #94a3b8 !important; border: 1px solid #94a3b8 !important; }
+    .sold-out { background-color: #f1f5f9 !important; cursor: not-allowed !important; color: #cbd5e1 !important; opacity: 0.5; }
+    .selected { background-color: #22C55E !important; transform: scale(1.1); box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+    
+    .stage-box { background: #1e293b; color: white; text-align: center; padding: 12px; border-radius: 5px; font-weight: bold; margin-bottom: 40px; letter-spacing: 5px; }
+    .event-banner-img { height: 250px; object-fit: cover; border-radius: 20px 0 0 20px; }
+    @@media (max-width: 768px) { .event-banner-img { border-radius: 20px 20px 0 0; } }
+</style>
+
+<div class="container py-5">
+    @* Banner sự kiện *@
+    <div class="card border-0 shadow-sm mb-5 overflow-hidden" style="border-radius: 20px;">
+        <div class="row g-0 align-items-center">
+            <div class="col-md-4">
+                <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/Templates/charitize/img/carousel-1.jpg" : Model.ImageUrl)" 
+                     class="img-fluid w-100 event-banner-img" alt="@Model.Title">
+            </div>
+            <div class="col-md-8 p-4">
+                <h2 class="fw-bold mb-3">@Model.Title</h2>
+                <div class="d-flex flex-wrap gap-4 text-secondary">
+                    <span><i class="fa fa-calendar-alt text-primary me-2"></i><strong>Ngày:</strong> @Model.StartDate.ToString("dd/MM/yyyy")</span>
+                    <span><i class="fa fa-map-marker-alt text-primary me-2"></i><strong>Địa điểm:</strong> @Model.Location</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8 shadow p-4 bg-white rounded border">
+            <div class="stage-box shadow-sm">SÂN KHẤU</div>
+
+            @* Chú thích loại vé động với bộ đếm số lượng *@
+            <div class="d-flex flex-wrap gap-3 mb-5 justify-content-center">
+                @for (int i = 0; i < ticketTypes.Count; i++)
+                {
+                    <div class="d-flex align-items-center">
+                        <span class="seat type-@i me-2"></span> 
+                        <small>
+                            @ticketTypes[i].Name (@ticketTypes[i].Price.ToString("N0")đ) 
+                            <br><span class="text-muted">Còn lại: <b id="stock-@i" data-initial="@ticketTypes[i].Quantity">@ticketTypes[i].Quantity</b></span>
+                        </small>
+                    </div>
+                }
+                <div class="d-flex align-items-center"><span class="seat selected me-2"></span> <small>Đang chọn</small></div>
+                <div class="d-flex align-items-center"><span class="seat booked me-2"></span> <small>Hết chỗ</small></div>
+            </div>
+
+            @* Sơ đồ ghế *@
+            <div class="seat-container d-flex flex-column align-items-center overflow-auto py-3">
+                @foreach (var row in new[] { "A", "B", "C", "D", "E", "F", "G", "H" })
+                {
+                    <div class="d-flex align-items-center mb-1">
+                        <span class="fw-bold me-3 text-muted" style="width: 20px;">@row</span>
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            string seatCode = $"{row}{i}";
+                            bool isBooked = bookedSeats.Contains(seatCode);
+
+                            int typeIndex = (row == "A" || row == "B") ? 0 : (row == "C" || row == "D" || row == "E") ? 1 : 2;
+                            if (typeIndex >= ticketTypes.Count) typeIndex = ticketTypes.Count - 1;
+                            var currentTicket = ticketTypes[typeIndex];
+                            
+                            // Trạng thái hết vé cho hạng này
+                            bool isSoldOut = currentTicket.Quantity <= 0;
+
+                            <div class="seat type-@typeIndex @(isBooked ? "booked" : isSoldOut ? "sold-out" : "")" 
+                                 data-seat="@seatCode" 
+                                 data-price="@currentTicket.Price" 
+                                 data-type-index="@typeIndex"
+                                 title="@(isBooked ? "Ghế đã được đặt" : isSoldOut ? "Hạng vé này đã hết chỗ" : $"Ghế {seatCode}")"
+                                 onclick="@(isBooked || isSoldOut ? "" : "handleSeatClick(this)")">@i</div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card p-4 shadow border-0 h-100">
+                <h5 class="fw-bold mb-4">Thông Tin Đặt Vé</h5>
+                <form asp-action="ProcessBooking" method="post" id="paymentForm">
+                    <input type="hidden" name="eventId" value="@Model.Id" />
+                    <input type="hidden" id="SelectedSeats" name="selectedSeats" />
+                    <input type="hidden" id="TotalAmountInput" name="totalAmount" />
+
+                    <div class="mb-4 p-3 bg-light rounded">
+                        <p class="small text-muted mb-1">Vị trí ghế đã chọn:</p>
+                        <p id="seatDisplay" class="fw-bold text-primary mb-0">Chưa chọn ghế nào</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="small fw-bold">Họ và tên</label>
+                        <input name="customerName" class="form-control" value="@(user?.FullName ?? "")" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold">Email</label>
+                        <input name="customerEmail" type="email" class="form-control" value="@(user?.Email ?? "")" required />
+                    </div>
+                    <div class="mb-4">
+                        <label class="small fw-bold">Số điện thoại</label>
+                        <input name="phoneNumber" class="form-control" value="@(user?.PhoneNumber ?? "")" required />
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2 border-top pt-3">
+                        <span>Số lượng vé:</span>
+                        <span id="qtyDisplay" class="fw-bold">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fs-5 fw-bold">Tổng cộng:</span>
+                        <span id="totalDisplay" class="fs-5 fw-bold text-danger">0đ</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow" style="background-color: #006D5B; border: none;">
+                        <i class="fa fa-credit-card me-2"></i> TIẾP TỤC THANH TOÁN
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedSeats = [];
+    let totalAmount = 0;
+    // Lưu trữ số lượng đang chọn của từng hạng vé để trừ stock hiển thị
+    let selectedByType = {}; 
+
+    function handleSeatClick(el) {
+        if (el.classList.contains('booked') || el.classList.contains('sold-out')) return;
+
+        const seatId = el.getAttribute('data-seat');
+        const price = parseFloat(el.getAttribute('data-price'));
+        const typeIndex = el.getAttribute('data-type-index');
+
+        if (el.classList.contains('selected')) {
+            el.classList.remove('selected');
+            selectedSeats = selectedSeats.filter(s => s !== seatId);
+            totalAmount -= price;
+            selectedByType[typeIndex] = (selectedByType[typeIndex] || 0) - 1;
+        } else {
+            // Kiểm tra stock trước khi cho chọn (Logic client-side dự phòng)
+            const currentStock = parseInt(document.getElementById(`stock-${typeIndex}`).getAttribute('data-initial'));
+            const currentlySelected = selectedByType[typeIndex] || 0;
+            
+            if (currentlySelected >= currentStock) {
+                alert("Hạng vé này đã đạt giới hạn số lượng còn lại!");
+                return;
+            }
+
+            el.classList.add('selected');
+            selectedSeats.push(seatId);
+            totalAmount += price;
+            selectedByType[typeIndex] = (selectedByType[typeIndex] || 0) + 1;
+        }
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('seatDisplay').innerText = selectedSeats.length > 0 ? selectedSeats.join(', ') : "Chưa chọn ghế nào";
+        document.getElementById('qtyDisplay').innerText = selectedSeats.length;
+        document.getElementById('totalDisplay').innerText = totalAmount.toLocaleString('vi-VN') + 'đ';
+        
+        document.getElementById('SelectedSeats').value = selectedSeats.join(',');
+        document.getElementById('TotalAmountInput').value = totalAmount;
+
+        // Cập nhật số lượng hiển thị trên Legend (giảm dần tương thích)
+        for (let type in selectedByType) {
+            const initialStock = parseInt(document.getElementById(`stock-${type}`).getAttribute('data-initial'));
+            const remaining = initialStock - selectedByType[type];
+            const stockElement = document.getElementById(`stock-${type}`);
+            stockElement.innerText = remaining;
+            
+            // Đổi màu nếu sắp hết
+            if (remaining === 0) stockElement.className = "text-danger fw-bold";
+            else stockElement.className = "text-muted";
+        }
+    }
+
+    document.getElementById('paymentForm').onsubmit = function(e) {
+        if (selectedSeats.length === 0) {
+            alert("Vui lòng chọn ít nhất một vị trí ghế trước khi thanh toán!");
+            return false;
+        }
+    };
+</script>

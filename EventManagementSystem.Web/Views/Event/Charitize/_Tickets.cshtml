@@ -1,0 +1,52 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.TicketType>
+
+<div class="container-fluid py-5" id="tickets">
+    <div class="container">
+        @* Căn giữa tiêu đề section *@
+        <div class="text-center mx-auto wow fadeIn" data-wow-delay="0.1s" style="max-width: 500px;">
+            <p class="section-title bg-white text-center text-primary px-3">Vé Tham Gia</p>
+            <h1 class="display-6 mb-4">Chọn Gói Vé Phù Hợp</h1>
+        </div>
+
+        @* justify-content-center giúp các cột (columns) tập trung vào giữa nếu không đủ 12 grid *@
+        <div class="row g-4 justify-content-center">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var ticket in Model)
+                {
+                    <div class="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="0.1s">
+                        @* text-center giúp nội dung văn bản và nút bấm nằm giữa card *@
+                        <div class="donation-item d-flex flex-column h-100 p-4 border rounded shadow-sm text-center">
+                            <div class="donation-detail w-100">
+                                @* Tên loại vé từ TicketType.cs *@
+                                <h3 class="mb-3">@ticket.Name</h3>
+                                
+                                @* Giá vé định dạng VNĐ *@
+                                <h2 class="text-primary mb-3">@ticket.Price.ToString("N0") <small class="text-dark" style="font-size: 1rem;">VNĐ</small></h2>
+                                
+                                <div class="mb-4 text-start d-inline-block">
+                                    @* Giữ text-start bên trong một khối d-inline-block để các icon tích xanh thẳng hàng nhau ở giữa *@
+                                    <p class="mb-1"><i class="fa fa-check text-primary me-2"></i>Số lượng: <strong>@ticket.Quantity</strong> vé</p>
+                                    <p class="mb-0"><i class="fa fa-check text-primary me-2"></i>Hỗ trợ check-in nhanh</p>
+                                </div>
+
+                                @* Nút đặt vé *@
+                                <a href="@Url.Action("BookingProcess", "Booking", new { id = ticket.EventId })" class="btn btn-primary w-100 py-3">
+                                    <i class="fa fa-shopping-cart me-2"></i>ĐẶT VÉ NGAY
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center">
+                    <div class="alert alert-info">
+                        Hiện tại chưa có thông tin loại vé chính thức. Vui lòng quay lại sau!
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

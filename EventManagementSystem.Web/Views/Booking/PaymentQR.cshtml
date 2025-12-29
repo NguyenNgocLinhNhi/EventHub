@@ -1,0 +1,62 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Booking
+@{
+    Layout = "_Layout";
+}
+
+<div class="container py-5 d-flex justify-content-center">
+    <div class="card shadow border-0 p-4 text-center" style="max-width: 600px; border-radius: 20px;">
+        <div class="mb-3">
+            <div class="bg-success d-inline-block rounded-circle p-2 text-white">
+                <i class="fa fa-check fs-4"></i>
+            </div>
+        </div>
+        
+        <h4 class="fw-bold">Quét Mã QR Để Thanh Toán</h4>
+        <p class="text-muted small">Sử dụng ứng dụng ngân hàng hoặc ví điện tử để quét mã QR</p>
+
+        @* QR Code thanh toán tổng đơn hàng *@
+        <div class="qr-box my-4 p-3 border rounded shadow-sm d-inline-block mx-auto">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=PAYMENT_BOOKING_@ViewBag.BookingId" 
+                 alt="Payment QR" class="img-fluid" style="width: 250px;" />
+        </div>
+
+        <div class="instruction-box alert alert-primary text-start small mb-4" style="background-color: #f0f7ff; border: none;">
+            <h6 class="fw-bold mb-2 text-primary">Hướng dẫn thanh toán:</h6>
+            <ol class="mb-0">
+                <li>Mở ứng dụng ngân hàng hoặc ví điện tử của bạn</li>
+                <li>Chọn tính năng quét mã QR</li>
+                <li>Quét mã QR phía trên</li>
+                <li>Xác nhận thông tin và hoàn tất thanh toán</li>
+                <li>Hệ thống sẽ gửi từng vé rời về email sau khi bạn xác nhận</li>
+            </ol>
+        </div>
+
+        <div class="payment-info bg-light p-3 rounded mb-4">
+            <div class="d-flex justify-content-between mb-1">
+                <span class="text-muted small">Phương thức:</span>
+                <span class="fw-bold">@ViewBag.PaymentMethod</span>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+                <span class="text-muted small">Vị trí ghế:</span>
+                <span class="fw-bold text-success">@ViewBag.SelectedSeats</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span class="text-muted small">Tổng số tiền:</span>
+                <span class="fw-bold text-primary fs-5">@ViewBag.TotalAmount.ToString("N0")đ</span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a href="javascript:history.back()" class="btn btn-outline-secondary w-50 py-2">← Chọn phương thức khác</a>
+            <form asp-action="FinalizeBooking" method="post" class="w-50">
+                @* Cần truyền chính xác ID đơn hàng *@
+                <input type="hidden" name="bookingId" value="@ViewBag.BookingId" />
+                
+                @* QUAN TRỌNG: Truyền danh sách ghế để Controller tạo vé rời gửi Email *@
+                <input type="hidden" name="selectedSeats" value="@ViewBag.SelectedSeats" />
+                
+                <button type="submit" class="btn btn-success w-100 py-2 fw-bold">Xác Nhận Đã Thanh Toán</button>
+            </form>
+        </div>
+    </div>
+</div>

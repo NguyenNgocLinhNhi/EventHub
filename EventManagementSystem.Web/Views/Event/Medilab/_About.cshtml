@@ -1,0 +1,35 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+<section id="about" class="about section">
+    <div class="container">
+        <div class="row gy-4 gx-5">
+            <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="200">
+                <img src="/Templates/Medilab/assets/img/about.jpg" class="img-fluid" alt="">
+                <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox pulsating-play-btn"></a>
+            </div>
+            <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
+                <h3>Về hội thảo</h3>
+                <p>@Model.Description</p>
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-vial-circle-check"></i>
+                        <div>
+                            <h5>Thời gian diễn ra</h5>
+                            <p>Bắt đầu: @($"{Model.StartDate:HH:mm - dd/MM/yyyy}")</p>
+                            @if (Model.EndDate.HasValue)
+                            {
+                                <p>Kết thúc: @($"{Model.EndDate.Value:HH:mm - dd/MM/yyyy}")</p>
+                            }
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-pump-medical"></i>
+                        <div>
+                            <h5>Địa điểm tổ chức</h5>
+                            <p>@Model.Location</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>

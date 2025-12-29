@@ -1,0 +1,29 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+<div class="container-fluid p-5" id="about">
+    <div class="row gx-5">
+        <div class="col-lg-5 mb-5 mb-lg-0 wow fadeIn" data-wow-delay="0.1s" style="min-height: 500px;">
+            <div class="position-relative h-100">
+                <img class="position-absolute w-100 h-100 rounded-circle rounded-bottom rounded-end"
+                     src="~/Templates/Chefer/img/about.jpg" style="object-fit: cover;">
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="mb-4 wow fadeIn" data-wow-delay="0.2s">
+                <h5 class="section-title text-primary">Về sự kiện</h5>
+                <h1 class="display-3 mb-0">Hương vị đỉnh cao cùng chuyên gia</h1>
+            </div>
+            <p class="mb-4">@Model.Description</p>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="bg-light rounded p-4">
+                        <h4>Thời gian</h4>
+                        <p class="mb-0">Bắt đầu: @($"{Model.StartDate:dd/MM/yyyy HH:mm}")</p>
+                        @if (Model.EndDate.HasValue) {
+                            <p class="mb-0">Kết thúc: @($"{Model.EndDate.Value:dd/MM/yyyy HH:mm}")</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

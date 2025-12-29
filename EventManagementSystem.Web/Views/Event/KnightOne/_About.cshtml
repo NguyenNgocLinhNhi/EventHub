@@ -1,0 +1,27 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+<section id="about" class="about section">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>Giới thiệu</h2>
+        <p>Chi tiết về sự kiện @Model.Title</p>
+    </div>
+    <div class="container">
+        <div class="row gy-4">
+            <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
+                <h3>Chủ đề: @(Model.Category?.Name ?? "Đang cập nhật")</h3>
+                <p>@Model.Description</p>
+                <ul>
+                    <li><i class="bi bi-geo-alt"></i> <span><strong>Địa điểm:</strong> @Model.Location</span></li>
+                    <li><i class="bi bi-calendar-check"></i> <span><strong>Bắt đầu:</strong> @($"{Model.StartDate:dd/MM/yyyy HH:mm}")</span></li>
+                    @if (Model.EndDate.HasValue)
+                    {
+                        <li><i class="bi bi-clock"></i> <span><strong>Kết thúc:</strong> @($"{Model.EndDate.Value:dd/MM/yyyy HH:mm}")</span></li>
+                    }
+                </ul>
+            </div>
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                <p>Hãy nhanh tay đăng ký để giữ chỗ và tham gia cùng các chuyên gia hàng đầu trong lĩnh vực này.</p>
+                <a href="#tickets" class="read-more"><span>Đăng ký tham gia</span><i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</section>

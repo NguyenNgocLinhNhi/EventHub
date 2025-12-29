@@ -1,0 +1,31 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Speaker>
+
+@if (Model != null && Model.Any())
+{
+    <section id="speakers" class="feature-section bg-light py-5">
+        <div class="container">
+            <div class="section-title text-center mb-60">
+                <h3>Diễn Giả</h3>
+                <p>Những chuyên gia đồng hành cùng sự kiện</p> [cite: 30]
+            </div>
+            <div class="row justify-content-center">
+                @foreach (var sp in Model)
+                {
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="speaker-card p-4 bg-white rounded shadow-sm text-center border">
+                            <img src="@(sp.ImageUrl ?? "/images/default-avatar.png")" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;" alt="@sp.Name" /> 
+                            <h5>@sp.Name</h5> [cite: 33]
+                            <p class="text-primary">@sp.JobTitle</p>
+                            @if (!string.IsNullOrEmpty(sp.SocialUrl))
+                            {
+                                <a href="@sp.SocialUrl" target="_blank" class="text-info fs-4">
+                                    <i class="lni lni-linkedin-original"></i> [cite: 34]
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}

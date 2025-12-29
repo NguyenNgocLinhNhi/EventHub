@@ -1,0 +1,23 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+@{
+    Layout = "~/Views/Shared/LayoutLandingPage/_LayoutNova.cshtml";
+    ViewData["Title"] = Model.Title;
+}
+
+@* 1. Hero Section *@
+@await Html.PartialAsync("~/Views/Event/Nova/_Hero.cshtml", Model)
+
+@* 2. About Section *@
+@await Html.PartialAsync("~/Views/Event/Nova/_About.cshtml", Model)
+
+@* 3. Diễn giả *@
+@await Html.PartialAsync("~/Views/Event/Nova/_Speakers.cshtml", Model.Speakers)
+
+@* 4. Lịch trình *@
+@await Html.PartialAsync("~/Views/Event/Nova/_Schedules.cshtml", Model.Schedules)
+
+@* 5. Vé Tham Dự *@
+@await Html.PartialAsync("~/Views/Event/Nova/_Tickets.cshtml", Model.TicketTypes)
+
+@* 6. Đối tác *@
+@await Html.PartialAsync("~/Views/Event/Nova/_Sponsors.cshtml", Model.Sponsors)

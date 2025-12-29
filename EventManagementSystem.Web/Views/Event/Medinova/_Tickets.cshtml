@@ -1,0 +1,40 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.TicketType>
+
+<section id="tickets" class="section py-5">
+    <div class="container section-title text-center mb-5" data-aos="fade-up">
+        <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Vé tham dự</h5>
+        <h1 class="display-4">Đăng ký tham gia ngay</h1>
+    </div>
+    <div class="container">
+        <div class="row gy-4 justify-content-center">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var ticket in Model)
+                {
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                        <div class="card text-center h-100 shadow-sm border-primary">
+                            <div class="card-header bg-primary text-white py-3">
+                                <h4 class="my-0 fw-bold text-white">@ticket.Name</h4>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h1 class="card-title pricing-card-title text-primary">
+                                    @ticket.Price.ToString("N0") <small class="text-muted fw-light" style="font-size: 1rem;">VNĐ</small>
+                                </h1>
+                                <ul class="list-unstyled mt-3 mb-4 text-start ms-4">
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Còn lại: @ticket.Quantity</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Check-in ưu tiên</li>
+                                </ul>
+                                <div class="mt-auto">
+                                     @* Nút đặt vé *@
+                                    <a href="@Url.Action("BookingProcess", "Booking", new { id = ticket.EventId })" class="btn btn-primary w-100 py-3">
+                                        <i class="fa fa-shopping-cart me-2"></i>ĐẶT VÉ NGAY
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
