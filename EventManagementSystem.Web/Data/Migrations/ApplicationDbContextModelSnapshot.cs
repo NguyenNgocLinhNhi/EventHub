@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EventManagementSystem.Web.Data.Migrations
+namespace EventManagementSystem.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -151,6 +151,10 @@ namespace EventManagementSystem.Web.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OrganizerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -162,6 +166,8 @@ namespace EventManagementSystem.Web.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("OrganizerId");
 
                     b.ToTable("Events");
                 });
@@ -336,6 +342,10 @@ namespace EventManagementSystem.Web.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("OrganizationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -504,7 +514,7 @@ namespace EventManagementSystem.Web.Data.Migrations
             modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.Booking", b =>
                 {
                     b.HasOne("EventManagementSystem.Web.Models.Entities.Event", "Event")
-                        .WithMany()
+                        .WithMany("Bookings")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -546,7 +556,15 @@ namespace EventManagementSystem.Web.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("EventManagementSystem.Web.Models.Identity.ApplicationUser", "Organizer")
+                        .WithMany()
+                        .HasForeignKey("OrganizerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("Organizer");
                 });
 
             modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.Schedule", b =>
@@ -656,6 +674,8 @@ namespace EventManagementSystem.Web.Data.Migrations
 
             modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.Event", b =>
                 {
+                    b.Navigation("Bookings");
+
                     b.Navigation("Schedules");
 
                     b.Navigation("Speakers");

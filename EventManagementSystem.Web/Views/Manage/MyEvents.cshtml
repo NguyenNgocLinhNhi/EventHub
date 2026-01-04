@@ -174,13 +174,17 @@
 
     @if (!Model.Any())
     {
-        <div class="ticket-list-wrapper">
-            <div class="text-center py-5 shadow-sm rounded-4 bg-white border">
-                <i class="fa fa-folder-open fs-1 mb-3" style="color: #ccc;"></i>
-                <p class="text-muted fs-5">Lịch sử của bạn đang trống.</p>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4 py-2 mt-2" style="background: #006D5B; border: none;">Tìm sự kiện ngay</a>
-            </div>
-        </div>
+       <div class="ticket-list-wrapper">
+    <div class="text-center py-5 shadow-sm rounded-4 bg-white border">
+        <i class="fa fa-folder-open fs-1 mb-3" style="color: #ccc;"></i>
+        <p class="text-muted fs-5">Lịch sử của bạn đang trống.</p>
+        
+        @* Thay đổi asp-action từ "Index" thành "Events" *@
+       <a asp-controller="Home" asp-action="Events" class="btn btn-primary rounded-pill px-4 py-2 mt-2" style="background: #006D5B; border: none;">
+    Tìm sự kiện ngay
+</a>
+    </div>
+</div>
     }
     else
     {

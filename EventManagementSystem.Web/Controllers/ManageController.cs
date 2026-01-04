@@ -77,18 +77,20 @@ namespace EventManagementSystem.Web.Controllers
             return View(bookings);
         }
 
-        // ===================== INDEX =====================
+        // ===================== INDEX (GET) =====================
+        [HttpGet]
         public async Task<IActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Mật khẩu đã được thay đổi thành công."
-                : message == ManageMessageId.SetPasswordSuccess ? "Mật khẩu đã được thiết lập."
-                : message == ManageMessageId.Error ? "Đã xảy ra lỗi trong quá trình xử lý."
+                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
+                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
+                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : message == ManageMessageId.Error ? "An error has occurred."
                 : "";
 
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return RedirectToAction("Login", "Account");
+            if (user == null) return RedirectToAction("Login", "Account");
 
             var model = new IndexViewModel
             {
@@ -175,7 +177,13 @@ namespace EventManagementSystem.Web.Controllers
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.RemovePhoneSuccess });
         }
 
-        // ===================== CHANGE PASSWORD =====================
+        // ===================== CHANGE PASSWORD (GET & POST) =====================
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -274,13 +282,12 @@ namespace EventManagementSystem.Web.Controllers
                 new { message = result.Succeeded ? (ManageMessageId?)null : ManageMessageId.Error });
         }
 
-        // ===================== EDIT PROFILE =====================
+        // ===================== EDIT PROFILE (GET & POST) =====================
         [HttpGet]
         public async Task<IActionResult> EditProfile()
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return RedirectToAction("Login", "Account");
+            if (user == null) return RedirectToAction("Login", "Account");
 
             return View(new IndexViewModel
             {
@@ -294,6 +301,11 @@ namespace EventManagementSystem.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProfile(IndexViewModel model)
         {
+            // Loại bỏ kiểm tra Password vì trang này không sửa Password
+            ModelState.Remove("OldPassword");
+            ModelState.Remove("NewPassword");
+            ModelState.Remove("ConfirmPassword");
+
             if (!ModelState.IsValid) return View(model);
 
             var user = await _userManager.GetUserAsync(User);
@@ -309,6 +321,8 @@ namespace EventManagementSystem.Web.Controllers
                 return View(model);
             }
 
+            // Làm mới Cookie để Header cập nhật tên mới ngay
+            await _signInManager.RefreshSignInAsync(user);
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangePasswordSuccess });
         }
 
@@ -329,5 +343,7 @@ namespace EventManagementSystem.Web.Controllers
             RemovePhoneSuccess,
             Error
         }
+
+
     }
 }

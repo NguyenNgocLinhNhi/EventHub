@@ -270,79 +270,76 @@
 
 
     @*Section 2: Browse by Category (Circle Style)*@
-    <div class="container-xxl py-5">
-        <div class="container">
-            <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                <h6 class="text-primary section-title bg-white text-center px-3">Topics</h6>
-                <h1 class="display-6 mb-4">Explore Events by Interest</h1>
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+            <h6 class="text-primary section-title bg-white text-center px-3">Topics</h6>
+            <h1 class="display-6 mb-4">Explore Events by Interest</h1>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.1s">
+                <a asp-controller="Home" asp-action="Events" asp-route-searchString="Công nghệ" class="cat-circle d-block text-decoration-none">
+                    <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                        <img class="img-fluid w-100 h-100" src="~/img/project-5.jpg" alt="Technology">
+                        <div class="circle-overlay"></div>
+                    </div>
+                    <h6 class="mb-0 text-dark fw-bold">Technology</h6>
+                </a>
             </div>
 
-            <div class="row g-4 justify-content-center">
+            <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.2s">
+                <a asp-controller="Home" asp-action="Events" asp-route-searchString="Âm nhạc & Giải trí" class="cat-circle d-block text-decoration-none">
+                    <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                        <img class="img-fluid w-100 h-100" src="~/img/project-3.jpg" alt="Music">
+                        <div class="circle-overlay"></div>
+                    </div>
+                    <h6 class="mb-0 text-dark fw-bold">Music</h6>
+                </a>
+            </div>
 
-                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <a href="@Url.Action("Categories", "Home", new { searchString = "Technology" })" class="cat-circle d-block text-decoration-none">
-                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
-                            <img class="img-fluid w-100 h-100" src="~/img/project-5.jpg" alt="Technology">
-                            <div class="circle-overlay"></div>
-                        </div>
-                        <h6 class="mb-0 text-dark fw-bold">Technology</h6>
-                    </a>
-                </div>
+            <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.3s">
+                <a asp-controller="Home" asp-action="Events" asp-route-searchString="Ẩm thực & Đồ uống" class="cat-circle d-block text-decoration-none">
+                    <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                        <img class="img-fluid w-100 h-100" src="~/img/project-2.jpg" alt="Food">
+                        <div class="circle-overlay"></div>
+                    </div>
+                    <h6 class="mb-0 text-dark fw-bold">Food & Drink</h6>
+                </a>
+            </div>
 
-                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.2s">
-                    <a href="@Url.Action("Categories", "Home", new { searchString = "Music" })" class="cat-circle d-block text-decoration-none">
-                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
-                            <img class="img-fluid w-100 h-100" src="~/img/project-3.jpg" alt="Music">
-                            <div class="circle-overlay"></div>
-                        </div>
-                        <h6 class="mb-0 text-dark fw-bold">Music</h6>
-                    </a>
-                </div>
+            <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.4s">
+                <a asp-controller="Home" asp-action="Events" asp-route-searchString="Giáo dục" class="cat-circle d-block text-decoration-none">
+                    <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                        <img class="img-fluid w-100 h-100" src="~/img/project-4.jpg" alt="Education">
+                        <div class="circle-overlay"></div>
+                    </div>
+                    <h6 class="mb-0 text-dark fw-bold">Education</h6>
+                </a>
+            </div>
 
-                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.3s">
-                    <a href="@Url.Action("Categories", "Home", new { searchString = "Food" })" class="cat-circle d-block text-decoration-none">
-                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
-                            <img class="img-fluid w-100 h-100" src="~/img/project-2.jpg" alt="Food">
-                            <div class="circle-overlay"></div>
-                        </div>
-                        <h6 class="mb-0 text-dark fw-bold">Food & Drink</h6>
-                    </a>
-                </div>
+            <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.5s">
+                <a asp-controller="Home" asp-action="Events" asp-route-searchString="Kinh doanh & Đầu tư" class="cat-circle d-block text-decoration-none">
+                    <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                        <img class="img-fluid w-100 h-100" src="~/img/project-1.jpg" alt="Business">
+                        <div class="circle-overlay"></div>
+                    </div>
+                    <h6 class="mb-0 text-dark fw-bold">Business</h6>
+                </a>
+            </div>
 
-                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.4s">
-                    <a href="@Url.Action("Categories", "Home", new { searchString = "Education" })" class="cat-circle d-block text-decoration-none">
-                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
-                            <img class="img-fluid w-100 h-100" src="~/img/project-4.jpg" alt="Education">
-                            <div class="circle-overlay"></div>
-                        </div>
-                        <h6 class="mb-0 text-dark fw-bold">Education</h6>
-                    </a>
-                </div>
-
-                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.5s">
-                    <a href="@Url.Action("Categories", "Home", new { searchString = "Business" })" class="cat-circle d-block text-decoration-none">
-                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
-                            <img class="img-fluid w-100 h-100" src="~/img/project-1.jpg" alt="Business">
-                            <div class="circle-overlay"></div>
-                        </div>
-                        <h6 class="mb-0 text-dark fw-bold">Business</h6>
-                    </a>
-                </div>
-
-                <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.6s">
-                    <a href="@Url.Action("Categories", "Home", new { searchString = "Health" })" class="cat-circle d-block text-decoration-none">
-                        <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
-                            <img class="img-fluid w-100 h-100" src="~/img/project-6.jpg" alt="Health">
-                            <div class="circle-overlay"></div>
-                        </div>
-                        <h6 class="mb-0 text-dark fw-bold">Health</h6>
-                    </a>
-                </div>
-
+            <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.6s">
+                <a asp-controller="Home" asp-action="Events" asp-route-searchString="Y học & Sức khỏe" class="cat-circle d-block text-decoration-none">
+                    <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
+                        <img class="img-fluid w-100 h-100" src="~/img/project-6.jpg" alt="Health">
+                        <div class="circle-overlay"></div>
+                    </div>
+                    <h6 class="mb-0 text-dark fw-bold">Health</h6>
+                </a>
             </div>
         </div>
     </div>
-
+</div>
     <style>
         /* CSS tạo hình tròn */
         .circle-img {

@@ -1,0 +1,126 @@
+﻿@using EventManagementSystem.Web.Areas.Organizer.ViewModels
+@model OrganizerRegisterViewModel
+@{
+    Layout = "_LayoutLanding";
+}
+
+<style>
+    .registration-card {
+        border-radius: 24px !important;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    .registration-header {
+        background-color: #00877a;
+        padding: 3rem 1rem;
+        border-radius: 24px 24px 0 0;
+    }
+    .input-group-custom {
+        border: 1.5px solid #e9ecef;
+        border-radius: 12px !important;
+        padding: 5px 10px;
+        transition: all 0.3s;
+    }
+    .input-group-custom:focus-within {
+        border-color: #00877a;
+        box-shadow: 0 0 0 3px rgba(0, 135, 122, 0.1);
+    }
+    .btn-register {
+        background-color: #00877a;
+        border-radius: 12px;
+        padding: 12px;
+        transition: background 0.3s;
+        border: none;
+    }
+    .btn-register:hover {
+        background-color: #006b61;
+        color: white;
+    }
+</style>
+
+<div class="registration-container py-5" style="background-color: #f8f9fa; min-height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card registration-card overflow-hidden">
+                    <div class="registration-header text-white text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-building fa-4x opacity-75"></i>
+                        </div>
+                        <h2 class="fw-bold">Organizer Registration</h2>
+                        <p class="mb-0 opacity-75">Create your organizer account to start hosting</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        @* Đảm bảo POST đúng địa chỉ và có Token bảo mật *@
+                        <form asp-area="Organizer" asp-controller="Account" asp-action="Register" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                            <div class="mb-4">
+                                <label asp-for="OrganizationName" class="form-label text-muted small fw-bold">ORGANIZATION NAME</label>
+                                <div class="input-group input-group-custom">
+                                    <span class="input-group-text bg-transparent border-0"><i class="far fa-building text-muted"></i></span>
+                                    <input asp-for="OrganizationName" class="form-control border-0 shadow-none" placeholder="Your company name" />
+                                </div>
+                                <span asp-validation-for="OrganizationName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="FullName" class="form-label text-muted small fw-bold">CONTACT PERSON NAME</label>
+                                <div class="input-group input-group-custom">
+                                    <span class="input-group-text bg-transparent border-0"><i class="far fa-user text-muted"></i></span>
+                                    <input asp-for="FullName" class="form-control border-0 shadow-none" placeholder="Your full name" />
+                                </div>
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="Email" class="form-label text-muted small fw-bold">EMAIL ADDRESS</label>
+                                    <div class="input-group input-group-custom">
+                                        <span class="input-group-text bg-transparent border-0"><i class="far fa-envelope text-muted"></i></span>
+                                        <input asp-for="Email" class="form-control border-0 shadow-none" placeholder="your@email.com" />
+                                    </div>
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="PhoneNumber" class="form-label text-muted small fw-bold">PHONE NUMBER</label>
+                                    <div class="input-group input-group-custom">
+                                        <span class="input-group-text bg-transparent border-0"><i class="fas fa-phone-alt text-muted"></i></span>
+                                        <input asp-for="PhoneNumber" class="form-control border-0 shadow-none" placeholder="+84 XXX XXX XXX" />
+                                    </div>
+                                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="Password" class="form-label text-muted small fw-bold">PASSWORD</label>
+                                    <div class="input-group input-group-custom">
+                                        <span class="input-group-text bg-transparent border-0"><i class="fas fa-lock text-muted"></i></span>
+                                        <input asp-for="Password" type="password" class="form-control border-0 shadow-none" placeholder="********" />
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="ConfirmPassword" class="form-label text-muted small fw-bold">CONFIRM PASSWORD</label>
+                                    <div class="input-group input-group-custom">
+                                        <span class="input-group-text bg-transparent border-0"><i class="fas fa-lock text-muted"></i></span>
+                                        <input asp-for="ConfirmPassword" type="password" class="form-control border-0 shadow-none" placeholder="********" />
+                                    </div>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-register w-100 py-3 fw-bold text-white shadow-sm mb-4">Create Account</button>
+                            
+                            <p class="text-center small text-muted">Already have an account? <a href="/Organizer/Account/Login" class="fw-bold" style="color: #00877a; text-decoration: none;">Sign in here</a></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

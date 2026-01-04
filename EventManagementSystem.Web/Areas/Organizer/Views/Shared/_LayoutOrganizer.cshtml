@@ -1,0 +1,172 @@
+﻿@using EventManagementSystem.Web.Models.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    // Lấy thông tin user hiện tại từ Database để hiển thị OrganizationName và Email
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EventHub Organizer</title>
+    
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Arimo', sans-serif; background-color: #f4f7f6; overflow-x: hidden; }
+        
+        /* Sidebar phong cách Emerald chuyên nghiệp */
+        .sidebar { 
+            min-width: 280px; 
+            max-width: 280px;
+            min-height: 100vh; 
+            background-color: #00786F;
+            color: white; 
+            position: fixed;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 30px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar .nav-link { 
+            color: rgba(255,255,255,0.8); 
+            margin: 5px 15px; 
+            padding: 12px 20px; 
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        
+        .sidebar .nav-link i { font-size: 1.2rem; width: 30px; }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { 
+            background: rgba(255,255,255,0.15); 
+            color: #ffffff !important; 
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 20px 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .user-info { padding: 10px 15px; display: flex; align-items: center; gap: 12px; }
+        .user-info i { font-size: 24px; color: rgba(255,255,255,0.7); }
+
+        .content-area { 
+            margin-left: 280px; 
+            flex: 1; 
+            padding: 25px 40px; 
+            min-height: 100vh;
+        }
+
+        .btn-emerald { background: #00786F; color: white; border-radius: 30px; border:none; padding: 10px 25px; }
+        .btn-emerald:hover { background: #005F5A; color: white; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <div class="sidebar shadow d-flex flex-column">
+            <div class="sidebar-header">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-calendar4-event fs-2 me-3"></i>
+                    <div>
+                        <h4 class="fw-bold mb-0">EventHub</h4>
+                        <small class="text-white-50">Organizer Panel</small>
+                    </div>
+                </div>
+            </div>
+            
+            <ul class="nav flex-column mt-4">
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "active" : "")" 
+                       asp-area="Organizer" asp-controller="Dashboard" asp-action="Index">
+                        <i class="bi bi-grid-1x2"></i> Tổng quan
+                    </a>
+                </li>
+               <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Event" ? "active" : "")" 
+                           asp-area="Organizer" asp-controller="Event" asp-action="Index">
+                            <i class="bi bi-calendar-event"></i> Quản lý sự kiện
+                        </a>
+                    </li>
+                 <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="bi bi-ticket-perforated"></i> Quản lý vé</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="bi bi-layout-text-window-reverse"></i> Kho Landing page</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="bi bi-plus-circle"></i> Tạo sự kiện</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="bi bi-currency-dollar"></i> Báo cáo doanh thu</a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                @if (currentUser != null)
+                {
+                    <div class="user-info mb-3">
+                        <i class="bi bi-person-circle text-white"></i>
+                        <div class="overflow-hidden">
+                            <p class="small fw-bold mb-0 text-truncate">@(currentUser.OrganizationName ?? "Tổ chức")</p>
+                            <p class="text-white-50 mb-0 text-truncate" style="font-size: 11px;">@currentUser.Email</p>
+                        </div>
+                    </div>
+                }
+                
+                <a class="nav-link mb-2" href="#"><i class="bi bi-gear"></i> Cài đặt</a>
+                
+                <form asp-area="Organizer" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                    <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">
+                        <i class="bi bi-box-arrow-right text-danger"></i> <span class="text-danger">Đăng xuất</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">@ViewData["Title"]</h2>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white p-2 rounded-circle shadow-sm px-3">
+                        <i class="bi bi-bell"></i>
+                    </div>
+                    <button class="btn btn-emerald rounded-pill">
+                        <i class="bi bi-plus-lg me-2"></i> Tạo sự kiện mới
+                    </button>
+                </div>
+            </div>
+
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        window.addEventListener('pagehide', function (event) {
+            if (performance.navigation.type !== 1) { // Loại trừ nhấn F5
+                navigator.sendBeacon('/Organizer/Account/Logout');
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

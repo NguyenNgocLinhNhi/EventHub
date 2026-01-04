@@ -1,0 +1,105 @@
+﻿@using EventManagementSystem.Web.Areas.Organizer.ViewModels
+@model OrganizerLoginViewModel
+@{
+    Layout = "_LayoutLanding";
+}
+
+<style>
+    /* CSS tùy chỉnh bo góc và hiệu ứng đổ bóng chuyên nghiệp */
+    .login-card {
+        border-radius: 24px !important; /* Bo góc đồng bộ với Landing Page */
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-header {
+        background-color: #00877a; /* Tông màu Emerald chủ đạo */
+        padding: 2.5rem 1rem;
+        border-radius: 24px 24px 0 0;
+    }
+
+    .input-group-custom {
+        border: 1.5px solid #e9ecef;
+        border-radius: 12px !important; /* Bo góc ô nhập liệu */
+        padding: 5px 10px;
+        transition: all 0.3s;
+    }
+
+    .input-group-custom:focus-within {
+        border-color: #00877a;
+        box-shadow: 0 0 0 3px rgba(0, 135, 122, 0.1);
+    }
+
+    .btn-login {
+        background-color: #00877a;
+        border-radius: 12px;
+        padding: 12px;
+        transition: background 0.3s;
+    }
+
+    .btn-login:hover {
+        background-color: #006b61;
+        color: white;
+    }
+
+    .text-teal {
+        color: #00877a !important;
+    }
+</style>
+
+<div class="login-container py-5" style="background-color: #f8f9fa; min-height: 85vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card login-card overflow-hidden">
+                    <div class="login-header text-white text-center">
+                        <div class="mb-2">
+                            <i class="fas fa-building fa-3x opacity-75"></i>
+                        </div>
+                        <h3 class="fw-bold">Organizer Login</h3>
+                        <p class="small mb-0 opacity-75">Welcome back to Event Manager</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form asp-area="Organizer" asp-controller="Account" asp-action="Login" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                            <div class="mb-4">
+                                <label class="form-label text-muted small fw-bold">EMAIL ADDRESS</label>
+                                <div class="input-group input-group-custom">
+                                    <span class="input-group-text bg-transparent border-0"><i class="far fa-envelope text-muted"></i></span>
+                                    <input asp-for="Email" class="form-control border-0 shadow-none" placeholder="your@email.com">
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-muted small fw-bold">PASSWORD</label>
+                                <div class="input-group input-group-custom">
+                                    <span class="input-group-text bg-transparent border-0"><i class="fas fa-lock text-muted"></i></span>
+                                    <input asp-for="Password" type="password" class="form-control border-0 shadow-none" placeholder="********">
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input asp-for="RememberMe" class="form-check-input" id="rememberMe">
+                                    <label class="form-check-label small text-muted" for="rememberMe">Remember me</label>
+                                </div>
+                                <a href="#" class="small text-teal text-decoration-none fw-bold">Forgot password?</a>
+                            </div>
+
+                            <button type="submit" class="btn btn-login w-100 py-3 fw-bold text-white shadow-sm mb-4">Sign In</button>
+                            
+                            <p class="text-center small text-muted">
+                                Don't have an account? 
+                                <a href="/Organizer/Account/Register" class="text-teal text-decoration-none fw-bold">Register here</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

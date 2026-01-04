@@ -9,7 +9,7 @@ namespace EventManagementSystem.Web.Data
 {
     public static class SeedData
     {
-        public static void Initialize(ApplicationDbContext context)
+        public static void Initialize(ApplicationDbContext context, string organizerId)
         {
             // Tự động Migrate database nếu có thay đổi cấu trúc
             context.Database.Migrate();
@@ -43,8 +43,10 @@ namespace EventManagementSystem.Web.Data
             // =========================================================
             // SỰ KIỆN 1: MEDINOVA (Y TẾ)
             // =========================================================
+            /* var medCat = context.Categories.FirstOrDefault(c => c.Name == "Y học & Sức khỏe");
+             if (medCat != null && !context.Events.Any(e => e.Title.Contains("Medinova")))*/
             var medCat = context.Categories.FirstOrDefault(c => c.Name == "Y học & Sức khỏe");
-            if (medCat != null && !context.Events.Any(e => e.Title.Contains("Medinova")))
+            if (medCat != null)
             {
                 var medEvent = new Event
                 {
@@ -56,6 +58,7 @@ namespace EventManagementSystem.Web.Data
                     EndDate = new DateTime(2025, 12, 20, 17, 0, 0),
                     IsActive = true,
                     CategoryId = medCat.Id,
+                    OrganizerId = organizerId,
                     LandingPage = "Medinova"
                 };
                 context.Events.Add(medEvent);
@@ -156,6 +159,7 @@ namespace EventManagementSystem.Web.Data
                     EndDate = new DateTime(2025, 12, 24, 22, 30, 0),
                     IsActive = true,
                     CategoryId = foodCat.Id,
+                    OrganizerId = organizerId,
                     LandingPage = "Chefer"
                 };
                 context.Events.Add(chefEvent);
@@ -205,6 +209,7 @@ namespace EventManagementSystem.Web.Data
                     EndDate = new DateTime(2025, 11, 15, 11, 0, 0),
                     IsActive = true,
                     CategoryId = charityCat.Id,
+                    OrganizerId = organizerId,
                     LandingPage = "Charitize"
                 };
                 context.Events.Add(charityEvent);
@@ -241,6 +246,7 @@ namespace EventManagementSystem.Web.Data
                     EndDate = new DateTime(2025, 10, 11, 17, 0, 0),
                     IsActive = true,
                     CategoryId = techCat.Id,
+                    OrganizerId = organizerId,
                     LandingPage = "Nova" // Chỉ định template Nova
                 };
                 context.Events.Add(novaEvent);
@@ -332,6 +338,7 @@ namespace EventManagementSystem.Web.Data
                     EndDate = new DateTime(2025, 12, 31, 23, 59, 0),
                     IsActive = true,
                     CategoryId = foodCat.Id,
+                    OrganizerId = organizerId,
                     LandingPage = "Yummy"
                 };
                 context.Events.Add(galaEvent);
@@ -431,6 +438,7 @@ namespace EventManagementSystem.Web.Data
                     EndDate = new DateTime(2025, 09, 15, 17, 0, 0),
                     IsActive = true,
                     CategoryId = bizCat.Id,
+                    OrganizerId = organizerId,
                     LandingPage = "KnightOne"
                 };
                 context.Events.Add(bizEvent);
@@ -529,6 +537,7 @@ namespace EventManagementSystem.Web.Data
                     EndDate = new DateTime(2025, 08, 20, 16, 0, 0),
                     IsActive = true,
                     CategoryId = sciCat.Id,
+                    OrganizerId = organizerId,
                     LandingPage = "Medilab"
                 };
                 context.Events.Add(sciEvent);
