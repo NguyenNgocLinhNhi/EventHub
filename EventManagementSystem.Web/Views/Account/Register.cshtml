@@ -36,11 +36,11 @@
         transition: all 0.3s;
     }
 
-        .btn-register:hover {
-            background-color: #00695c;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
+    .btn-register:hover {
+        background-color: #00695c;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
 
     .divider-text {
         position: relative;
@@ -49,100 +49,106 @@
         margin-bottom: 25px;
     }
 
-        .divider-text span {
-            padding: 7px;
-            font-size: 12px;
-            position: relative;
-            z-index: 2;
-            background-color: #fff;
-            color: #a0a0a0;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
+    .divider-text span {
+        padding: 7px;
+        font-size: 12px;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+        color: #a0a0a0;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
 
-        .divider-text:after {
-            content: "";
-            position: absolute;
-            width: 100%;
-            border-bottom: 1px solid #ddd;
-            top: 55%;
-            left: 0;
-            z-index: 1;
-        }
+    .divider-text:after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        border-bottom: 1px solid #ddd;
+        top: 55%;
+        left: 0;
+        z-index: 1;
+    }
 
     .iti {
         width: 100%;
+    }
+
+    /* Custom Input Styling */
+    .form-control-lg {
+        border-radius: 0.5rem;
+        font-size: 1rem;
     }
 </style>
 
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <div class="card card-register">
+            <div class="card card-register shadow-lg">
                 <div class="card-header bg-register-header text-center py-4">
                     <h3 class="mb-1 header-title">Join Eventus</h3>
                     <p class="small mb-0 text-white-50">Create an account to manage your events</p>
                 </div>
 
                 <div class="card-body p-5">
-                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form", id = "registerForm" }))
                     {
                         @Html.AntiForgeryToken()
                         @Html.ValidationSummary(true, "", new { @class = "alert alert-danger small" })
 
                         <div class="form-group mb-3">
-                            @Html.LabelFor(m => m.FullName, new { @class = "font-weight-bold text-muted small text-uppercase" })
+                            <label asp-for="FullName" class="font-weight-bold text-muted small text-uppercase">Full Name</label>
                             @Html.TextBoxFor(m => m.FullName, new { @class = "form-control form-control-lg", placeholder = "e.g. John Doe" })
                             @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger small" })
                         </div>
 
                         <div class="form-group mb-3">
-                            @Html.LabelFor(m => m.PhoneNumber, new { @class = "font-weight-bold text-muted small text-uppercase" })
+                            <label asp-for="PhoneNumber" class="font-weight-bold text-muted small text-uppercase">Phone Number</label>
                             @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control form-control-lg", id = "txtPhone", type = "tel" })
                             @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger small" })
                         </div>
 
                         <div class="form-group mb-3">
-                            @Html.LabelFor(m => m.Email, new { @class = "font-weight-bold text-muted small text-uppercase" })
+                            <label asp-for="Email" class="font-weight-bold text-muted small text-uppercase">Email Address</label>
                             @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-lg", placeholder = "name@example.com" })
                             @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
                         </div>
 
                         <div class="form-group mb-3">
-                            @Html.LabelFor(m => m.Password, new { @class = "font-weight-bold text-muted small text-uppercase" })
+                            <label asp-for="Password" class="font-weight-bold text-muted small text-uppercase">Password</label>
                             @Html.PasswordFor(m => m.Password, new { @class = "form-control form-control-lg", placeholder = "Enter password" })
                             @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
                         </div>
 
                         <div class="form-group mb-4">
-                            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "font-weight-bold text-muted small text-uppercase" })
-                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control form-control-lg", placeholder = "Confirm password" })
+                            <label asp-for="ConfirmPassword" class="font-weight-bold text-muted small text-uppercase">Confirm Password</label>
+                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control form-control-lg", placeholder = "Repeat password" })
                             @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small" })
                         </div>
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-register btn-lg btn-block w-100 text-white">
+                            <button type="submit" class="btn btn-register btn-lg w-100 text-white shadow-sm">
                                 REGISTER
                             </button>
                         </div>
                     }
 
                     <div class="divider-text">
-                        <span>Use another service to log in</span>
+                        <span>Or use another service</span>
                     </div>
 
                     <div class="row">
                         <div class="col-12 text-center">
                             <section id="socialLoginForm">
-                                @* Thêm dấu @ vào trước Html.Partial *@
-                                <partial name="_ExternalLoginsListPartial" model="@((IEnumerable<Microsoft.AspNetCore.Authentication.AuthenticationScheme>)ViewBag.ExternalLogins)" />
+                                @* Fixed Partial syntax for .NET Core *@
+                                <partial name="_ExternalLoginsListPartial" model="@ViewBag.ExternalLogins" />
                             </section>
                         </div>
                     </div>
 
                     <div class="text-center mt-4">
                         <span class="text-muted small">Already have an account?</span>
-                        <a href="@Url.Action("Login", "Account")" class="font-weight-bold text-dark ml-1">Log in</a>
+                        <a href="@Url.Action("Login", "Account")" class="font-weight-bold text-dark text-decoration-none ms-1">Log in</a>
                     </div>
                 </div>
             </div>
@@ -151,9 +157,7 @@
 </div>
 
 @section Scripts {
-<partial name="_ValidationScriptsPartial" />
-}
-
+    <partial name="_ValidationScriptsPartial" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 
     <script>
@@ -166,11 +170,16 @@
                 preferredCountries: ["vn", "us", "jp", "kr"],
             });
 
-            $("form").submit(function () {
+            // Handle Form Submission
+            $("#registerForm").submit(function (e) {
                 if (iti.isValidNumber()) {
                     var fullNumber = iti.getNumber();
-                    // Đảm bảo giá trị đầy đủ (có mã vùng) được gửi về server
+                    // Set the hidden or actual input value to the E.164 formatted number (+84...)
                     input.value = fullNumber;
+                } else {
+                    // Optional: You can prevent submission if the phone number is invalid
+                    // e.preventDefault();
+                    // alert("Please enter a valid phone number.");
                 }
             });
         });

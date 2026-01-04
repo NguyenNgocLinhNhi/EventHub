@@ -4,31 +4,138 @@
     ViewData["Title"] = "Edit Profile";
 }
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<style>
+    .bg-profile-header {
+        /* Matches your Register/Login header gradient */
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+    }
+
+    .card-profile {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.15);
+    }
+
+    .form-label-custom {
+        color: #006D5B; /* Emerald Green */
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .input-custom {
+        border-radius: 0.75rem;
+        border: 1.5px solid #eee;
+        padding-left: 2.8rem;
+        transition: all 0.3s;
+    }
+
+    .input-custom:focus {
+        border-color: #006D5B;
+        box-shadow: 0 0 0 0.2rem rgba(0, 109, 91, 0.15);
+    }
+
+    .input-group-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #006D5B;
+        z-index: 10;
+        font-size: 1.1rem;
+    }
+
+    .btn-save {
+        background-color: #006D5B;
+        border-color: #006D5B;
+        color: white;
+        font-weight: bold;
+        border-radius: 50px;
+        padding: 12px;
+        transition: all 0.3s;
+    }
+
+    .btn-save:hover {
+        background-color: #004d40;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        color: white;
+    }
+
+    .btn-cancel {
+        border-radius: 50px;
+        color: #6c757d;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .btn-cancel:hover {
+        color: #343a40;
+    }
+</style>
+
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm p-4" style="border-radius: 1rem;">
-                <h3 class="fw-bold text-center mb-4">Edit Profile</h3>
-                <form asp-action="EditProfile" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger small"></div>
-                    
-                    <div class="mb-3">
-                        <label asp-for="FullName" class="form-label small fw-bold text-uppercase">Full Name</label>
-                        <input asp-for="FullName" class="form-control form-control-lg" placeholder="Enter your name" />
-                        <span asp-validation-for="FullName" class="text-danger"></span>
-                    </div>
+        <div class="col-md-8 col-lg-6 col-xl-5">
+            <div class="card card-profile">
+                <div class="card-header bg-profile-header text-center py-4">
+                    <h3 class="fw-bold mb-1" style="text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Edit Profile</h3>
+                    <p class="small mb-0 text-white-50">Update your personal information</p>
+                </div>
 
-                    <div class="mb-4">
-                        <label asp-for="Email" class="form-label small fw-bold text-uppercase">Email (Read Only)</label>
-                        <input asp-for="Email" class="form-control form-control-lg bg-light" readonly />
-                    </div>
+                <div class="card-body p-4 p-lg-5">
+                    <form asp-action="EditProfile" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger small border-0 py-2"></div>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg rounded-pill">Save Changes</button>
-                        <a asp-action="Index" class="btn btn-link text-muted">Cancel</a>
-                    </div>
-                </form>
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label form-label-custom">Full Name</label>
+                            <div class="position-relative">
+                                <i class="fa-solid fa-user input-group-icon"></i>
+                                <input asp-for="FullName" class="form-control form-control-lg input-custom" placeholder="e.g. John Doe" />
+                            </div>
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label form-label-custom">Phone Number</label>
+                            <div class="position-relative">
+                                <i class="fa-solid fa-phone input-group-icon"></i>
+                                <input asp-for="PhoneNumber" class="form-control form-control-lg input-custom" placeholder="Your phone number" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Email" class="form-label form-label-custom">Email Address (Read-only)</label>
+                            <div class="position-relative">
+                                <i class="fa-solid fa-envelope input-group-icon text-muted"></i>
+                                <input asp-for="Email" class="form-control form-control-lg input-custom bg-light" readonly />
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-save btn-lg shadow-sm">
+                                <i class="fa-solid fa-save me-2"></i> SAVE CHANGES
+                            </button>
+                            <a asp-action="Index" class="btn btn-cancel text-center mt-2">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

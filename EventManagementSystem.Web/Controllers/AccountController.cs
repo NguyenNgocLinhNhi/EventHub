@@ -1,4 +1,4 @@
-﻿using EventManagementSystem.Web.Data; 
+﻿using EventManagementSystem.Web.Data;
 using EventManagementSystem.Web.Models.Identity;
 using EventManagementSystem.Web.Services;
 using EventManagementSystem.Web.ViewModels;
@@ -16,13 +16,13 @@ namespace EventManagementSystem.Web.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
-        private readonly ApplicationDbContext _context; // Thêm DbContext để quản lý dữ liệu vé 
+        private readonly ApplicationDbContext _context;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailService emailService,
-            ApplicationDbContext context) // Inject DbContext vào Constructor 
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -34,6 +34,12 @@ namespace EventManagementSystem.Web.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(string? returnUrl = null)
         {
+            // Bảo vệ CS8602: Kiểm tra null cho Identity
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return await RedirectByUserRole();
+            }
+
             ViewData["ReturnUrl"] = returnUrl;
             ViewBag.ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             return View();
@@ -51,9 +57,17 @@ namespace EventManagementSystem.Web.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
+                    // 1. Kiểm tra xác nhận Email
                     if (!await _userManager.IsEmailConfirmedAsync(user))
                     {
                         ModelState.AddModelError(string.Empty, "Bạn cần xác nhận email trước khi đăng nhập.");
+                        return View(model);
+                    }
+
+                    // 2. CHẶN TỔ CHỨC: Không cho phép Organization đăng nhập tại cổng User
+                    if (!string.IsNullOrEmpty(user.OrganizationName))
+                    {
+                        ModelState.AddModelError(string.Empty, "Tài khoản tổ chức không thể đăng nhập tại giao diện khách hàng.");
                         return View(model);
                     }
 
@@ -68,10 +82,6 @@ namespace EventManagementSystem.Web.Controllers
             return View(model);
         }
 
-        // ===================== REGISTER (GET) =====================
-        [AllowAnonymous]
-        public IActionResult Register() => View();
-
         // ===================== REGISTER (POST) =====================
         [HttpPost]
         [AllowAnonymous]
@@ -84,31 +94,32 @@ namespace EventManagementSystem.Web.Controllers
                 {
                     UserName = model.Email,
                     Email = model.Email,
-                    FullName = model.FullName
+                    FullName = model.FullName,
+                    PhoneNumber = model.PhoneNumber
+                    // OrganizationName mặc định null cho khách hàng cá nhân
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "User");
+
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account",
                         new { userId = user.Id, token = token }, protocol: Request.Scheme);
 
-                    string subject = "Kích hoạt tài khoản Event Management";
+                    string subject = "Kích hoạt tài khoản EventHub";
                     string body = $@"
-                        <div style='font-family: Arial; padding: 20px; border: 1px solid #eee;'>
-                            <h2 style='color: #007bff;'>Chào mừng bạn đến với hệ thống sự kiện!</h2>
-                            <p>Cảm ơn bạn đã đăng ký. Vui lòng nhấn vào nút bên dưới để xác nhận email và bắt đầu sử dụng tài khoản:</p>
+                        <div style='font-family: Arial; padding: 20px; border: 1px solid #eee; border-radius: 20px;'>
+                            <h2 style='color: #007bff;'>Chào mừng đến với EventHub!</h2>
+                            <p>Vui lòng xác nhận email để bắt đầu đặt vé sự kiện:</p>
                             <div style='text-align: center; margin: 30px 0;'>
-                                <a href='{callbackUrl}' style='background-color: #28a745; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>XÁC NHẬN TÀI KHOẢN</a>
+                                <a href='{callbackUrl}' style='background-color: #28a745; color: white; padding: 12px 25px; text-decoration: none; border-radius: 10px; font-weight: bold;'>XÁC NHẬN NGAY</a>
                             </div>
-                            <p style='color: #666; font-size: 12px;'>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email.</p>
                         </div>";
 
-                   // Gửi email kích hoạt duy nhất một lần với giao diện đẹp 
                     await _emailService.SendEmailAsync(model.Email, subject, body);
-
                     return RedirectToAction("RegisterConfirmation");
                 }
 
@@ -118,12 +129,6 @@ namespace EventManagementSystem.Web.Controllers
                 }
             }
             return View(model);
-        }
-
-        [AllowAnonymous]
-        public IActionResult RegisterConfirmation()
-        {
-            return View();
         }
 
         // ===================== XÁC NHẬN EMAIL =====================
@@ -136,19 +141,16 @@ namespace EventManagementSystem.Web.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {
-                // Đồng bộ hóa: Tìm vé cũ đặt qua Email này nhưng chưa có UserId
+                // Đồng bộ hóa các đơn hàng "mồ côi" của User này
                 var orphanBookings = await _context.Bookings
                     .Where(b => b.CustomerEmail == user.Email && b.UserId == null)
                     .ToListAsync();
 
-                foreach (var b in orphanBookings)
-                {
-                    b.UserId = user.Id;
-                }
+                foreach (var b in orphanBookings) { b.UserId = user.Id; }
                 await _context.SaveChangesAsync();
 
                 await _signInManager.SignInAsync(user, isPersistent: true);
-                return RedirectToAction("Index", "Home");
+                return await RedirectByUserRole();
             }
             return View("Error");
         }
@@ -162,12 +164,50 @@ namespace EventManagementSystem.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        // ===================== ACCESS DENIED =====================
+        [AllowAnonymous]
+        public IActionResult AccessDenied(string? message)
+        {
+            ViewBag.ErrorMessage = message ?? "Tài khoản của bạn không có quyền truy cập vùng này.";
+            // Trả về view AccessDenied.cshtml bạn đã tạo
+            return View();
+        }
+
+        // ===================== HÀM HỖ TRỢ ĐIỀU HƯỚNG =====================
+        private async Task<IActionResult> RedirectByUserRole()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            // Fix CS8602: Kiểm tra user != null trước khi truy cập thuộc tính
+            if (user != null && !string.IsNullOrEmpty(user.OrganizationName))
+            {
+                return RedirectToAction("Index", "Dashboard", new { area = "Organizer" });
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
         private IActionResult RedirectToLocal(string? returnUrl)
         {
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Index()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                // Nếu là Tổ chức mà lỡ vào trang User
+                if (user != null && !string.IsNullOrEmpty(user.OrganizationName))
+                {
+                    return RedirectToAction("AccessDenied", "Account", new { message = "Tài khoản này không có quyền truy cập vùng này. " });
+                }
+            }
+
+            var allEvents = await _context.Events.ToListAsync();
+            return View(allEvents);
         }
     }
 }

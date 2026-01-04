@@ -1,6 +1,8 @@
-﻿using System;
+﻿using EventManagementSystem.Web.Models.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EventManagementSystem.Web.Models.Entities
 {
@@ -57,5 +59,14 @@ namespace EventManagementSystem.Web.Models.Entities
             = new List<Sponsor>();
 
         public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-    }
+
+        // BỔ SUNG: Liên kết với Organizer (Người tạo sự kiện)
+        [Required]
+        public string OrganizerId { get; set; } = null!;
+
+        [ForeignKey("OrganizerId")]
+        public virtual ApplicationUser Organizer { get; set; } = null!;
+
+    
+}
 }

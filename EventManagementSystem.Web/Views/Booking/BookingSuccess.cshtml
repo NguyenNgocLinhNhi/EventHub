@@ -20,22 +20,22 @@
             <div class="col-md-6 col-lg-4">
                 <div class="ticket shadow-sm mb-4 animate__animated animate__fadeInUp">
                     <div class="ticket-header p-3 text-white text-center" style="background: #006D5B;">
-                        <h6 class="text-uppercase mb-0 fw-bold">@Model.Event?.Title</h6> [cite: 123]
-                        <small>Mã đơn: #@Model.Id</small> [cite: 155]
+                        <h6 class="text-uppercase mb-0 fw-bold">@Model.Event?.Title</h6> 
+                        <small>Mã đơn: #@Model.Id</small> 
                     </div>
 
                     <div class="ticket-body p-4 bg-white position-relative">
                         <div class="text-center mb-3">
                             <label class="text-muted small d-block">VỊ TRÍ GHẾ</label>
-                            <h2 class="fw-bold text-primary">@(detail.SeatNumber ?? "N/A")</h2> [cite: 161]
+                            <h2 class="fw-bold text-primary">@(detail.SeatNumber ?? "N/A")</h2> 
                         </div>
                         
                         <div class="border-top pt-3">
-                            <p class="mb-1"><b>Khách hàng:</b> @Model.CustomerName</p> [cite: 156]
-                            <p class="mb-0 small"><b>Ngày đặt:</b> @Model.BookingDate.ToString("dd/MM/yyyy")</p> [cite: 157]
+                            <p class="mb-1"><b>Khách hàng:</b> @Model.CustomerName</p> 
+                            <p class="mb-0 small"><b>Ngày đặt:</b> @Model.BookingDate.ToString("dd/MM/yyyy")</p> 
                         </div>
 
-                        <div class="ticket-divider my-3" style="border-top: 2px dashed #ddd;"></div> [cite: 171, 172]
+                        <div class="ticket-divider my-3" style="border-top: 2px dashed #ddd;"></div> 
 
                         <div class="text-center">
                             @* QR Code độc lập cho từng ghế dựa trên ID chi tiết vé *@
@@ -52,7 +52,7 @@
     @* Các nút điều hướng sau khi hoàn tất [cite: 166] *@
     <div class="text-center mt-5 no-print">
         <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary px-4 py-2 me-2">Về trang chủ</a>
-        <button onclick="window.print()" class="btn btn-dark px-4 py-2">In tất cả vé</button> [cite: 167]
+        <button onclick="window.print()" class="btn btn-dark px-4 py-2">In tất cả vé</button>
     </div>
 </div>
 

@@ -1,0 +1,86 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Bảng điều khiển";
+}
+
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="card card-stat p-4 shadow-sm" style="background: linear-gradient(45deg, #006D5B, #00bfa5);">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h2 class="fw-bold mb-0">2,500+</h2>
+                    <p class="mb-0 small opacity-75">Sự kiện đã tạo</p>
+                </div>
+                <i class="fas fa-calendar-check fa-2x opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-stat p-4 shadow-sm" style="background: linear-gradient(45deg, #2c3e50, #4ca1af);">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h2 class="fw-bold mb-0">50K+</h2>
+                    <p class="mb-0 small opacity-75">Người tham gia</p>
+                </div>
+                <i class="fas fa-users fa-2x opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-stat p-4 shadow-sm" style="background: linear-gradient(45deg, #f39c12, #e67e22);">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h2 class="fw-bold mb-0">95%</h2>
+                    <p class="mb-0 small opacity-75">Tỷ lệ thành công</p>
+                </div>
+                <i class="fas fa-chart-line fa-2x opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-stat p-4 shadow-sm" style="background: linear-gradient(45deg, #d31027, #ea384d);">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h2 class="fw-bold mb-0">500+</h2>
+                    <p class="mb-0 small opacity-75">Ban tổ chức</p>
+                </div>
+                <i class="fas fa-award fa-2x opacity-50"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <h5 class="fw-bold mb-4">Sự kiện gần đây</h5>
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tên sự kiện</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Địa điểm</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tech Summit 2025</td>
+                        <td>10/10/2025</td>
+                        <td>TP. Hồ Chí Minh</td>
+                        <td><span class="badge bg-success rounded-pill">Đang chạy</span></td>
+                    </tr>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <h5 class="fw-bold mb-4">Phân bổ danh mục</h5>
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+</div>

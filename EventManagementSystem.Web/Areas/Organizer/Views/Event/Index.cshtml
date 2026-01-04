@@ -1,0 +1,145 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Event>
+@{
+    ViewData["Title"] = "Quản Lý Sự Kiện";
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0">Quản Lý Sự Kiện</h2>
+        <p class="text-muted small">Tổng cộng @Model.Count() sự kiện</p>
+    </div>
+    <a asp-action="Create" class="btn btn-emerald rounded-pill px-4 shadow-sm">
+        <i class="bi bi-plus-lg me-2"></i> Tạo Sự Kiện Mới
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm p-3 mb-4 rounded-4">
+    <div class="row g-3">
+        <div class="col-md-7">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0 shadow-none" placeholder="Tìm kiếm sự kiện...">
+            </div>
+        </div>
+        <div class="col-md-5 d-flex gap-2">
+            <select class="form-select shadow-none">
+                <option selected>Tất cả trạng thái</option>
+                <option>Đang bán</option>
+                <option>Nháp</option>
+            </select>
+            <select class="form-select shadow-none">
+                <option selected>Mới nhất</option>
+                <option>Cũ nhất</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light text-muted small fw-bold">
+            <tr>
+                <th class="ps-4 py-3">SỰ KIỆN</th>
+                <th>THÔNG TIN</th>
+                <th>VÉ BÁN</th>
+                <th>DOANH THU</th>
+                <th>TRẠNG THÁI</th>
+                <th class="text-end pe-4">THAO TÁC</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                // Logic tính toán số liệu vé và doanh thu
+                var sold = item.Bookings?.Where(b => b.Status == "Confirmed").SelectMany(b => b.BookingDetails).Sum(d => d.Quantity) ?? 0;
+                var stock = item.TicketTypes?.Sum(t => t.Quantity) ?? 0;
+                var total = sold + stock;
+                var percent = total > 0 ? (sold * 100 / total) : 0;
+                var revenue = item.Bookings?.Where(b => b.Status == "Confirmed").Sum(b => b.TotalAmount) ?? 0;
+
+                <tr>
+                    <td class="ps-4">
+                        <div class="d-flex align-items-center">
+                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/event-default.jpg" : item.ImageUrl)" 
+                                 class="rounded-3 me-3 border" style="width: 55px; height: 55px; object-fit: cover;">
+                            <div>
+                                <div class="fw-bold text-dark">@item.Title</div>
+                                <small class="text-muted">@item.Category?.Name</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="small"><i class="bi bi-calendar3 me-2"></i>@item.StartDate.ToString("dd/MM/yyyy")</div>
+                        <div class="small text-muted text-truncate" style="max-width: 150px;"><i class="bi bi-geo-alt me-2"></i>@item.Location</div>
+                    </td>
+                    <td style="min-width: 140px;">
+                        <div class="d-flex justify-content-between mb-1 small">
+                            <span class="fw-bold">@sold / @total</span>
+                        </div>
+                        <div class="progress" style="height: 6px; border-radius: 10px;">
+                            <div class="progress-bar" role="progressbar" style="width: @percent%; background-color: #007bff;"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="fw-bold text-success">@revenue.ToString("N0")đ</span>
+                    </td>
+                    <td>
+                        @if (item.Status == "Published")
+                        {
+                            <span class="badge bg-success-light text-success rounded-pill px-3">Đang bán</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning-light text-warning rounded-pill px-3">Nháp</span>
+                        }
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="btn-group border rounded-3 overflow-hidden shadow-sm">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-white border-end" title="Xem chi tiết"><i class="bi bi-eye text-primary"></i></a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-white border-end" title="Chỉnh sửa"><i class="bi bi-pencil text-dark"></i></a>
+                            <button type="button" onclick="deleteEvent(@item.Id)" class="btn btn-sm btn-white" title="Xóa"><i class="bi bi-trash text-danger"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+    <script>
+        function deleteEvent(id) {
+            if (confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
+                var token = $('input[name="__RequestVerificationToken"]').val();
+                $.ajax({
+                    url: '/Organizer/Event/Delete/' + id,
+                    type: 'POST',
+                    data: { __RequestVerificationToken: token },
+                    success: function (data) {
+                        if (data.success) {
+                            location.reload(); 
+                        } else {
+                            alert(data.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Đã xảy ra lỗi khi kết nối với máy chủ.");
+                    }
+                });
+            }
+        }
+    </script>
+}
+
+<style>
+    /* CSS bổ trợ giao diện */
+    .bg-success-light { background-color: #e6f9f1; }
+    .bg-warning-light { background-color: #fff8eb; }
+    .btn-white { background: white; border: none; }
+    .btn-white:hover { background: #f8f9fa; }
+    .btn-emerald { background: #00786F; color: white; border-radius: 30px; border:none; padding: 10px 25px; transition: all 0.3s; }
+    .btn-emerald:hover { background: #005F5A; color: white; transform: translateY(-2px); }
+</style>

@@ -35,7 +35,6 @@ namespace EventManagementSystem.Web.Models.Entities
         [Required]
         public string CustomerEmail { get; set; } = null!;
         public string? PhoneNumber { get; set; }
-
         public virtual ICollection<BookingDetail> BookingDetails { get; set; } = new List<BookingDetail>();
     }
 }

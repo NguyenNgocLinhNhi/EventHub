@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eventus - Host Amazing Events</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Arimo', sans-serif; }
+        .bg-emerald-gradient { background: linear-gradient(151.8deg, #0B4F4A 8.1%, #005F5A 50%, #00786F 91.9%); }
+        .text-teal-bright { color: #46ECD5; }
+        .nav-link { color: #364153 !important; font-weight: 400; }
+        .btn-emerald { background: #00786F; color: white; border-radius: 30px; }
+        .btn-outline-emerald { border: 1px solid #00786F; color: #00786F; border-radius: 30px; }
+        footer { background: #0A1F1F; color: #99A1AF; padding: 60px 0; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="#">Eventus</a>
+            <div class="collapse navbar-collapse justify-content-center">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link px-3" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#">Services</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#">Events</a></li>
+                </ul>
+            </div>
+            <div class="d-flex">
+                <a href="/Organizer/Account/Login" class="btn btn-outline-emerald px-4 me-2">Log in</a>
+                <a href="/Organizer/Account/Register" class="btn btn-emerald px-4">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    @RenderBody()
+
+   <footer class="bg-dark text-white pt-5 pb-3" style="background-color: #0b1619 !important;">
+    <div class="container pt-4">
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <h5 class="fw-bold mb-4">Eventus</h5>
+                <p class="text-secondary small">
+                    Eventus - Giải pháp quản lý sự kiện thông minh. 
+                    Dễ dàng tạo, quản lý và tổ chức các sự kiện chuyên nghiệp 
+                    với hệ thống đăng ký và soát vé tự động.
+                </p>
+                <div class="d-flex gap-2 mt-4">
+                    <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle shadow-sm">
+                        <i class="bi bi-twitter text-white"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle shadow-sm">
+                        <i class="bi bi-facebook text-white"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle shadow-sm">
+                        <i class="bi bi-instagram text-white"></i>
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle shadow-sm">
+                        <i class="bi bi-linkedin text-white"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h6 class="fw-bold mb-4 text-uppercase small" style="letter-spacing: 1px;">Liên hệ</h6>
+                <ul class="list-unstyled text-secondary small">
+                    <li class="mb-3 d-flex align-items-start">
+                        <i class="bi bi-geo-alt-fill text-teal me-2"></i>
+                        161 Street, New York, USA
+                    </li>
+                    <li class="mb-3 d-flex align-items-center">
+                        <i class="bi bi-telephone-fill text-teal me-2"></i>
+                        +84 123 456 789
+                    </li>
+                    <li class="mb-3 d-flex align-items-center">
+                        <i class="bi bi-envelope-fill text-teal me-2"></i>
+                        info@example.com
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h6 class="fw-bold mb-4 text-uppercase small" style="letter-spacing: 1px;">Liên kết</h6>
+                <ul class="list-unstyled text-secondary small">
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-secondary footer-link">Về chúng tôi</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-secondary footer-link">Liên hệ</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-secondary footer-link">Chính sách bảo mật</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-secondary footer-link">Điều khoản dịch vụ</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-secondary footer-link">Dành cho tổ chức</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-secondary footer-link text-info">Đăng nhập Admin</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h6 class="fw-bold mb-4 text-uppercase small" style="letter-spacing: 1px;">Dịch vụ</h6>
+                <ul class="list-unstyled text-secondary small">
+                    <li class="mb-2">Thiết kế sự kiện</li>
+                    <li class="mb-2">Lập kế hoạch dự án</li>
+                    <li class="mb-2">Giải pháp sáng tạo</li>
+                    <li class="mb-2">Triển khai kỹ thuật</li>
+                    <li class="mb-2">Phân tích dữ liệu</li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="mt-5 mb-4 border-secondary opacity-25">
+
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="text-secondary small mb-0">
+                    &copy; 2026 Eventus. All Rights Reserved. Designed by <span class="text-white">Thematuvirus</span>
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <ul class="list-inline mb-0 small">
+                    <li class="list-inline-item me-3"><a href="#" class="text-decoration-none text-secondary footer-link">Home</a></li>
+                    <li class="list-inline-item me-3"><a href="#" class="text-decoration-none text-secondary footer-link">Cookies</a></li>
+                    <li class="list-inline-item me-3"><a href="#" class="text-decoration-none text-secondary footer-link">Help</a></li>
+                    <li class="list-inline-item"><a href="#" class="text-decoration-none text-secondary footer-link">FAQs</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .text-teal { color: #00877a; }
+    .footer-link:hover { color: #00f2fe !important; padding-left: 5px; transition: all 0.3s ease; }
+    footer hr { border-color: rgba(255,255,255,0.1); }
+</style>
+
+</body>
+</html>
