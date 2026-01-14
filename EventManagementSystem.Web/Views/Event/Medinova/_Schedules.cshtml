@@ -1,10 +1,17 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Schedule>
 
+<style>
+    /* Đồng bộ font Roboto cho toàn bộ section Schedule */
+    #schedule, #schedule h1, #schedule h5, #schedule h4, #schedule p {
+        font-family: 'Roboto', sans-serif;
+    }
+</style>
+
 <div class="container-fluid py-5" id="schedule">
     <div class="container">
         <div class="text-center mx-auto mb-5" style="max-width: 500px;">
-            <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Lịch trình</h5>
-            <h1 class="display-4">Chương trình khoa học chi tiết</h1>
+            <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Schedule</h5>
+            <h1 class="display-4">Detailed Scientific Program</h1>
         </div>
         <div class="row g-5">
             @if (Model != null && Model.Any())
@@ -33,7 +40,7 @@
             else
             {
                 <div class="col-12 text-center">
-                    <p class="text-muted italic">Lịch trình đang được cập nhật...</p>
+                    <p class="text-muted italic">Schedule is being updated...</p>
                 </div>
             }
         </div>

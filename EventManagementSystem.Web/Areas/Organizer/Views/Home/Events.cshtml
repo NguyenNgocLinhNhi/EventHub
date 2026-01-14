@@ -1,0 +1,279 @@
+﻿@using EventManagementSystem.Web.Areas.Organizer.Controllers
+@model List<EventController.LandingPageTemplateEntity>
+
+@{
+    ViewData["Title"] = "Professional interface ecosystem - Eventus";
+    Layout = "_LayoutLanding";
+}
+
+<style>
+    /* 1. ĐỒNG BỘ HỆ THỐNG FONT */
+    body, h1, h2, h3, h4, h5, h6, p, a, span, button, li, input {
+        font-family: 'Arimo', sans-serif;
+    }
+
+    body {
+        background-color: #fdfdfd;
+        color: #2d3436;
+    }
+
+    /* 2. HERO SECTION - ĐỒNG BỘ VỚI SERVICES & ABOUT */
+    .showcase-hero {
+        background: linear-gradient(rgba(0, 77, 64, 0.85), rgba(0, 77, 64, 0.85)), url('https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        padding: 120px 0 100px;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        /* Hiệu ứng đốm sáng đặc trưng của hệ thống */
+        .showcase-hero::after {
+            content: "";
+            position: absolute;
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: rgba(38, 198, 218, 0.15);
+            filter: blur(120px);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .showcase-hero .container {
+            position: relative;
+            z-index: 2;
+        }
+
+    /* Tiêu đề display-title (Đã chỉnh kích thước nhỏ lại như yêu cầu) */
+    .display-title {
+        font-size: calc(1.3rem + 1.8vw);
+        font-weight: 700 !important;
+        line-height: 1.2;
+    }
+
+    /* 3. SEARCH CONTAINER */
+    .search-container {
+        max-width: 650px;
+        margin: 60px auto;
+        position: relative;
+        z-index: 10;
+    }
+
+    .search-input {
+        border: 2px solid #eee;
+        border-radius: 20px;
+        padding: 18px 30px 18px 60px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .search-input:focus {
+            box-shadow: 0 15px 35px rgba(0, 121, 107, 0.15);
+            border-color: #26c6da;
+            outline: none;
+        }
+
+    .search-icon {
+        position: absolute;
+        left: 25px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #00796b;
+        font-size: 1.2rem;
+    }
+
+    /* 4. TPL FRAME CARDS */
+    .tpl-frame {
+        border: none;
+        border-radius: 24px;
+        background: #fff;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: 1px solid rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+        .tpl-frame:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12) !important;
+            border-color: #26c6da;
+        }
+
+    .tpl-media {
+        position: relative;
+        height: 260px;
+        overflow: hidden;
+    }
+
+        .tpl-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1s ease;
+        }
+
+    .tpl-frame:hover .tpl-media img {
+        transform: scale(1.1);
+    }
+
+    .tpl-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 77, 64, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: 0.3s ease;
+    }
+
+    .tpl-frame:hover .tpl-overlay {
+        opacity: 1;
+    }
+
+    .btn-preview {
+        background: white;
+        color: #00796b;
+        border-radius: 50px;
+        padding: 10px 25px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.3s;
+        font-size: 0.9rem;
+    }
+
+        .btn-preview:hover {
+            background: #26c6da;
+            color: white;
+        }
+
+    /* Content Typography */
+    .tpl-title {
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+
+    .btn-action {
+        background: linear-gradient(135deg, #00796b 0%, #004d40 100%);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 15px;
+        font-weight: 700;
+        width: 100%;
+        transition: 0.3s;
+        text-decoration: none;
+        display: block;
+    }
+
+        .btn-action:hover {
+            filter: brightness(1.1);
+            color: white;
+            transform: translateY(-2px);
+        }
+</style>
+
+<section class="showcase-hero">
+    <div class="container text-center">
+        <span class="badge bg-info bg-opacity-25 text-info px-3 py-2 rounded-pill fw-bold mb-3" style="letter-spacing: 1px;">
+            Design Ecosystem
+        </span>
+        <h1 class="display-title mb-4">
+            Ultimate <span style="color: #26c6da;">interface ecosystem</span>
+        </h1>
+        <p class="lead opacity-75 mx-auto mb-0" style="max-width: 800px;">
+            Own Landing Page solutions built with in-depth research on user experience (UX) and optimized for ticket conversion rates.
+        </p>
+    </div>
+</section>
+
+<div class="container search-container">
+    <div class="position-relative">
+        <i class="bi bi-search search-icon"></i>
+        <input type="text" id="tplSearch" class="form-control search-input" placeholder="Explore by style, theme or event type...">
+    </div>
+</div>
+
+<section class="pb-5 mb-5">
+    <div class="container">
+        <div class="row g-4" id="tplGrid">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <div class="col-md-6 col-lg-4 tpl-wrapper">
+                        <div class="card tpl-frame h-100 shadow-sm">
+                            <div class="tpl-media">
+                                <img src="@item.ImageUrl" alt="@item.Name"
+                                     onerror="this.src='https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=600&q=80'">
+
+                                <div class="tpl-overlay">
+                                    <a href="~/Templates/@item.Id/index.html" target="_blank" class="btn-preview">
+                                        Live demo <i class="bi bi-eye ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-4 d-flex flex-column">
+                                <h5 class="tpl-title mb-2">@item.Name</h5>
+                                <p class="small text-muted mb-4">
+                                    Optimized solution for brand awareness and attendance registration.
+                                </p>
+
+                                <div class="mt-auto">
+                                    <a href="/Organizer/Account/Register" class="btn btn-action text-center">
+                                        Activate solution <i class="bi bi-rocket-takeoff ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-palette2 display-1 opacity-10 mb-3"></i>
+                    <h4 class="text-muted">Updating new solutions...</h4>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="mb-5 container">
+    <div class="p-5 rounded-5 text-center text-white shadow-lg"
+         style="background: linear-gradient(135deg, #004d40 0%, #00796b 100%);">
+        <h2 class="fw-bold mb-3">Exclusive design request?</h2>
+        <p class="mb-4 opacity-75 lead">Our team is ready to realize unique ideas tailored specifically to your brand DNA.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/Organizer/Home/Contact" class="btn btn-info btn-lg px-5 rounded-pill fw-bold text-white shadow-sm">Contact now</a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.getElementById('tplSearch').addEventListener('input', function (e) {
+            const query = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.tpl-wrapper');
+
+            items.forEach(item => {
+                const title = item.querySelector('.tpl-title').innerText.toLowerCase();
+                if (title.includes(query)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}

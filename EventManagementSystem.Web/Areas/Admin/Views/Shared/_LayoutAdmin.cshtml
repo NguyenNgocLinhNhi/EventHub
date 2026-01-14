@@ -1,0 +1,426 @@
+﻿@using EventManagementSystem.Web.Models.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Eventus Admin System</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --admin-sidebar-bg: #ffffff;
+            --admin-main-blue: #0d6efd;
+            --admin-light-blue: #e7f1ff;
+            --admin-text-dark: #1e293b;
+            --admin-text-muted: #64748b;
+            --admin-bg-light: #f8fafc;
+            --admin-border-color: #e2e8f0;
+            --sidebar-width: 280px;
+            --sidebar-collapsed-width: 85px;
+            --header-height: 70px;
+        }
+
+        body {
+            font-family: 'Arimo', sans-serif;
+            background-color: var(--admin-bg-light);
+            margin: 0;
+            color: var(--admin-text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Base */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--admin-sidebar-bg);
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 1100;
+            border-right: 1px solid var(--admin-border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Header Brand Section */
+        .sidebar-header {
+            padding: 25px;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            transition: opacity 0.2s;
+        }
+
+        .brand-main {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--admin-main-blue);
+            letter-spacing: -1px;
+        }
+
+        .brand-sub {
+            background-color: var(--admin-light-blue);
+            color: var(--admin-main-blue);
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            height: var(--header-height);
+            background: #ffffff;
+            border-bottom: 1px solid var(--admin-border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: var(--sidebar-width);
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toggle-btn {
+            background: var(--admin-bg-light);
+            border: 1px solid var(--admin-border-color);
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--admin-main-blue);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+            .toggle-btn:hover {
+                background: var(--admin-light-blue);
+            }
+
+        /* Navigation Links */
+        .nav-link {
+            color: var(--admin-text-muted) !important;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin: 4px 15px;
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+            .nav-link:hover {
+                background: var(--admin-light-blue);
+                color: var(--admin-main-blue) !important;
+            }
+
+            .nav-link.active {
+                background: var(--admin-main-blue) !important;
+                color: white !important;
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+            }
+
+            .nav-link i {
+                font-size: 1.25rem;
+                min-width: 30px;
+            }
+
+        .menu-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin: 20px 0 10px 25px;
+            display: block;
+            transition: opacity 0.2s;
+        }
+
+        /* Footer & User Profile */
+        .sidebar-footer {
+            margin-top: auto;
+            border-top: 1px solid var(--admin-border-color);
+            padding: 15px 0;
+        }
+
+        .user-profile-box {
+            background: var(--admin-bg-light);
+            margin: 0 15px 15px 15px;
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--admin-main-blue);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            margin-left: 12px;
+            white-space: nowrap;
+            transition: opacity 0.2s;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--admin-text-muted);
+        }
+
+        .btn-logout {
+            color: #dc3545 !important;
+            /* Giảm padding-left từ 20px xuống 15px để nhích icon sang trái */
+            padding: 12px 15px !important;
+            border-radius: 12px !important;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+            .btn-logout:hover {
+                background: #fff5f5 !important;
+                color: #bb2d3b !important;
+            }
+
+        #adminLogoutForm {
+            margin: 0 25px 15px 0px!important; /* Quan trọng: Margin phải khớp y hệt .user-profile-box */
+        }
+
+        .sidebar.collapsed .btn-logout {
+            margin: 4px 10px !important;
+            padding: 12px 0 !important;
+            justify-content: center;
+        }
+
+        /* Main Content Wrapper */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            padding-top: var(--header-height);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        /* COLLAPSED STATE STYLES */
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+            .sidebar.collapsed .brand-container,
+            .sidebar.collapsed .menu-label,
+            .sidebar.collapsed .nav-link span,
+            .sidebar.collapsed .user-info {
+                opacity: 0;
+                pointer-events: none;
+                display: none;
+            }
+
+            .sidebar.collapsed .sidebar-header {
+                justify-content: center;
+                padding: 25px 0;
+            }
+                /* Icon bi-calendar-event (\F1F0) */
+                .sidebar.collapsed .sidebar-header::after {
+                    content: "\F1F0";
+                    font-family: "bootstrap-icons";
+                    font-size: 2rem;
+                    color: var(--admin-main-blue);
+                }
+
+            .sidebar.collapsed .nav-link {
+                justify-content: center;
+                margin: 4px 10px; /* Đã sửa: Giảm margin để icon căn giữa */
+                padding: 12px 0;
+            }
+
+                .sidebar.collapsed .nav-link i {
+                    margin: 0;
+                    min-width: auto;
+                }
+
+            .sidebar.collapsed .user-profile-box {
+                margin: 0 10px 15px 10px;
+                padding: 10px 0;
+                justify-content: center;
+                background: transparent;
+            }
+
+            .sidebar.collapsed .btn-logout {
+                justify-content: center;
+                margin: 4px 10px; /* Fix lỗi lệch nút logout */
+            }
+
+            /* Wrapper & Topbar adjustment when collapsed */
+            .sidebar.collapsed ~ .top-navbar {
+                left: var(--sidebar-collapsed-width);
+            }
+
+            .sidebar.collapsed ~ .main-wrapper {
+                margin-left: var(--sidebar-collapsed-width);
+            }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <nav class="sidebar shadow-sm" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-container">
+                    <span class="brand-main">Eventus</span>
+                    <span class="brand-sub">System</span>
+                </div>
+            </div>
+
+            <div class="nav flex-column">
+                <span class="menu-label">Main menu</span>
+
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                    <i class="bi bi-grid-1x2-fill"></i> <span>Dashboard</span>
+                </a>
+
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "OrganizerManager" ? "active" : "")"
+                   asp-area="Admin" asp-controller="OrganizerManager" asp-action="Index">
+                    <i class="bi bi-briefcase-fill"></i> <span>Organizer management</span>
+                </a>
+
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "TemplateManager" ? "active" : "")"
+                   asp-area="Admin" asp-controller="TemplateManager" asp-action="Index">
+                    <i class="bi bi-layout-text-window-reverse"></i> <span>Template library</span>
+                </a>
+
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Category" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Category" asp-action="Index">
+                    <i class="bi bi-tag-fill"></i> <span>Category management</span>
+                </a>
+
+               <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "EventManager" ? "active" : "")"
+                   asp-area="Admin" asp-controller="EventManager" asp-action="Index">
+                    <i class="bi bi-shield-check"></i> <span>Event approval</span>
+                </a>
+
+               
+                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Report" ? "active" : "")" 
+                   asp-area="Admin" asp-controller="Report" asp-action="Revenue">
+                    <i class="bi bi-currency-dollar me-2"></i> Revenue Report
+                </a>
+
+
+                @* <span class="menu-label">System</span>
+
+                <a class="nav-link" href="#">
+                    <i class="bi bi-gear-fill"></i> <span>Platform configuration</span>
+                </a> *@
+            </div>
+
+            <div class="sidebar-footer">
+                @if (currentUser != null)
+                {
+                    <div class="user-profile-box">
+                        <div class="user-avatar shadow-sm">
+                            <i class="bi bi-person-badge fs-5"></i>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name text-dark text-truncate" style="max-width: 150px;">@currentUser.FullName</span>
+                            <span class="user-role">Senior Admin</span>
+                        </div>
+                    </div>
+                }
+
+                <form asp-area="Organizer" asp-controller="Account" asp-action="Logout" method="post" id="adminLogoutForm">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="nav-link btn-logout border-0 bg-transparent w-100">
+                        <i class="bi bi-power"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <header class="top-navbar shadow-sm">
+            <button class="toggle-btn" id="sidebarToggle">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            <div class="ms-3">
+                <h6 class="mb-0 fw-bold text-muted">Admin System - Eventus</h6>
+            </div>
+        </header>
+
+        <main class="main-wrapper" id="mainWrapper">
+            <div class="content-area">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    @await RenderSectionAsync("FooterModals", required: false)
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.getElementById('sidebar');
+            const btn = document.getElementById('sidebarToggle');
+
+            if(localStorage.getItem('sidebarStatus') === 'collapsed') {
+                sidebar.classList.add('collapsed');
+            }
+
+            btn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                if(sidebar.classList.contains('collapsed')) {
+                    localStorage.setItem('sidebarStatus', 'collapsed');
+                } else {
+                    localStorage.setItem('sidebarStatus', 'expanded');
+                }
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,190 @@
+﻿@using EventManagementSystem.Web.Models.Entities
+@model EventManagementSystem.Web.Models.Entities.Event
+@{
+    ViewData["Title"] = "Event details";
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+
+    var confirmedBookings = Model.Bookings != null
+        ? Model.Bookings.Where(b => b.Status == "Confirmed" || b.Status == "Success").ToList()
+        : new List<Booking>();
+
+    var totalSold = confirmedBookings
+        .SelectMany(b => b.BookingDetails ?? new List<BookingDetail>())
+        .Sum(d => d.Quantity);
+
+    var totalRemaining = Model.TicketTypes?.Sum(t => t.Quantity) ?? 0;
+
+    var revenue = confirmedBookings.Sum(b => b.TotalAmount);
+
+    var totalEventCapacity = totalSold + totalRemaining;
+    var attendanceRate = totalEventCapacity > 0 ? (totalSold * 100 / totalEventCapacity) : 0;
+}
+
+<div class="mb-4" style="font-family: 'Arimo', sans-serif;">
+    <a asp-action="Index" class="text-decoration-none text-muted small">
+        <i class="bi bi-arrow-left me-1"></i> Back to list
+    </a>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+        <h2 class="fw-bold mb-0">@Model.Title</h2>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary rounded-pill px-4">
+                <i class="bi bi-pencil me-2"></i> Edit event
+            </a>
+            @* Nút View Landing Page đã được loại bỏ *@
+        </div>
+    </div>
+</div>
+
+<div class="row g-4" style="font-family: 'Arimo', sans-serif;">
+    <div class="col-lg-8">
+        @* Quick stats row *@
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                    <small class="text-muted d-block mb-1">Total revenue</small>
+                    <h4 class="fw-bold text-success mb-0">@revenue.ToString("N0") đ</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                    <small class="text-muted d-block mb-1">Tickets sold</small>
+                    <h4 class="fw-bold text-primary mb-0">@totalSold / @totalEventCapacity</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                    <small class="text-muted d-block mb-1">Attendance rate</small>
+                    <h4 class="fw-bold text-warning mb-0">@attendanceRate%</h4>
+                </div>
+            </div>
+        </div>
+
+        @* Ticket types table *@
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">Ticket types</h5>
+                <a asp-controller="Ticket" asp-action="Index" asp-route-eventId="@Model.Id" class="btn btn-sm btn-light rounded-pill px-3">Manage tickets</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="text-muted small">
+                        <tr>
+                            <th>Ticket name</th>
+                            <th>Price</th>
+                            <th>Remaining</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.TicketTypes != null && Model.TicketTypes.Any())
+                        {
+                            foreach (var ticket in Model.TicketTypes)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@ticket.Name</td>
+                                    <td>@ticket.Price.ToString("N0") đ</td>
+                                    <td>@ticket.Quantity</td>
+                                    <td>
+                                        @if (ticket.Quantity > 0)
+                                        {
+                                            <span class="badge bg-success-light text-success rounded-pill px-3">Available</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-light text-danger rounded-pill px-3">Sold out</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">No ticket types created for this event.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* Recent orders *@
+        <div class="card border-0 shadow-sm rounded-4 p-4">
+            <h5 class="fw-bold mb-4">Recent orders</h5>
+            @if (confirmedBookings.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="text-muted small">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var booking in confirmedBookings.Take(5))
+                            {
+                                <tr>
+                                    <td class="small">#@booking.Id</td>
+                                    <td class="fw-medium">@booking.CustomerName</td>
+                                    <td class="text-muted small">@booking.BookingDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class="fw-bold text-dark">@booking.TotalAmount.ToString("N0") đ</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-center text-muted py-4">No orders confirmed yet.</p>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+            <h5 class="fw-bold mb-3">Detail information</h5>
+            <div class="mb-3">
+                <label class="text-muted small d-block">Location</label>
+                <div class="fw-bold"><i class="bi bi-geo-alt me-1 text-danger"></i> @Model.Location</div>
+            </div>
+            <div class="mb-3">
+                <label class="text-muted small d-block">Category</label>
+                <div class="badge bg-light text-dark border fw-normal">@Model.Category?.Name</div>
+            </div>
+            <hr />
+            <div class="mb-0">
+                <label class="text-muted small d-block">Short description</label>
+                <p class="small text-muted mb-0">@Model.Description</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/event-default.jpg" : Model.ImageUrl)"
+                 class="w-100" style="height: 200px; object-fit: cover;" />
+            <div class="p-3">
+                <small class="text-muted">Template: <strong>@Model.LandingPage</strong></small>
+                <div class="mt-2 small text-muted">
+                    <i class="bi bi-calendar-check me-1"></i> Created on @Model.CreatedAt.ToString("dd/MM/yyyy")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-success-light {
+        background-color: #e6f9f1;
+    }
+
+    .bg-danger-light {
+        background-color: #fff5f5;
+    }
+
+    .table thead th {
+        border-top: none;
+    }
+</style>

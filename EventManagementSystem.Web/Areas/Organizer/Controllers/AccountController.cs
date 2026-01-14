@@ -63,18 +63,34 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
                         return View(model);
                     }
 
-                    // 2. CHẶN TRUY CẬP: Chỉ cho phép tài khoản có OrganizationName đăng nhập tại đây
-                    if (string.IsNullOrEmpty(user.OrganizationName))
+                    // 2. CHỈNH SỬA TẠI ĐÂY: Cho phép cả Admin và Organizer (người có OrganizationName) vào
+                    bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                    if (!isAdmin && string.IsNullOrEmpty(user.OrganizationName))
                     {
-                        ModelState.AddModelError(string.Empty, "Tài khoản này không có quyền truy cập vùng quản trị tổ chức.");
+                        ModelState.AddModelError(string.Empty, "Tài khoản này không có quyền truy cập vùng quản trị.");
                         return View(model);
                     }
 
                     var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+
                     if (result.Succeeded)
                     {
-                        // Luôn đẩy vào Dashboard của Organizer sau khi đăng nhập thành công
-                        return RedirectToAction("Index", "Dashboard", new { area = "Organizer" });
+                        // 3. ĐIỀU HƯỚNG THÔNG MINH: Kiểm tra quyền sau khi đăng nhập thành công
+                        var roles = await _userManager.GetRolesAsync(user);
+
+                        if (roles.Contains("Admin"))
+                        {
+                            // Nếu là Admin thì bay sang Area Admin (Giao diện Mantis)
+                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                        }
+
+                        if (roles.Contains("Organizer"))
+                        {
+                            // Nếu là Organizer thì bay sang Area Organizer (Giao diện hiện tại của bạn)
+                            return RedirectToAction("Index", "Dashboard", new { area = "Organizer" });
+                        }
+
+                        return RedirectToAction("Index", "Home", new { area = "" });
                     }
                 }
                 ModelState.AddModelError(string.Empty, "Email hoặc mật khẩu không chính xác.");

@@ -1,0 +1,40 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Booking>
+
+<table class="table table-sm align-middle" style="font-family: 'Arimo', sans-serif;">
+    <thead class="small text-muted">
+        <tr>
+            <th>Order ID</th>
+            <th>Event</th>
+            <th>Booking date</th>
+            <th class="text-end">Total amount</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var b in Model)
+        {
+            <tr>
+                <td class="fw-bold">#@b.Id.ToString("D5")</td>
+                <td>@b.Event?.Title</td>
+                <td class="small">@b.BookingDate.ToString("dd/MM/yyyy")</td>
+                <td class="text-end">@b.TotalAmount.ToString("N0")đ</td>
+                <td>
+                    <span class="badge @(b.Status == "Confirmed" || b.Status == "Success" ? "bg-success" : "bg-warning") small">
+                        @b.Status
+                    </span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+    /* Đảm bảo phông chữ được áp dụng đồng bộ */
+    table {
+        font-family: 'Arimo', sans-serif;
+    }
+
+    .badge {
+        font-weight: 500;
+    }
+</style>

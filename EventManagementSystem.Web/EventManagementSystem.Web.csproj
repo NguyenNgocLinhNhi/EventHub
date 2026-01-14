@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Areas\Admin\Views\EventManager\ApprovalList.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Areas\Admin\Views\EventManager\ApprovalList.cshtml" />
     <None Include="wwwroot\Templates\Nova\assets\.DS_Store" />
     <None Include="wwwroot\Templates\Nova\assets\img\.DS_Store" />
     <None Include="wwwroot\Templates\Nova\assets\img\about\.DS_Store" />
@@ -18,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="MailKit" Version="4.14.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.20" />
@@ -25,6 +31,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.20" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Migrations\" />
+    <Folder Include="wwwroot\img\events\" />
   </ItemGroup>
 
 </Project>

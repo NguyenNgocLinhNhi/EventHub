@@ -1,0 +1,97 @@
+﻿@model IEnumerable<dynamic>
+@{
+    ViewData["Title"] = "Template usage history";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid p-4" style="font-family: 'Arimo', sans-serif;">
+    @* --- Navigation header --- *@
+    <div class="mb-4">
+        <a asp-action="Index" class="text-decoration-none small fw-bold">
+            <i class="bi bi-arrow-left me-1"></i> Back to Organizer list
+        </a>
+        <div class="d-flex justify-content-between align-items-end mt-2">
+            <div>
+                <h2 class="fw-bold mb-0">Template usage history</h2>
+                <p class="text-muted mb-0">Organizer: <span class="text-primary fw-bold">@ViewBag.OrganizerName</span></p>
+            </div>
+            <div class="badge bg-info-subtle text-info px-3 py-2 rounded-pill border border-info-subtle">
+                Total: @Model.Count() usages
+            </div>
+        </div>
+    </div>
+
+    @* --- History list table --- *@
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-muted small fw-bold">EVENT NAME</th>
+                        <th class="text-muted small fw-bold">INTERFACE TEMPLATE</th>
+                        <th class="text-muted small fw-bold text-center">CREATED DATE</th>
+                        <th class="text-muted small fw-bold text-center">STATUS</th>
+                        <th class="text-end pe-4 text-muted small fw-bold">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-folder2-open fs-1 d-block mb-2"></i>
+                                This organizer has not created any events using templates.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-dark">@item.EventTitle</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2">
+                                        <i class="bi bi-layout-text-window-reverse me-1"></i> @item.TemplateName
+                                    </span>
+                                </td>
+                                <td class="text-center text-muted small">
+                                    @item.Date.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge rounded-pill @(item.Status == "Published" ? "bg-success" : "bg-warning")">
+                                        @item.Status
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a href="/Event/Detail/@item.EventId" target="_blank"
+                                       class="btn btn-sm btn-light border rounded-pill px-3 shadow-sm"
+                                       title="View event interface">
+                                        <i class="bi bi-eye me-1"></i> Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-info-subtle {
+        background-color: #e0f7fa !important;
+    }
+
+    .bg-primary-subtle {
+        background-color: #e3f2fd !important;
+    }
+
+    .table thead th {
+        font-size: 11px;
+        letter-spacing: 0.5px;
+    }
+</style>

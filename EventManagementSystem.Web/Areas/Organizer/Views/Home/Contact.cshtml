@@ -1,0 +1,349 @@
+﻿@model EventManagementSystem.Web.Areas.Organizer.ViewModels.ContactFormModel
+@{
+    ViewData["Title"] = "Contact us - Eventus";
+    Layout = "_LayoutLanding";
+}
+
+<style>
+    /* 1. ĐỒNG BỘ HỆ THỐNG FONT */
+    body, h1, h2, h3, h4, h5, h6, p, a, span, button, li, input, textarea, label {
+        font-family: 'Arimo', sans-serif;
+    }
+
+    #contactToast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: none;
+    }
+
+    /* 2. HERO SECTION - ĐỒNG BỘ TUYỆT ĐỐI */
+    .contact-hero {
+        background: linear-gradient(rgba(0, 77, 64, 0.85), rgba(0, 77, 64, 0.85)), url('https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        padding: 140px 0 100px;
+        color: white;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .contact-hero::after {
+            content: "";
+            position: absolute;
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: rgba(38, 198, 218, 0.15);
+            filter: blur(120px);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .contact-hero .container {
+            position: relative;
+            z-index: 2;
+        }
+
+    .display-title {
+        font-size: calc(1.3rem + 1.8vw);
+        font-weight: 700 !important;
+        line-height: 1.2;
+    }
+
+    /* 3. CONTACT CARDS & ELEMENTS */
+    .card-contact {
+        border: none;
+        border-radius: 24px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+    }
+
+    .info-icon {
+        width: 50px;
+        height: 50px;
+        background: rgba(38, 198, 218, 0.1);
+        color: #26c6da;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+
+    .form-control {
+        border: 1px solid #eee;
+        padding: 12px 20px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #26c6da;
+            box-shadow: 0 0 0 0.25rem rgba(38, 198, 218, 0.1);
+        }
+
+    .btn-submit-contact {
+        background: linear-gradient(135deg, #00796b 0%, #004d40 100%);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 15px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+
+        .btn-submit-contact:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 77, 64, 0.2);
+            color: white;
+            filter: brightness(1.1);
+        }
+
+    .social-link {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 1px solid #eee;
+        color: #00796b;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+        .social-link:hover {
+            background: #26c6da;
+            border-color: #26c6da;
+            color: white;
+        }
+
+    .error-msg {
+        font-size: 0.8rem;
+        color: #dc3545;
+        margin-top: 4px;
+        display: block;
+        min-height: 1.2em;
+    }
+</style>
+
+@* Thông báo Toast *@
+<div id="contactToast" class="alert alert-success shadow-lg border-0">
+    <i class="bi bi-check-circle-fill me-2"></i> <span id="toastMessage"></span>
+</div>
+
+<header class="contact-hero">
+    <div class="container">
+        <span class="badge bg-info bg-opacity-25 text-info px-3 py-2 rounded-pill fw-bold mb-3">
+            24/7 Support
+        </span>
+        <h1 class="display-title mb-3">Get in <span style="color: #26c6da;">touch</span></h1>
+        <p class="lead opacity-75 mx-auto mb-0" style="max-width: 650px;">
+            Have questions about our service or need a custom quote? Our team is ready to support you every step of the way.
+        </p>
+    </div>
+</header>
+
+<div class="container py-5 mt-n5 position-relative" style="z-index: 5;">
+    <div class="row g-4">
+        @* Cột thông tin liên hệ *@
+        <div class="col-lg-5">
+            <div class="card card-contact p-4 p-md-5 h-100 bg-white shadow-sm">
+                <h3 class="fw-bold mb-4">Contact information</h3>
+
+                <div class="info-item d-flex align-items-center mb-4">
+                    <div class="info-icon me-3"><i class="bi bi-geo-alt"></i></div>
+                    <div>
+                        <p class="text-muted mb-0 small">Office address</p>
+                        <p class="fw-bold mb-0">District 1, Ho Chi Minh city</p>
+                    </div>
+                </div>
+
+                <div class="info-item d-flex align-items-center mb-4">
+                    <div class="info-icon me-3"><i class="bi bi-envelope"></i></div>
+                    <div>
+                        <p class="text-muted mb-0 small">Email</p>
+                        <p class="fw-bold mb-0">support@eventus.com</p>
+                    </div>
+                </div>
+
+                <div class="info-item d-flex align-items-center mb-4">
+                    <div class="info-icon me-3"><i class="bi bi-telephone"></i></div>
+                    <div>
+                        <p class="text-muted mb-0 small">Hotline</p>
+                        <p class="fw-bold mb-0">+84 123 456 789</p>
+                    </div>
+                </div>
+
+                <hr class="my-4 opacity-50">
+
+                <h6 class="fw-bold mb-3">Follow us</h6>
+                <div class="d-flex gap-2">
+                    <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="bi bi-twitter-x"></i></a>
+                </div>
+            </div>
+        </div>
+
+        @* Cột Form liên hệ *@
+        <div class="col-lg-7">
+            <div class="card card-contact p-4 p-md-5 bg-white h-100 shadow-sm">
+                <h3 class="fw-bold mb-4">Send us a message</h3>
+                <form id="contactForm" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Full name</label>
+                            <input type="text" id="fullName" class="form-control rounded-3" placeholder="Ex: John Doe">
+                            <span id="nameError" class="error-msg"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Email address</label>
+                            <input type="email" id="email" class="form-control rounded-3" placeholder="Ex: name@company.com">
+                            <span id="emailError" class="error-msg"></span>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">Subject</label>
+                            <input type="text" id="subject" class="form-control rounded-3" placeholder="How can we help you?">
+                            <span id="subjectError" class="error-msg"></span>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">Message</label>
+                            <textarea id="message" class="form-control rounded-3" rows="4" placeholder="Tell us about your event..."></textarea>
+                            <span id="messageError" class="error-msg"></span>
+                        </div>
+                        <div class="col-12 pt-2">
+                            <button type="submit" id="btnSubmit" class="btn btn-submit-contact w-100 shadow-sm">
+                                Send message <i class="bi bi-send-fill ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="rounded-5 overflow-hidden shadow-sm" style="height: 400px; border: 1px solid #eee;">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.424167419747!2d106.69766207573596!3d10.774913259151591!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f385570472f%3A0x108ad2a66e6024!2sDistrict%201%2C%20Ho%20Chi%20Minh%20City%2C%20Vietnam!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const form = document.getElementById('contactForm');
+
+        // Định nghĩa các quy tắc kiểm tra cho từng ô nhập liệu
+        const fields = {
+            fullName: {
+                el: document.getElementById('fullName'),
+                err: document.getElementById('nameError'),
+                validate: (val) => {
+                    if (!val) return "Please enter your name.";
+                    if (!/^[a-zA-ZÀ-ỹ]/.test(val)) return "Name must start with a letter.";
+                    if (val.length < 2) return "Name must have at least 2 characters.";
+                    return "";
+                }
+            },
+            email: {
+                el: document.getElementById('email'),
+                err: document.getElementById('emailError'),
+                validate: (val) => {
+                    if (!val) return "Please enter your email.";
+                    if (!/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(val)) return "Invalid email address.";
+                    return "";
+                }
+            },
+            subject: {
+                el: document.getElementById('subject'),
+                err: document.getElementById('subjectError'),
+                validate: (val) => (!val ? "Please enter a subject." : "")
+            },
+            message: {
+                el: document.getElementById('message'),
+                err: document.getElementById('messageError'),
+                validate: (val) => (!val ? "Please enter your message." : "")
+            }
+        };
+
+        // Hàm báo lỗi ngay lập tức
+        function validateField(fieldName) {
+            const field = fields[fieldName];
+            const errorText = field.validate(field.el.value.trim());
+            field.err.innerText = errorText;
+
+            // Đổi màu viền để người dùng dễ nhận biết
+            field.el.style.borderColor = errorText ? "#dc3545" : "#eee";
+            return !errorText;
+        }
+
+        // Gán sự kiện cho từng ô: Kiểm tra khi gõ (input) và khi rời ô (blur)
+        Object.keys(fields).forEach(key => {
+            fields[key].el.addEventListener('input', () => validateField(key));
+            fields[key].el.addEventListener('blur', () => validateField(key));
+        });
+
+        // Xử lý sự kiện Submit Form
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Kiểm tra lại toàn bộ các ô trước khi cho phép gửi
+            let isFormValid = true;
+            Object.keys(fields).forEach(key => {
+                if (!validateField(key)) isFormValid = false;
+            });
+
+            if (!isFormValid) return;
+
+            const btn = document.getElementById('btnSubmit');
+            const toast = document.getElementById('contactToast');
+            const toastMsg = document.getElementById('toastMessage');
+
+            const formData = {
+                FullName: fields.fullName.el.value.trim(),
+                Email: fields.email.el.value.trim(),
+                Subject: fields.subject.el.value.trim(),
+                Message: fields.message.el.value.trim()
+            };
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Sending...';
+
+            try {
+                const response = await fetch('/Organizer/Home/SubmitContact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    toastMsg.innerText = result.message;
+                    toast.classList.replace('alert-danger', 'alert-success');
+                    toast.style.display = 'block';
+                    form.reset();
+                    // Reset lại màu viền sau khi xóa form
+                    Object.keys(fields).forEach(key => fields[key].el.style.borderColor = "#eee");
+                    setTimeout(() => { toast.style.display = 'none'; }, 4000);
+                } else {
+                    toastMsg.innerText = "Error: " + result.message;
+                    toast.classList.replace('alert-success', 'alert-danger');
+                    toast.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Could not connect to the server!');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Send message <i class="bi bi-send-fill ms-2"></i>';
+            }
+        });
+    </script>
+}

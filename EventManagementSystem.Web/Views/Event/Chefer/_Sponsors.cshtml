@@ -1,27 +1,75 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Sponsor>
 
-<div class="container-fluid py-5" id="sponsors">
+<style>
+    /* Đồng bộ font Oswald cho tiêu đề và Open Sans cho nội dung */
+    #sponsors h1, #sponsors h4, #sponsors .section-title {
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+    }
+
+    #sponsors p {
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    /* Hiệu ứng cho logo đối tác tương tự như team-item của Speakers */
+    .sponsor-card {
+        transition: .3s;
+        border: 1px solid #333;
+        background: #1a1a1a;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 120px;
+    }
+
+        .sponsor-card:hover {
+            border-color: #D4A762; /* Màu vàng Gold đồng bộ với Detail */
+            transform: translateY(-5px);
+        }
+
+    .tier-title {
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+        margin-bottom: 30px;
+        font-weight: 700;
+        color: #D4A762;
+    }
+</style>
+
+<div class="container-fluid py-5 bg-dark" id="sponsors">
     <div class="container">
-        <div class="text-center mx-auto wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px;">
-            <p class="section-title bg-dark text-center text-primary px-3">Đối tác</p>
-            <h1 class="display-6 mb-5 text-white">Đơn vị đồng hành & Tài trợ</h1>
+        @* Tiêu đề chính đồng bộ với Speakers *@
+        <div class="mb-5 text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px; margin: auto;">
+            <h5 class="section-title text-primary text-uppercase">Partnerships</h5>
+            <h1 class="display-3 text-white mb-0">Our Sponsors</h1>
         </div>
-        
+
         @if (Model != null && Model.Any())
         {
             var groupedSponsors = Model.GroupBy(s => s.Rank).OrderBy(g => g.Key);
 
             foreach (var group in groupedSponsors)
             {
-                <div class="mb-5 text-center">
-                    <h4 class="text-uppercase text-primary mb-4">Hạng @group.Key</h4>
+                <div class="mb-5">
+                    @* Tiêu đề phân hạng đồng bộ với phong cách Schedule *@
+                    <div class="text-center">
+                        <h4 class="tier-title text-uppercase">@group.Key Tier</h4>
+                    </div>
+
                     <div class="row g-4 justify-content-center">
                         @foreach (var sponsor in group)
                         {
                             <div class="col-lg-2 col-md-3 col-6 wow fadeIn" data-wow-delay="0.1s">
-                                <div class="sponsor-item p-4 h-100 d-flex align-items-center justify-content-center border rounded" style="background: #111111;">
+                                <div class="sponsor-card">
                                     <a href="@(string.IsNullOrEmpty(sponsor.WebsiteUrl) ? "#" : sponsor.WebsiteUrl)" target="_blank">
-                                        <img class="img-fluid" src="@sponsor.LogoUrl" alt="@sponsor.Name" title="@sponsor.Name" style="filter: brightness(0) invert(1);">
+                                        <img class="img-fluid"
+                                             src="@sponsor.LogoUrl"
+                                             alt="@sponsor.Name"
+                                             title="@sponsor.Name"
+                                             style="max-height: 80px; filter: brightness(0) invert(1);">
                                     </a>
                                 </div>
                             </div>
@@ -29,6 +77,12 @@
                     </div>
                 </div>
             }
+        }
+        else
+        {
+            <div class="text-center wow fadeIn" data-wow-delay="0.1s">
+                <p class="text-secondary italic">Sponsorship information is being updated...</p>
+            </div>
         }
     </div>
 </div>

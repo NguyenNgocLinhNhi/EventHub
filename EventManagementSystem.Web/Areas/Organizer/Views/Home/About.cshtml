@@ -1,0 +1,250 @@
+﻿@{
+    ViewData["Title"] = "About us - Eventus";
+    Layout = "_LayoutLanding";
+}
+
+<style>
+    /* 1. ĐỒNG BỘ HÓA FONT HỆ THỐNG */
+    body, h1, h2, h3, h4, h5, h6, p, span, a, li, button, .badge {
+        font-family: 'Arimo', sans-serif;
+    }
+
+    /* 2. HERO SECTION - ĐỒNG BỘ VỚI INDEX */
+    .about-hero {
+        background: linear-gradient(rgba(0, 77, 64, 0.85), rgba(0, 77, 64, 0.85)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        padding: 140px 0 100px; /* Padding đồng bộ tuyệt đối */
+        color: white;
+        position: relative;
+        text-align: center;
+        overflow: hidden;
+    }
+
+        .about-hero h1 {
+            font-size: calc(1.3rem + 1.8vw); 
+            font-weight: 700 !important;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-hero p.lead {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Hiệu ứng mờ nghệ thuật đồng bộ Index */
+        .about-hero::after {
+            content: "";
+            position: absolute;
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: rgba(38, 198, 218, 0.15);
+            filter: blur(120px);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .about-hero .container {
+            position: relative;
+            z-index: 2;
+        }
+
+    /* Tiêu đề display-title đồng bộ Index */
+    .display-title {
+        font-size: calc(1.475rem + 2.7vw);
+        font-weight: 700 !important; /* Đậm toàn bộ theo yêu cầu */
+        line-height: 1.2;
+    }
+
+    /* 3. CÁC THÀNH PHẦN KHÁC CỦA VIEW */
+    .section-spacer {
+        padding: 100px 0;
+    }
+
+    .text-teal {
+        color: #00796b;
+    }
+
+    .bg-soft-teal {
+        background-color: rgba(0, 121, 107, 0.05);
+    }
+
+    .value-card {
+        border: 1px solid #eee;
+        border-radius: 1.25rem;
+        transition: all 0.3s ease-in-out;
+        background: #fff;
+    }
+
+        .value-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #26c6da;
+        }
+
+    .icon-wrapper {
+        width: 56px;
+        height: 56px;
+        background: #26c6da;
+        color: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .img-stack {
+        position: relative;
+    }
+
+        .img-stack::before {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            width: 100%;
+            height: 100%;
+            border: 2px solid #26c6da;
+            border-radius: 20px;
+            z-index: -1;
+        }
+</style>
+
+<header class="about-hero">
+    <div class="container">
+        <span class="badge bg-info bg-opacity-25 text-info px-3 py-2 rounded-pill fw-bold mb-3" style="letter-spacing: 1px;">
+            Our story
+        </span>
+        <h1 class="display-title mb-4 fw-bold">
+            Our mission is to <br />
+            <span style="color: #26c6da;">elevate your events</span>
+        </h1>
+        <p class="lead opacity-75 mx-auto mb-0" style="max-width: 750px;">
+            We redefine the way events are operated through technology, helping connect people and creating unforgettable memories.
+        </p>
+    </div>
+</header>
+
+<section class="section-spacer">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="img-stack">
+                    <img src="https://images.unsplash.com/photo-1540575861501-7cf05a4b125a?auto=format&fit=crop&w=800&q=80"
+                         alt="Professional event"
+                         class="img-fluid rounded-4 shadow">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">Why was Eventus born?</h2>
+                <p class="text-muted mb-4">
+                    We started with a group of people passionate about organizing events. We realized that manual ticketing and guest management processes were wasting too much time and money for organizers.
+                </p>
+                <p class="text-muted mb-4">
+                    In 2024, Eventus was built with the goal of becoming a powerful assistant, automating every stage from operations to revenue reporting, so you can focus on what matters most: <strong>your event content.</strong>
+                </p>
+
+                <div class="row g-3">
+                    <div class="col-sm-6 d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-teal me-2"></i>
+                        <span class="fw-bold">Financial transparency</span>
+                    </div>
+                    <div class="col-sm-6 d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-teal me-2"></i>
+                        <span class="fw-bold">QR check-in technology</span>
+                    </div>
+                    <div class="col-sm-6 d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-teal me-2"></i>
+                        <span class="fw-bold">Real-time reporting</span>
+                    </div>
+                    <div class="col-sm-6 d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-teal me-2"></i>
+                        <span class="fw-bold">24/7 partner support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-spacer bg-soft-teal">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold display-6">Values we pursue</h2>
+            <div class="mx-auto bg-teal mt-3" style="width: 60px; height: 4px; border-radius: 2px;"></div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 p-4 value-card">
+                    <div class="icon-wrapper">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <h5 class="fw-bold">Speed & efficiency</h5>
+                    <p class="text-muted mb-0 small">Every action, from event creation to ticket approval, is optimized to happen in seconds.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-4 value-card">
+                    <div class="icon-wrapper" style="background: #00796b;">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h5 class="fw-bold">Absolute security</h5>
+                    <p class="text-muted mb-0 small">Customer data and transaction history are encrypted according to banking standards.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 p-4 value-card">
+                    <div class="icon-wrapper" style="background: #6f42c1;">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h5 class="fw-bold">Community oriented</h5>
+                    <p class="text-muted mb-0 small">Connecting organizers and participants to create sustainable social values.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-spacer">
+    <div class="container text-center">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <h2 class="display-5 fw-bold text-teal">100+</h2>
+                <p class="text-muted text-uppercase fw-bold small">Trusted organizers</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="display-5 fw-bold text-teal">500k+</h2>
+                <p class="text-muted text-uppercase fw-bold small">Tickets issued</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="display-5 fw-bold text-teal">10k+</h2>
+                <p class="text-muted text-uppercase fw-bold small">Successful events</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="display-5 fw-bold text-teal">4.9/5</h2>
+                <p class="text-muted text-uppercase fw-bold small">Satisfaction rating</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container mb-5">
+    <div class="p-5 rounded-5 text-center text-white shadow-lg"
+         style="background: linear-gradient(135deg, #26c6da 0%, #00796b 100%);">
+        <h2 class="fw-bold mb-3">Have an upcoming event?</h2>
+        <p class="mb-4 opacity-75">Let Eventus help you manage it more professionally today.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/Organizer/Account/Register" class="btn btn-light btn-lg px-4 rounded-pill fw-bold">Get started</a>
+            <a href="/Organizer/Home/Contact" class="btn btn-outline-light btn-lg px-4 rounded-pill fw-bold">Contact consultation</a>
+        </div>
+    </div>
+</section>

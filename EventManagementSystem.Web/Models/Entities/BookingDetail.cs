@@ -24,5 +24,13 @@ namespace EventManagementSystem.Web.Models.Entities
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; }
+
+        public bool IsCheckedIn { get; set; } = true; 
+        public DateTime? CheckedInAt { get; set; }     // Lưu thời điểm khách đến
+
+        public string? TicketCode { get; set; } // Mã để tạo QR Code
+        public DateTime? CheckInTime { get; set; } // Thời gian quét vé
+
+        
     }
 }

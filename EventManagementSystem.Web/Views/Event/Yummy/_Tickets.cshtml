@@ -1,36 +1,45 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.TicketType>
+
 <section id="tickets" class="section py-5 light-background">
     <div class="container section-title" data-aos="fade-up">
-        <h2>Tham Gia</h2>
-        <p><span>Đăng Ký</span> <span class="description-title">Mua Vé</span></p>
+        <h2 style="font-family: 'Plus Jakarta Sans', sans-serif;">Join Us</h2>
+        <p><span style="font-family: 'Inter', sans-serif;">Register &</span> <span class="description-title" style="font-family: 'Plus Jakarta Sans', sans-serif;">Get Tickets</span></p>
     </div>
+
     <div class="container">
         <div class="row gy-4 justify-content-center">
-            @if (Model != null && Model.Any()) {
-                foreach (var ticket in Model) {
+            @if (Model != null && Model.Any())
+            {
+                foreach (var ticket in Model)
+                {
                     <div class="col-lg-4 col-md-6" data-aos="fade-up">
                         <div class="card text-center h-100 shadow border-0" style="border-radius: 15px;">
                             <div class="card-header bg-danger text-white py-3" style="border-radius: 15px 15px 0 0;">
-                                <h4 class="my-0 fw-bold">@ticket.Name</h4>
+                                <h4 class="my-0 fw-bold" style="font-family: 'Plus Jakarta Sans', sans-serif;">@ticket.Name</h4>
                             </div>
                             <div class="card-body d-flex flex-column">
-                                <h1 class="card-title pricing-card-title text-danger">
+                                <h1 class="card-title pricing-card-title text-danger" style="font-family: 'Plus Jakarta Sans', sans-serif;">
                                     @ticket.Price.ToString("N0") <small class="text-muted fw-light" style="font-size: 1rem;">VNĐ</small>
                                 </h1>
-                                <ul class="list-unstyled mt-3 mb-4">
-                                    <li><i class="bi bi-check-circle text-success me-2"></i>Số lượng còn: @ticket.Quantity</li>
-                                    <li><i class="bi bi-check-circle text-success me-2"></i>Check-in ưu tiên</li>
+                                <ul class="list-unstyled mt-3 mb-4" style="font-family: 'Inter', sans-serif;">
+                                    <li><i class="bi bi-check-circle text-success me-2"></i>Remaining: @ticket.Quantity</li>
+                                    <li><i class="bi bi-check-circle text-success me-2"></i>Priority Check-in</li>
                                 </ul>
                                 <div class="mt-auto">
-                                    @* Nút đặt vé *@
-                                    <a href="@Url.Action("BookingProcess", "Booking", new { id = ticket.EventId })" class="btn btn-primary w-100 py-3">
-                                        <i class="fa fa-shopping-cart me-2"></i>ĐẶT VÉ NGAY
+                                    <a href="@Url.Action("BookingProcess", "Booking", new { id = ticket.EventId })" class="btn btn-primary w-100 py-3" style="font-family: 'Inter', sans-serif; font-weight: 700;">
+                                        <i class="fa fa-shopping-cart me-2"></i>BOOK NOW
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 }
+            }
+            else
+            {
+                <div class="col-12 text-center">
+                    <p style="font-family: 'Inter', sans-serif;">Ticket information is being updated...</p>
+                </div>
             }
         </div>
     </div>

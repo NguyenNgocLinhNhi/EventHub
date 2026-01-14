@@ -1,0 +1,391 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Event>
+@{
+    ViewData["Title"] = "Revenue Report";
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+
+    var totalRevenue = ViewBag.TotalRevenue ?? 0m;
+    var currentMonthRevenue = ViewBag.CurrentMonthRevenue ?? 0m;
+    var lastMonthRevenue = ViewBag.LastMonthRevenue ?? 0m;
+    var monthlyData = ViewBag.MonthlyRevenueChart as List<decimal> ?? new List<decimal>();
+    var customerData = ViewBag.MonthlyCustomerChart as List<int> ?? new List<int>();
+
+    var fromDate = ViewBag.FromDate as DateTime?;
+    var toDate = ViewBag.ToDate as DateTime?;
+    var selectedStatus = ViewBag.SelectedStatus;
+    var chartYear = ViewBag.ChartYear;
+
+    decimal growthPercent = lastMonthRevenue > 0
+        ? ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100m
+        : 0m;
+}
+
+<div class="container-fluid py-4" style="font-family: 'Arimo', sans-serif;">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <h2 class="fw-bold mb-0 text-dark">Revenue & Performance Report</h2>
+        <div class="d-flex gap-2">
+            @if (fromDate.HasValue && toDate.HasValue)
+            {
+                <span class="badge bg-light text-dark border p-2">
+                    <i class="bi bi-calendar-range me-2"></i>@fromDate.Value.ToString("dd/MM/yyyy") - @toDate.Value.ToString("dd/MM/yyyy")
+                </span>
+            }
+        </div>
+    </div>
+
+    @* --- DATA FILTER BAR --- *@
+    <div class="card border-0 shadow-sm p-3 rounded-4 mb-4">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted">From Date</label>
+                <input type="date" name="fromDate" class="form-control border-0 bg-light rounded-3 shadow-none"
+                       value="@(fromDate?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted">To Date</label>
+                <input type="date" name="toDate" class="form-control border-0 bg-light rounded-3 shadow-none"
+                       value="@(toDate?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-muted">Event Status</label>
+                <select name="status" class="form-select border-0 bg-light rounded-3 shadow-none">
+                    <option value="">-- All Status --</option>
+                    <option value="Upcoming" selected='@(selectedStatus == "Upcoming")'>Upcoming</option>
+                    <option value="Ongoing" selected='@(selectedStatus == "Ongoing")'>Ongoing</option>
+                    <option value="Past" selected='@(selectedStatus == "Past")'>Past</option>
+                </select>
+            </div>
+            <div class="col-md-3 text-end">
+                <button type="submit" class="btn btn-primary w-100 rounded-3 py-2">
+                    <i class="bi bi-filter me-2"></i>Filter Report
+                </button>
+            </div>
+        </form>
+    </div>
+
+    @* --- QUICK STATS CARDS --- *@
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 h-100">
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted small fw-bold">This Month</span>
+                    <span class="@(growthPercent >= 0 ? "text-success" : "text-danger") small fw-bold">
+                        @(growthPercent >= 0 ? "+" : "")@growthPercent.ToString("N1")%
+                    </span>
+                </div>
+                <h3 class="fw-bold mt-2 mb-0">@currentMonthRevenue.ToString("N0")đ</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 h-100">
+                <div class="d-flex justify-content-between text-muted small fw-bold">Last Month</div>
+                <h3 class="fw-bold mt-2 mb-0 text-secondary">@lastMonthRevenue.ToString("N0")đ</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 bg-emerald text-white h-100">
+                <div class="d-flex justify-content-between text-white-50 small fw-bold">Filter Revenue</div>
+                <h3 class="fw-bold mt-2 mb-0 text-white">@totalRevenue.ToString("N0")đ</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div id="customerCountCard" class="card border-0 shadow-sm p-4 rounded-4 h-100">
+                <div class="d-flex justify-content-between text-muted small fw-bold">New Customers</div>
+                <h3 class="fw-bold mt-2 mb-0 text-success">@customerData.Sum()</h3>
+            </div>
+        </div>
+    </div>
+
+    @* --- REVENUE & NEW CUSTOMER CHARTS --- *@
+    <div class="row g-4 mb-4">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm p-4 rounded-4 h-100">
+                <h5 class="fw-bold mb-4">Monthly Revenue</h5>
+                @{
+                    var maxRev = monthlyData.Any() ? monthlyData.Max() : 1m;
+                }
+                <div style="height: 250px;" class="d-flex align-items-end justify-content-between px-2">
+                    @for (int i = 0; i < monthlyData.Count; i++)
+                    {
+                        var height = (monthlyData[i] * 100m / (maxRev > 0 ? maxRev : 1m));
+                        <div class="bg-primary rounded-top bar-hover"
+                             style="width: 6%; height: @(height)%; opacity: 0.8;"
+                             data-month="@(i + 1)" data-bs-toggle="tooltip"
+                             title="Month @(i + 1): @monthlyData[i].ToString("N0")đ">
+                        </div>
+                    }
+                </div>
+                <div class="d-flex justify-content-between mt-2 text-muted small px-1">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <span>M@(i)</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div id="customerChartContainer" class="card border-0 shadow-sm p-4 rounded-4 h-100">
+                <h5 class="fw-bold mb-4">New Customers</h5>
+                @{
+                    var maxCust = customerData.Any() ? customerData.Max() : 1;
+                }
+                <div style="height: 250px;" class="d-flex align-items-end justify-content-between px-2">
+                    @for (int i = 0; i < customerData.Count; i++)
+                    {
+                        var height = (customerData[i] * 100.0 / (maxCust > 0 ? maxCust : 1));
+                        <div class="bg-success rounded-top bar-hover"
+                             style="width: 8%; height: @(height)%; opacity: 0.8;"
+                             data-month="@(i + 1)"
+                             data-type="customer"
+                             data-bs-toggle="tooltip"
+                             title="Month @(i + 1): @customerData[i] customers">
+                        </div>
+                    }
+                </div>
+                <div class="d-flex justify-content-between mt-2 text-muted small px-1">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <span>M@(i)</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* --- TOP EVENTS TABLE --- *@
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+        <div class="p-4 border-bottom bg-white d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Highest Performance Events</h5>
+            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">Top 5</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-muted small fw-bold text-uppercase">
+                    <tr>
+                        <th class="ps-4 py-3" style="width: 100px;">Rank</th>
+                        <th style="min-width: 200px;">Event</th>
+                        <th class="text-end" style="width: 180px;">Revenue</th>
+                        <th class="ps-5" style="min-width: 300px;">Filling & Attendance Performance</th>
+                    </tr>
+                </thead>
+                <tbody id="performanceTableBody">
+                    @{
+                        int rank = 1;
+                    }
+                    @foreach (var item in Model.OrderByDescending(e => e.Bookings?.Where(b => b.Status == "Confirmed").Sum(b => b.TotalAmount)).Take(5))
+                    {
+                        decimal revenue = item.Bookings?.Where(b => b.Status == "Confirmed").Sum(b => b.TotalAmount) ?? 0m;
+                        int totalSold = item.Bookings?.Where(b => b.Status == "Confirmed").SelectMany(b => b.BookingDetails).Sum(d => d.Quantity) ?? 0;
+                        int totalCapacity = item.TicketTypes?.Sum(tt => tt.Quantity) ?? 0;
+                        int totalCheckedIn = item.Bookings?.Where(b => b.Status == "Confirmed").SelectMany(b => b.BookingDetails).Count(d => d.IsCheckedIn == true) ?? 0;
+
+                        decimal fillRatio = totalCapacity > 0 ? (totalSold * 100m / totalCapacity) : 0m;
+                        decimal checkInRatio = totalSold > 0 ? (totalCheckedIn * 100m / totalSold) : 0m;
+                        var checkInColor = checkInRatio < 50m ? "bg-danger" : (checkInRatio < 80m ? "bg-warning" : "bg-success");
+
+                        <tr>
+                            <td class="ps-4">
+                                <span class="badge rounded-circle @(rank == 1 ? "bg-warning shadow-sm" : "bg-primary-light text-primary")"
+                                      style="width:32px; height:32px; line-height:24px; display: inline-flex; align-items: center; justify-content: center;">@rank</span>
+                            </td>
+                            <td>
+                                <a asp-area="Organizer"
+                                   asp-controller="Report"
+                                   asp-action="EventDetailReport"
+                                   asp-route-id="@item.Id"
+                                   class="text-decoration-none text-dark hover-primary">
+                                    <div class="fw-bold">@item.Title</div>
+                                </a>
+                                <small class="text-muted">@item.StartDate.ToString("dd/MM/yyyy")</small>
+                            </td>
+                            <td class="text-end text-success fw-bold">@revenue.ToString("N0")đ</td>
+                            <td class="ps-5 pe-4">
+                                <div class="d-flex flex-column gap-2 py-2">
+                                    <div>
+                                        <div class="d-flex justify-content-between mb-1 small">
+                                            <span class="text-muted">Filling:</span>
+                                            <span class="fw-bold">@fillRatio.ToString("N1")% (@totalSold/@totalCapacity)</span>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-primary" style="width: @fillRatio.ToString("0.0")%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="d-flex justify-content-between mb-1 small">
+                                            <span class="text-muted">Attendance:</span>
+                                            <span class="fw-bold @checkInColor.Replace("bg-", "text-")">@checkInRatio.ToString("N1")% (@totalCheckedIn/@totalSold)</span>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar @checkInColor" style="width: @checkInRatio.ToString("0.0")%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        rank++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@* --- MODAL DETAILS WHEN CLICKING CHARTS --- *@
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header p-4 border-0">
+                <h5 class="modal-title fw-bold" id="modalTitle">Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 pt-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="detailsTable">
+                        <thead class="text-muted small text-uppercase fw-bold">
+                        </thead>
+                        <tbody id="detailsBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-emerald {
+        background-color: #00786F;
+    }
+
+    .bg-primary-light {
+        background-color: #e7f1ff;
+    }
+
+    .bg-success {
+        background-color: #10b981 !important;
+    }
+
+    .bar-hover:hover {
+        opacity: 1 !important;
+        cursor: pointer;
+        transform: scaleX(1.1);
+        transition: 0.2s;
+    }
+
+    .progress-bar {
+        transition: width 0.8s ease-in-out;
+        border-radius: 10px;
+    }
+
+    .hover-primary {
+        transition: all 0.2s ease-in-out;
+        display: inline-block;
+    }
+
+        .hover-primary:hover {
+            color: #0d6efd !important;
+            text-decoration: underline !important;
+            transform: translateX(5px);
+        }
+
+    .progress {
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    /* Thêm CSS để canh giữa tiêu đề bảng theo chiều dọc */
+    .table thead th {
+        vertical-align: middle;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (el) { return new bootstrap.Tooltip(el); });
+
+            // Xử lý sự kiện click biểu đồ để hiện Modal
+            $(document).on("click", ".bar-hover", function () {
+                var month = $(this).data("month");
+                var year = @(chartYear ?? DateTime.Now.Year);
+                var type = $(this).data("type");
+
+                $("#detailsModal").modal("show");
+                $("#detailsBody").html('<tr><td colspan="4" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary"></div> Loading data...</td></tr>');
+
+                if (type === "customer") {
+                    $("#modalTitle").text("New Customer List - Month " + month + "/" + year);
+                    $.get("/Organizer/Report/GetMonthlyNewCustomers", { month: month, year: year }, function (data) {
+                        var tableHead = `<tr>
+                            <th>Customer Name</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th class="text-end">Total Orders</th>
+                        </tr>`;
+                        $("#detailsTable thead").html(tableHead);
+                        var html = "";
+                        if (data.length === 0) {
+                            html = '<tr><td colspan="4" class="text-center py-4 text-muted">No new customers this month.</td></tr>';
+                        } else {
+                            data.forEach(function (c) {
+                                html += `<tr>
+                                    <td class="fw-bold">${c.name}</td>
+                                    <td>${c.email}</td>
+                                    <td><small>${c.phone}</small></td>
+                                    <td class="text-end"><span class="badge bg-light text-dark border">${c.totalBookings} orders</span></td>
+                                </tr>`;
+                            });
+                        }
+                        $("#detailsBody").html(html);
+                    });
+                } else {
+                    $("#modalTitle").text("Order Details - Month " + month + "/" + year);
+                    $.get("/Organizer/Report/GetMonthlyBookingDetails", { month: month, year: year }, function (data) {
+                        var tableHead = `<tr>
+                            <th>Event</th>
+                            <th>Customer</th>
+                            <th>Booking Date</th>
+                            <th class="text-end">Amount</th>
+                        </tr>`;
+                        $("#detailsTable thead").html(tableHead);
+                        var html = "";
+                        if (data.length === 0) {
+                            html = '<tr><td colspan="4" class="text-center py-4 text-muted">No order data available.</td></tr>';
+                        } else {
+                            data.forEach(function (i) {
+                                html += `<tr>
+                                    <td class="fw-bold">${i.eventTitle}</td>
+                                    <td><small>${i.customer}</small></td>
+                                    <td><small>${i.date}</small></td>
+                                    <td class="text-end text-success fw-bold">${i.amount}</td>
+                                </tr>`;
+                            });
+                        }
+                        $("#detailsBody").html(html);
+                    });
+                }
+            });
+
+            // Tự động làm mới dữ liệu sau mỗi 10 giây
+            const refreshInterval = 10000;
+            function refreshCheckInData() {
+                $.get(window.location.href, function (data) {
+                    const newCustomerCount = $(data).find("#customerCountCard").html();
+                    $("#customerCountCard").html(newCustomerCount);
+
+                    const newTableBody = $(data).find("#performanceTableBody").html();
+                    $("#performanceTableBody").html(newTableBody);
+
+                    const newCustomerChart = $(data).find("#customerChartContainer").html();
+                    $("#customerChartContainer").html(newCustomerChart);
+
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.map(function (el) { return new bootstrap.Tooltip(el); });
+                });
+            }
+            setInterval(refreshCheckInData, refreshInterval);
+        });
+    </script>
+}

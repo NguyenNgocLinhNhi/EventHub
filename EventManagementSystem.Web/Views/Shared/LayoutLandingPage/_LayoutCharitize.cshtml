@@ -26,14 +26,30 @@
     <link href="~/Templates/Charitize/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
     <link href="~/Templates/Charitize/css/bootstrap.min.css" rel="stylesheet">
-
     <link href="~/Templates/Charitize/css/style.css" rel="stylesheet">
 
     <style>
+        /* 1. Global Font Synchronization */
         body {
+            font-family: 'Open Sans', sans-serif;
             overflow-x: hidden;
         }
 
+        /* 2. Headline & Display Font (Josefin Sans) */
+        h1, h2, h3, h4, h5, h6,
+        .display-1, .display-4, .display-6,
+        .navbar-brand h1 {
+            font-family: 'Josefin Sans', sans-serif !important;
+            font-weight: 700;
+        }
+
+        /* 3. Navigation & Button Font */
+        .nav-item, .nav-link, .btn, .section-title {
+            font-family: 'Josefin Sans', sans-serif;
+            font-weight: 600;
+        }
+
+        /* 4. Layout Structure */
         .sticky-top {
             top: 0;
             position: fixed;
@@ -41,6 +57,7 @@
             z-index: 999;
         }
 
+        /* 5. Back to Home Button */
         .btn-home-back {
             position: fixed;
             top: 20px;
@@ -62,12 +79,11 @@
                 background: #FDBE33;
                 color: white;
             }
-        /* Màu vàng Charitize */
     </style>
 </head>
 
 <body>
-    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Quay về trang chủ">
+    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Back to Home">
         <i class="fas fa-arrow-left"></i>
     </a>
 
@@ -82,35 +98,27 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav me-auto">
-                        @* Quay lại phần đầu trang (Hero) *@
-                        <a href="#hero" class="nav-item nav-link active">Trang chủ</a>
+                        <a href="#hero" class="nav-item nav-link active">Home</a>
+                        <a href="#about" class="nav-item nav-link">About</a>
 
-                        @* Liên kết đến Section _About.cshtml *@
-                        <a href="#about" class="nav-item nav-link">Giới thiệu</a>
-
-                        @* Liên kết đến Section _Schedules.cshtml (Chỉ hiển thị nếu có lịch trình) *@
                         @if (Model.Schedules != null && Model.Schedules.Any())
                         {
-                            <a href="#schedule" class="nav-item nav-link">Lịch trình</a>
+                            <a href="#schedule" class="nav-item nav-link">Schedule</a>
                         }
 
-                        @* Liên kết đến Section _Speakers.cshtml (Diễn giả/Đại sứ) *@
                         @if (Model.Speakers != null && Model.Speakers.Any())
                         {
-                            <a href="#speakers" class="nav-item nav-link">Diễn giả</a>
+                            <a href="#speakers" class="nav-item nav-link">Speakers</a>
                         }
 
-                        @* Liên kết đến Section _Sponsors.cshtml (Nhà tài trợ) *@
                         @if (Model.Sponsors != null && Model.Sponsors.Any())
                         {
-                            <a href="#sponsors" class="nav-item nav-link">Đối tác</a>
+                            <a href="#sponsors" class="nav-item nav-link">Sponsors</a>
                         }
 
-                        @* Liên kết đến Section _Tickets.cshtml (Đặt vé/Quyên góp) *@
-                        <a href="#tickets" class="nav-item nav-link">Đặt vé</a>
+                        <a href="#tickets" class="nav-item nav-link">Tickets</a>
                     </div>
                     <div class="d-none d-lg-flex ms-auto align-items-center">
-                        @* Hiển thị tên sự kiện từ Model  *@
                         <span class="text-white me-3 fw-bold">@Model.Title</span>
                         <a class="btn btn-square btn-dark ms-2" href="#"><i class="fab fa-facebook-f"></i></a>
                     </div>
@@ -118,18 +126,19 @@
             </nav>
         </div>
     </div>
+
     @RenderBody()
 
     <div class="container-fluid bg-dark text-secondary px-5 mt-5">
         <div class="row gx-5 py-5">
             <div class="col-lg-3 col-md-6">
-                <h3 class="text-light mb-4">Liên hệ</h3>
+                <h3 class="text-light mb-4">Contact Us</h3>
                 <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-3"></i>123 Street, NY, USA</p>
                 <p class="mb-2"><i class="fa fa-envelope text-primary me-3"></i>info@charitize.com</p>
                 <p class="mb-0"><i class="fa fa-phone-alt text-primary me-3"></i>+012 345 67890</p>
             </div>
             <div class="col-lg-3 col-md-6">
-                <h3 class="text-light mb-4">Kết nối</h3>
+                <h3 class="text-light mb-4">Follow Us</h3>
                 <div class="d-flex">
                     <a class="btn btn-square btn-primary me-2" href="#"><i class="fab fa-twitter"></i></a>
                     <a class="btn btn-square btn-primary me-2" href="#"><i class="fab fa-facebook-f"></i></a>
@@ -138,9 +147,11 @@
             </div>
         </div>
     </div>
+
     <div class="container-fluid bg-dark text-secondary text-center border-top border-secondary py-4">
         <p class="mb-0">&copy; <a class="text-light fw-bold" href="#">Eventus</a>. All Rights Reserved.</p>
     </div>
+
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -150,7 +161,6 @@
     <script src="~/Templates/Charitize/lib/waypoints/waypoints.min.js"></script>
     <script src="~/Templates/Charitize/lib/owlcarousel/owl.carousel.min.js"></script>
     <script src="~/Templates/Charitize/lib/counterup/counterup.min.js"></script>
-
     <script src="~/Templates/Charitize/js/main.js"></script>
 </body>
 </html>

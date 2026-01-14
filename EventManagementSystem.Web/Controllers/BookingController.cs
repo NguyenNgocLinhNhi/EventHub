@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using System.Net;
 
 namespace EventManagementSystem.Web.Controllers
 {
@@ -48,7 +49,6 @@ namespace EventManagementSystem.Web.Controllers
             var @event = await _context.Events.FindAsync(eventId);
             if (@event == null) return NotFound();
 
-            // Lưu thông tin vào ViewBag để hiển thị ở trang PaymentMethod
             ViewBag.EventTitle = @event.Title;
             ViewBag.CustomerName = customerName;
             ViewBag.CustomerEmail = customerEmail;
@@ -76,7 +76,6 @@ namespace EventManagementSystem.Web.Controllers
 
                 var seatArray = selectedSeats.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-                // KIỂM TRA TRÙNG GHẾ LẦN CUỐI
                 var existingSeats = await _context.BookingDetails
                     .Where(d => d.Booking.EventId == eventId && (d.Booking.Status == "Confirmed" || d.Booking.Status == "Pending"))
                     .Select(d => d.SeatNumber)
@@ -90,7 +89,6 @@ namespace EventManagementSystem.Web.Controllers
                     }
                 }
 
-                // KHỞI TẠO ĐƠN HÀNG (Cho phép mua không cần đăng nhập)
                 var user = await _userManager.FindByEmailAsync(customerEmail);
                 var booking = new Booking
                 {
@@ -98,17 +96,16 @@ namespace EventManagementSystem.Web.Controllers
                     BookingDate = DateTime.Now,
                     TotalAmount = totalAmount,
                     Status = "Pending",
+                    PaymentMethod = paymentMethod, // Đã bổ sung lưu phương thức thanh toán [cite: 5]
                     CustomerName = customerName,
                     CustomerEmail = customerEmail,
                     PhoneNumber = phoneNumber,
-                    UserId = user?.Id // Tự động liên kết nếu email đã có tài khoản
+                    UserId = user?.Id
                 };
 
-                // XỬ LÝ HẠNG VÉ THEO HÀNG GHẾ
                 foreach (var seatCode in seatArray)
                 {
                     string row = seatCode.Trim().Substring(0, 1).ToUpper();
-                    // Phân loại: A,B (VIP) | C,D,E (Standard) | Còn lại (Economy)
                     int typeIndex = (row == "A" || row == "B") ? 0 : (row == "C" || row == "D" || row == "E") ? 1 : 2;
 
                     var ticketTypesOrdered = @event.TicketTypes.OrderByDescending(t => t.Price).ToList();
@@ -122,10 +119,13 @@ namespace EventManagementSystem.Web.Controllers
                         TicketTypeId = ticketType.Id,
                         SeatNumber = seatCode.Trim(),
                         Quantity = 1,
-                        UnitPrice = ticketType.Price
+                        UnitPrice = ticketType.Price,
+                        // Quan trọng: Tạo TicketCode ngay từ lúc này để quản lý [cite: 2]
+                        TicketCode = "EH-" + Guid.NewGuid().ToString().ToUpper().Substring(0, 8),
+                        IsCheckedIn = false // Mặc định chưa tham gia [cite: 3]
                     });
 
-                    ticketType.Quantity -= 1; // Inventory Management
+                    ticketType.Quantity -= 1;
                     _context.TicketTypes.Update(ticketType);
                 }
 
@@ -133,7 +133,6 @@ namespace EventManagementSystem.Web.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                // Dữ liệu hiển thị trang QR
                 ViewBag.BookingId = booking.Id;
                 ViewBag.TotalAmount = totalAmount;
                 ViewBag.PaymentMethod = paymentMethod;
@@ -151,7 +150,7 @@ namespace EventManagementSystem.Web.Controllers
         // Bước 4: Hoàn tất và gửi Email QR rời từng vé
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> FinalizeBooking(int bookingId, string selectedSeats)
+        public async Task<IActionResult> FinalizeBooking(int bookingId)
         {
             var booking = await _context.Bookings
                 .Include(b => b.Event)
@@ -160,42 +159,46 @@ namespace EventManagementSystem.Web.Controllers
 
             if (booking == null) return NotFound();
 
+            // Cập nhật trạng thái chính thức [cite: 1]
             booking.Status = "Confirmed";
             await _context.SaveChangesAsync();
 
-            // TẠO VÉ RỜI KÈM QR CHO TỪNG GHẾ
-            var seatList = selectedSeats.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            // TẠO NỘI DUNG VÉ CHO EMAIL
             var ticketListHtml = new StringBuilder();
 
-            foreach (var seat in seatList)
+            foreach (var detail in booking.BookingDetails)
             {
-                string individualTicketCode = Guid.NewGuid().ToString().ToUpper().Substring(0, 8);
-                // Sử dụng API QR Code mã hóa mã soát vé
-                string qrUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TICKET_{individualTicketCode}";
+                // Sử dụng mã soát vé đã lưu trong DB để tạo QR [cite: 2, 4]
+                string qrUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={detail.TicketCode}";
 
                 ticketListHtml.Append($@"
-                    <div style='border: 2px dashed #006D5B; padding: 20px; margin-bottom: 20px; border-radius: 10px; background-color: #fff;'>
-                        <h2 style='color: #006D5B; text-align: center;'>VÉ XEM SỰ KIỆN</h2>
+                    <div style='border: 2px dashed #006D5B; padding: 20px; margin-bottom: 20px; border-radius: 10px; background-color: #fff; font-family: sans-serif;'>
+                        <h2 style='color: #006D5B; text-align: center; margin-top: 0;'>VÉ XEM SỰ KIỆN</h2>
                         <p><b>Sự kiện:</b> {booking.Event?.Title}</p>
-                        <p><b>Vị trí ghế:</b> <span style='font-size: 20px; color: #ce1212;'>{seat.Trim()}</span></p>
-                        <p><b>Mã soát vé:</b> {individualTicketCode}</p>
-                        <div style='text-align: center;'>
+                        <p><b>Vị trí ghế:</b> <span style='font-size: 20px; color: #ce1212;'>{detail.SeatNumber}</span></p>
+                        <p><b>Mã soát vé:</b> {detail.TicketCode}</p>
+                        <div style='text-align: center; margin-top: 15px;'>
                             <img src='{qrUrl}' width='150' alt='QR Code' />
+                            <p style='font-size: 12px; color: #666;'>Vui lòng trình mã này tại cửa sự kiện để Check-in</p>
                         </div>
                     </div>");
             }
 
             string subject = $"[EventHub] Xác nhận đặt vé thành công #{booking.Id}";
             string body = $@"
-                <div style='font-family: Arial; max-width: 600px; margin: auto;'>
-                    <h3>Cảm ơn {booking.CustomerName}!</h3>
-                    <p>Đơn hàng của bạn đã hoàn tất. Dưới đây là vé của bạn:</p>
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f9f9f9;'>
+                    <h3 style='color: #333;'>Cảm ơn {booking.CustomerName}!</h3>
+                    <p>Thanh toán thành công. Dưới đây là danh sách vé điện tử của bạn:</p>
                     {ticketListHtml}
-                    <p><b>Thời gian:</b> {booking.Event?.StartDate:dd/MM/yyyy HH:mm}</p>
-                    <p><b>Địa điểm:</b> {booking.Event?.Location}</p>
+                    <div style='background-color: #eee; padding: 15px; border-radius: 5px; margin-top: 20px;'>
+                        <p style='margin: 5px 0;'><b>Thời gian:</b> {booking.Event?.StartDate:dd/MM/yyyy HH:mm}</p>
+                        <p style='margin: 5px 0;'><b>Địa điểm:</b> {booking.Event?.Location}</p>
+                    </div>
+                    <p style='text-align: center; color: #888; font-size: 12px; margin-top: 20px;'>Đây là email tự động, vui lòng không phản hồi.</p>
                 </div>";
 
             await _emailService.SendEmailAsync(booking.CustomerEmail, subject, body);
+
             return RedirectToAction("BookingSuccess", new { id = booking.Id });
         }
 
@@ -209,6 +212,80 @@ namespace EventManagementSystem.Web.Controllers
 
             if (booking == null) return NotFound();
             return View(booking);
+        }
+
+        [HttpGet]
+        public IActionResult CheckEmailReal(string email)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
+                    return Json(new { isReal = false });
+
+                string domain = email.Split('@')[1];
+
+                // Kiểm tra xem Domain có máy chủ nhận thư (MX Record) hay không
+                // Nếu domain không tồn tại hoặc là domain ảo không có server mail, lệnh này sẽ báo lỗi
+                var hostEntry = Dns.GetHostEntry(domain);
+                bool hasActiveDomain = hostEntry.AddressList.Length > 0;
+
+                return Json(new { isReal = hasActiveDomain });
+            }
+            catch
+            {
+                // Trả về false nếu không tìm thấy tên miền trong hệ thống DNS
+                return Json(new { isReal = false });
+            }
+        }
+
+        // Action mới để xử lý việc quay lại từ trang QR
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RollbackAndChangeMethod(int bookingId)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.BookingDetails)
+                .FirstOrDefaultAsync(b => b.Id == bookingId && b.Status == "Pending");
+
+            if (booking != null)
+            {
+                // Hoàn trả số lượng vé vào kho
+                foreach (var detail in booking.BookingDetails)
+                {
+                    var ticketType = await _context.TicketTypes.FindAsync(detail.TicketTypeId);
+                    if (ticketType != null)
+                    {
+                        ticketType.Quantity += 1;
+                        _context.TicketTypes.Update(ticketType);
+                    }
+                }
+
+                // Lưu thông tin cần thiết để quay lại trang trước
+                var eventId = booking.EventId;
+                var name = booking.CustomerName;
+                var email = booking.CustomerEmail;
+                var phone = booking.PhoneNumber;
+                var seats = string.Join(",", booking.BookingDetails.Select(d => d.SeatNumber));
+                var total = booking.TotalAmount;
+
+                // Xóa đơn hàng Pending
+                _context.Bookings.Remove(booking);
+                await _context.SaveChangesAsync();
+
+                // Quay lại trang PaymentMethod
+                var @event = await _context.Events.FindAsync(eventId);
+                ViewBag.EventTitle = @event?.Title;
+                ViewBag.CustomerName = name;
+                ViewBag.CustomerEmail = email;
+                ViewBag.PhoneNumber = phone;
+                ViewBag.SelectedSeats = seats;
+                ViewBag.TotalAmount = total;
+                ViewBag.EventId = eventId;
+
+                return View("PaymentMethod");
+            }
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

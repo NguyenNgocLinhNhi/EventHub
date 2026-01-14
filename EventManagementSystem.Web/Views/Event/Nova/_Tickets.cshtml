@@ -1,30 +1,81 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.TicketType>
 
+<style>
+    /* Đồng bộ font chữ hệ thống với _LayoutNova và các section khác */
+    #pricing,
+    #pricing h3,
+    #pricing h6,
+    #pricing ul,
+    #pricing a {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    }
+
+    /* Tối ưu hiển thị thẻ vé */
+    .single-pricing {
+        transition: all 0.3s ease;
+        border: 1px solid #eee !important;
+    }
+
+        .single-pricing:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+            border-color: #5864FF !important;
+        }
+
+    /* Định dạng lại nút đặt vé để đồng bộ với nút Register trên Header */
+    .btn-booking {
+        background-color: #5864FF;
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .btn-booking:hover {
+            background-color: #434ed9;
+            color: #fff;
+        }
+</style>
+
 <section id="pricing" class="pricing-section pricing-style-4 bg-light pt-100 pb-100">
     <div class="container">
         <div class="section-title text-center mb-60">
-            <h3>Vé Tham Dự</h3> [cite: 42]
+            @* Chuyển đổi tiêu đề sang tiếng Anh *@
+            <h3>Ticket Options</h3>
         </div>
         <div class="row justify-content-center">
             @if (Model != null && Model.Any())
             {
                 foreach (var ticket in Model)
                 {
-                    <div class="col-lg-4 col-md-6">
-                        <div class="single-pricing text-center bg-white p-5 rounded border shadow-sm">
-                            <h6 class="text-uppercase text-muted">@ticket.Name</h6> [cite: 43]
-                            <h3 class="text-primary my-4">@(ticket.Price == 0 ? "Miễn Phí" : ticket.Price.ToString("N0") + "đ")</h3> [cite: 44]
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="single-pricing text-center bg-white p-5 rounded shadow-sm">
+                            <h6 class="text-uppercase text-muted">@ticket.Name</h6>
+
+                            @* Chuyển đổi hiển thị giá tiền và nhãn "Free" *@
+                            <h3 class="text-primary my-4">
+                                @(ticket.Price == 0 ? "Free" : ticket.Price.ToString("N0") + " VND")
+                            </h3>
+
                             <ul class="mb-4 list-unstyled text-start ms-4">
-                                <li><i class="lni lni-checkmark-circle text-primary me-2"></i>Số lượng: @ticket.Quantity</li>
-                                <li><i class="lni lni-checkmark-circle text-primary me-2"></i>Check-in nhanh</li>
+                                @* Chuyển đổi các đặc quyền sang tiếng Anh *@
+                                <li><i class="lni lni-checkmark-circle text-primary me-2"></i>Quantity: @ticket.Quantity</li>
+                                <li><i class="lni lni-checkmark-circle text-primary me-2"></i>Priority Check-in</li>
+                                <li><i class="lni lni-checkmark-circle text-primary me-2"></i>Full Access to Sessions</li>
                             </ul>
-                            @* Nút đặt vé *@
-                            <a href="@Url.Action("BookingProcess", "Booking", new { id = ticket.EventId })" class="btn btn-primary w-100 py-3">
-                                <i class="fa fa-shopping-cart me-2"></i>ĐẶT VÉ NGAY
+
+                            @* Nút đặt vé bằng tiếng Anh *@
+                            <a href="@Url.Action("BookingProcess", "Booking", new { id = ticket.EventId })" class="btn btn-primary btn-booking w-100 py-3">
+                                <i class="lni lni-cart me-2"></i>BOOK NOW
                             </a>
                         </div>
                     </div>
                 }
+            }
+            else
+            {
+                <div class="text-center py-5 text-muted">
+                    <p>Tickets are not available yet.</p>
+                </div>
             }
         </div>
     </div>

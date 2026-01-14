@@ -1,19 +1,24 @@
 ﻿@{
-    ViewData["Title"] = "About Us"; // .NET Core ưu tiên dùng ViewData hoặc tệp _ViewStart
-    Layout = "_Layout"; // Thường không cần đường dẫn đầy đủ nếu nằm trong Views/Shared
+    ViewData["Title"] = "About Us - Discover Experiences with Eventus";
+    Layout = "_Layout";
 }
 
-<div class="container-fluid pb-5 bg-primary hero-header">
+@* Section 1: Hero Header (Đã đồng bộ font và style) *@
+<div class="container-fluid pb-5 bg-primary hero-header mb-5">
     <div class="container py-5">
         <div class="row g-3 align-items-center">
             <div class="col-lg-6 text-center text-lg-start">
-                <h1 class="display-1 mb-0 animated slideInLeft">About Us</h1>
+                <h1 class="display-1 mb-0 animated slideInLeft text-dark">About Us</h1>
             </div>
             <div class="col-lg-6 animated slideInRight">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center justify-content-lg-end mb-0">
-                        <li class="breadcrumb-item"><a class="text-primary" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="breadcrumb-item text-secondary active" aria-current="page">About</li>
+                        @* Link Home: Đổi thành màu xám đậm (text-muted) *@
+                        <li class="breadcrumb-item">
+                            <a class="text-muted" asp-controller="Home" asp-action="Index" style="text-decoration: none;">Home</a>
+                        </li>
+                        @* Trang hiện tại: Đổi thành màu Primary (xanh đậm) và thêm fw-bold để thật sự nổi bật *@
+                        <li class="breadcrumb-item text-primary active" aria-current="page">About</li>
                     </ol>
                 </nav>
             </div>
@@ -21,81 +26,112 @@
     </div>
 </div>
 
+@* Section 2: Mission & Vision *@
 <div class="container-xxl py-5">
     <div class="container">
-        <div class="row g-5">
+        <div class="row g-5 align-items-center">
             <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                 <div class="about-img position-relative overflow-hidden p-5 pe-0">
-                    <img class="img-fluid w-100" src="~/img/about-1.jpg" alt="About Eventus">
+                    <img class="img-fluid w-100 rounded shadow" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80" alt="Discover Events">
                 </div>
             </div>
             <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                <h1 class="display-5 mb-4">We Are The Best Event Planner & Organizer</h1>
-                <p class="mb-4">Eventus is a comprehensive platform designed to streamline the event management process. From corporate conferences to music festivals, we provide the tools you need to succeed.</p>
-                <p><i class="fa fa-check text-primary me-3"></i>Seamless Registration Process</p>
-                <p><i class="fa fa-check text-primary me-3"></i>Real-time Analytics & Reporting</p>
-                <p><i class="fa fa-check text-primary me-3"></i>Customizable Event Pages</p>
-                <a class="btn btn-primary py-3 px-5 mt-3" asp-controller="Home" asp-action="Services">Read More</a>
+                <h1 class="display-5 mb-4">Connecting You with the Best Experiences</h1>
+                <p class="mb-4 text-muted lead">At Eventus, every ticket is not just an entry, but the beginning of a new journey. We are committed to providing maximum convenience so you don't miss any memorable moments.</p>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                        <p class="mb-2"><i class="fa fa-check text-primary me-3"></i>Discover thousands of events</p>
+                        <p class="mb-2"><i class="fa fa-check text-primary me-3"></i>Book tickets in 30 seconds</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="mb-2"><i class="fa fa-check text-primary me-3"></i>Safe & secure payments</p>
+                        <p class="mb-2"><i class="fa fa-check text-primary me-3"></i>Convenient e-tickets</p>
+                    </div>
+                </div>
+
+                <a class="btn btn-primary py-3 px-5 mt-3 rounded-pill fw-bold" asp-controller="Home" asp-action="Events">Explore Events Now <i class="fa fa-arrow-right ms-2"></i></a>
             </div>
         </div>
     </div>
 </div>
 
+@* Section 3: Team (Đồng bộ style display-6 từ Index) *@
 <div class="container-xxl py-5">
     <div class="container">
         <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
             <h6 class="text-primary section-title bg-white text-center px-3">Our Team</h6>
-            <h1 class="display-6 mb-4">Meet Our Expert Team</h1>
+            <h1 class="display-6 mb-4">Dedicated People for Your Experience</h1>
         </div>
         <div class="row g-4">
+            @* Team Member 1 *@
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="team-item text-center p-4">
-                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="~/img/team-1.jpg" alt="Member Name">
-                    <div class="team-text">
-                        <div class="team-title">
-                            <h5>Full Name</h5>
-                            <span>Event Manager</span>
-                        </div>
-                        <div class="team-social">
-                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-instagram"></i></a>
-                        </div>
+                <div class="team-item text-center p-4 shadow-sm border rounded-4 bg-white">
+                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="https://i.pravatar.cc/300?u=a1" alt="Minh Anh">
+                    <h5>Minh Anh</h5>
+                    <p class="text-primary mb-3">Event Curation Expert</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
+            @* Team Member 2 *@
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                <div class="team-item text-center p-4">
-                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="~/img/team-2.jpg" alt="Member Name">
-                    <div class="team-text">
-                        <div class="team-title">
-                            <h5>Full Name</h5>
-                            <span>Marketing Head</span>
-                        </div>
-                        <div class="team-social">
-                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-instagram"></i></a>
-                        </div>
+                <div class="team-item text-center p-4 shadow-sm border rounded-4 bg-white">
+                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="https://i.pravatar.cc/300?u=quocbao" alt="Quoc Bao">
+                    <h5>Quoc Bao</h5>
+                    <p class="text-primary mb-3">Head of Support</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
+            @* Team Member 3 *@
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                <div class="team-item text-center p-4">
-                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="~/img/team-3.jpg" alt="Member Name">
-                    <div class="team-text">
-                        <div class="team-title">
-                            <h5>Full Name</h5>
-                            <span>Tech Lead</span>
-                        </div>
-                        <div class="team-social">
-                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary rounded-circle" href=""><i class="fab fa-instagram"></i></a>
-                        </div>
+                <div class="team-item text-center p-4 shadow-sm border rounded-4 bg-white">
+                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="https://i.pravatar.cc/300?img=32" alt="Thanh Thao">
+                    <h5>Thanh Thao</h5>
+                    <p class="text-primary mb-3">Community Manager</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@* Section 4: CTA *@
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="bg-primary rounded-5 p-5 text-center text-white shadow-lg">
+            <h2 class="display-6 text-white mb-4">Ready to discover your next event?</h2>
+            <p class="mb-4 lead">Join the Eventus community to stay updated on the latest trends and hottest events.</p>
+            <a asp-controller="Home" asp-action="Events" class="btn btn-outline-light py-3 px-5 rounded-pill fw-bold">Search Events Now</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rounded-5 {
+        border-radius: 3rem !important;
+    }
+
+    .rounded-4 {
+        border-radius: 1.5rem !important;
+    }
+
+    .team-item {
+        transition: 0.5s;
+    }
+
+        .team-item:hover {
+            transform: translateY(-10px);
+        }
+</style>

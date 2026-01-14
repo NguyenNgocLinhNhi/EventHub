@@ -1,9 +1,23 @@
 ﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+<style>
+    /* Đồng bộ font chữ Poppins cho phần Hero tương tự như Layout và About */
+    #hero, #hero h2, #hero p {
+        font-family: 'Poppins', sans-serif !important;
+    }
+</style>
+
 <section id="hero" class="hero section dark-background">
-    <img src="@(Model.ImageUrl ?? "/Templates/Knightone/assets/img/hero-bg.jpg")" alt="" data-aos="fade-in">
+    @* Thuộc tính alt được chuyển sang tiếng Anh để hỗ trợ SEO và truy cập *@
+    <img src="@(Model.ImageUrl ?? "/Templates/Knightone/assets/img/hero-bg.jpg")" alt="Hero Background Image" data-aos="fade-in">
+
     <div class="container d-flex flex-column align-items-center text-center">
+        @* Tiêu đề sự kiện *@
         <h2 data-aos="fade-up" data-aos-delay="100">@Model.Title</h2>
+
+        @* Mô tả sự kiện - Đảm bảo nội dung nhập từ database cũng nên là tiếng Anh *@
         <p data-aos="fade-up" data-aos-delay="200">@Html.Raw(Model.Description)</p>
+
         <div data-aos="fade-up" data-aos-delay="300">
             <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox pulsating-play-btn"></a>
         </div>

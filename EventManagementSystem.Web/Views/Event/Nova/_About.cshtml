@@ -1,12 +1,45 @@
 ﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+<style>
+    /* Đồng bộ font chữ với _LayoutNova và _Hero */
+    .about-section,
+    .about-section h3,
+    .about-section div,
+    .about-section p {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    }
+
+        /* Đảm bảo tiêu đề phần giới thiệu nhất quán */
+        .about-section .section-title h3 {
+            color: #2e2e2e;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+            /* Hiệu ứng gạch chân trang trí dưới tiêu đề (tùy chọn theo phong cách Nova) */
+            .about-section .section-title h3::after {
+                content: "";
+                position: absolute;
+                width: 60px;
+                height: 3px;
+                background: #5864FF;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+</style>
+
 <section id="about" class="about-section about-style-4 py-5">
     <div class="container">
         <div class="about-content-wrapper text-center mx-auto" style="max-width:800px">
             <div class="section-title mb-30">
-                <h3 class="mb-25">Về Sự Kiện</h3>
+                @* Chuyển đổi sang tiếng Anh *@
+                <h3 class="mb-25">About The Event</h3>
             </div>
+            @* Nội dung mô tả từ Database *@
             <div class="text-start fs-5">
-                @Html.Raw(Model.Description) 
+                @Html.Raw(Model.Description)
             </div>
         </div>
     </div>

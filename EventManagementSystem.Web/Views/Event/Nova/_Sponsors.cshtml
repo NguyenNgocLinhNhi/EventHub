@@ -1,28 +1,62 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Sponsor>
 
+<style>
+    /* Đồng bộ font chữ hệ thống với _LayoutNova và các Section khác */
+    #sponsors,
+    #sponsors h3,
+    #sponsors h5,
+    #sponsors p {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    }
+
+    /* Hiệu ứng cho logo đối tác */
+    .sponsor-item {
+        transition: all 0.3s ease;
+        border: 1px solid #eee !important;
+    }
+
+        .sponsor-item:hover {
+            transform: scale(1.05);
+            border-color: #5864FF !important;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+        }
+
+    .sponsor-rank-title {
+        letter-spacing: 2px;
+        color: #6c757d;
+        font-weight: 600;
+        position: relative;
+        display: inline-block;
+        margin-bottom: 30px;
+    }
+</style>
+
 <section id="sponsors" class="clients-logo-section pt-100 pb-100 border-top">
     <div class="container">
         <div class="section-title text-center mb-50">
-            <h3>Đơn Vị Đồng Hành</h3>
+            @* Chuyển đổi tiêu đề sang tiếng Anh *@
+            <h3>Our Partners & Sponsors</h3>
         </div>
+
         @if (Model != null && Model.Any())
         {
-            @* Khai báo biến bên trong khối @if để đảm bảo scope chính xác *@
             var groupedSponsors = Model.GroupBy(s => s.Rank).OrderBy(g => g.Key);
 
             foreach (var group in groupedSponsors)
             {
                 <div class="mb-5 text-center">
-                    <h5 class="text-muted mb-4 text-uppercase" style="letter-spacing: 2px;">Hạng @group.Key</h5>
+                    @* Chuyển đổi nhãn phân hạng sang tiếng Anh *@
+                    <h5 class="text-uppercase sponsor-rank-title">@group.Key Rank</h5>
+
                     <div class="row justify-content-center align-items-center">
                         @foreach (var sponsor in group)
                         {
                             <div class="col-lg-2 col-md-3 col-6 text-center mb-4">
-                                <div class="p-3 border rounded bg-white shadow-sm h-100 d-flex align-items-center justify-content-center">
+                                <div class="p-3 border rounded bg-white shadow-sm h-100 d-flex align-items-center justify-content-center sponsor-item">
                                     <a href="@(string.IsNullOrEmpty(sponsor.WebsiteUrl) ? "#" : sponsor.WebsiteUrl)" target="_blank">
-                                        <img src="@sponsor.LogoUrl" 
-                                             class="img-fluid opacity-75 grayscale" 
-                                             style="max-height: 60px; transition: 0.3s;" 
+                                        <img src="@sponsor.LogoUrl"
+                                             class="img-fluid opacity-75 grayscale"
+                                             style="max-height: 60px; transition: 0.3s;"
                                              alt="@sponsor.Name"
                                              onmouseover="this.style.filter='grayscale(0%)'; this.className='img-fluid opacity-100'"
                                              onmouseout="this.style.filter='grayscale(100%)'; this.className='img-fluid opacity-75 grayscale'">
@@ -36,8 +70,9 @@
         }
         else
         {
+            @* Thông báo khi chưa có dữ liệu bằng tiếng Anh *@
             <div class="text-center py-5 text-muted">
-                <p>Danh sách đối tác đang được cập nhật.</p>
+                <p>Partner list is being updated.</p>
             </div>
         }
     </div>

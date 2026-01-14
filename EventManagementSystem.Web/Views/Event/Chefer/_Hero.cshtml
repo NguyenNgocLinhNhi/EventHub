@@ -1,13 +1,33 @@
 ﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+<style>
+    /* Đồng bộ font Oswald cho tiêu đề và Open Sans cho nội dung */
+    #hero h1 {
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    #hero p {
+        font-family: 'Open Sans', sans-serif;
+    }
+</style>
+
 <div class="container-fluid p-5 mb-5 bg-dark text-secondary" id="hero">
     <div class="row g-5 py-5">
         <div class="col-12 wow fadeIn" data-wow-delay="0.1s">
+            @* Tiêu đề sự kiện *@
             <h1 class="display-1 text-secondary text-center mb-0">@Model.Title</h1>
         </div>
         <div class="col-lg-4 wow fadeIn" data-wow-delay="0.1s">
-            <img class="img-fluid rounded mb-3" src="@Model.ImageUrl">
+            <img class="img-fluid rounded mb-3" src="@Model.ImageUrl" alt="@Model.Title">
             <p><i class="bi bi-arrow-down animate-up-down" style="font-size: 3rem;"></i></p>
-            <p class="mb-0">@Model.Location</p>
+
+            @* Nhãn Location hiển thị tiếng Anh *@
+            <p class="mb-0">
+                <i class="fa fa-map-marker-alt text-primary me-2"></i>
+                <strong>Location:</strong> @Model.Location
+            </p>
         </div>
         <div class="col-lg-4 wow fadeIn" data-wow-delay="0.3s" style="min-height: 500px;">
             <div class="position-relative h-100">
@@ -15,7 +35,12 @@
             </div>
         </div>
         <div class="col-lg-4 wow fadeIn" data-wow-delay="0.5s">
-            <p>@Html.Raw(Model.Description)</p>
+            @* Phần mô tả *@
+            <div class="mb-3">
+                <h4 class="text-white text-uppercase" style="font-family: 'Oswald', sans-serif;">About the Event</h4>
+                <p>@Html.Raw(Model.Description)</p>
+            </div>
+
             <p><i class="bi bi-arrow-up animate-up-down" style="font-size: 3rem;"></i></p>
             <img class="img-fluid rounded" src="~/Templates/Chefer/img/hero-3.jpg">
         </div>

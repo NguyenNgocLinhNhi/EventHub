@@ -1,0 +1,185 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+@{
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+    decimal revenue = ViewBag.TotalRevenue;
+    int sold = ViewBag.TicketsSold;
+    int capacity = ViewBag.TotalCapacity;
+    int checkedIn = ViewBag.CheckedInCount;
+    decimal fillRate = capacity > 0 ? (sold * 100m / capacity) : 0;
+    decimal checkInRate = sold > 0 ? (checkedIn * 100m / sold) : 0;
+
+    // Get list of customers from confirmed orders
+    var attendees = Model.Bookings?
+        .Where(b => b.Status == "Confirmed")
+        .SelectMany(b => b.BookingDetails)
+        .OrderByDescending(d => d.IsCheckedIn)
+        .ToList() ?? new List<EventManagementSystem.Web.Models.Entities.BookingDetail>();
+}
+
+<div class="container-fluid py-4" style="font-family: 'Arimo', sans-serif;">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <a href="javascript:history.back()" class="btn btn-link text-decoration-none text-muted p-0 mb-2">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+            <h2 class="fw-bold mb-0 text-dark">Detailed Report: @Model.Title</h2>
+            <p class="text-muted mb-0"><i class="bi bi-calendar3 me-2"></i>@Model.StartDate.ToString("dd/MM/yyyy HH:mm") | @Model.Location</p>
+        </div>
+        <button onclick="window.print()" class="btn btn-outline-primary rounded-pill">
+            <i class="bi bi-printer me-2"></i>Print Report
+        </button>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 h-100 border-start border-4 border-success">
+                <div class="text-muted small fw-bold mb-2">TOTAL REVENUE</div>
+                <h3 class="fw-bold text-success mb-0">@revenue.ToString("N0")đ</h3>
+                <div class="mt-2 small text-muted">From @sold Tickets Sold</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 h-100 border-start border-4 border-primary">
+                <div class="text-muted small fw-bold mb-2">FILLING RATE</div>
+                <h3 class="fw-bold text-primary mb-0">@fillRate.ToString("N1")%</h3>
+                <div class="progress mt-2" style="height: 6px;">
+                    <div class="progress-bar bg-primary" style="width: @fillRate%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 h-100 border-start border-4 border-warning">
+                <div class="text-muted small fw-bold mb-2">ATTENDEES</div>
+                <h3 class="fw-bold text-warning mb-0">@checkedIn / @sold</h3>
+                <div class="mt-2 small text-muted">@checkInRate.ToString("N1")% Checked-in</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm p-4 rounded-4 h-100 border-start border-4 border-danger">
+                <div class="text-muted small fw-bold mb-2">ABSENT CUSTOMERS</div>
+                <h3 class="fw-bold text-danger mb-0">@(sold - checkedIn)</h3>
+                <div class="mt-2 small text-muted">Based on Purchased Tickets</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 rounded-4 h-100">
+                <h5 class="fw-bold mb-4">Attendance Performance</h5>
+                <div class="text-center py-3">
+                    <div class="position-relative d-inline-block">
+                        <h2 class="fw-bold mb-0 @(checkInRate > 80 ? "text-success" : "text-warning")" style="font-size: 3rem;">
+                            @checkInRate.ToString("0")%
+                        </h2>
+                    </div>
+                    <p class="text-muted mt-2">Rate of Customers who Scanned QR Code</p>
+                </div>
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Checked-in</span>
+                        <span class="fw-bold text-success">@checkedIn</span>
+                    </div>
+                    <div class="progress mb-4" style="height: 10px;">
+                        <div class="progress-bar bg-success" style="width: @checkInRate%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Pending</span>
+                        <span class="fw-bold text-muted">@(sold - checkedIn)</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-light" style="width: @(100 - checkInRate)%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                <div class="p-4 bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Registration & Attendance List</h5>
+                    <div class="badge bg-primary-light text-primary px-3 py-2 rounded-pill">@attendees.Count Tickets</div>
+                </div>
+                <div class="table-responsive" style="max-height: 500px;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light sticky-top">
+                            <tr class="small fw-bold text-muted">
+                                <th class="ps-4">CUSTOMER</th>
+                                <th>TICKET TYPE / SEAT</th>
+                                <th>STATUS</th>
+                                <th class="pe-4">TIME</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detail in attendees)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">@detail.Booking.CustomerName</div>
+                                        <div class="small text-muted">@detail.Booking.CustomerEmail</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">@detail.TicketType.Name</span>
+                                        <div class="small fw-bold text-primary mt-1">Seat: @detail.SeatNumber</div>
+                                    </td>
+                                    <td>
+                                        @if (detail.IsCheckedIn)
+                                        {
+                                            <span class="badge bg-success-light text-success px-3 py-2 rounded-pill">
+                                                <i class="bi bi-check-circle-fill me-1"></i> Attended
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary-light text-muted px-3 py-2 rounded-pill">
+                                                <i class="bi bi-clock me-1"></i> Pending
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="pe-4 small text-muted">
+                                        @(detail.IsCheckedIn? detail.CheckInTime?.ToString("HH:mm dd/MM") : "---")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-primary-light {
+        background-color: #e7f1ff;
+        color: #0d6efd;
+    }
+
+    .bg-success-light {
+        background-color: #e6f9f1;
+        color: #198754;
+    }
+
+    .bg-secondary-light {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+
+    .progress {
+        border-radius: 10px;
+        background-color: #f0f0f0;
+    }
+
+    .progress-bar {
+        border-radius: 10px;
+    }
+
+    .card {
+        transition: transform 0.2s;
+    }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+</style>

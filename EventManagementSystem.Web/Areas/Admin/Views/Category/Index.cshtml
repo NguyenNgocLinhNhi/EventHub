@@ -1,0 +1,189 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Areas.Admin.ViewModels.CategoryViewModel>
+@{
+    ViewData["Title"] = "Category management";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid p-4" style="font-family: 'Arimo', sans-serif;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0 text-dark">Event categories</h2>
+            <p class="text-muted small">Manage and classify event topics on the system.</p>
+        </div>
+        <button class="btn btn-primary rounded-pill px-4 shadow-sm" onclick="openUpsertModal(0, '', '')">
+            <i class="bi bi-plus-lg me-2"></i>Add category
+        </button>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-muted small fw-bold">
+                    <tr>
+                        <th class="ps-4 py-3">CATEGORY NAME</th>
+                        <th>DESCRIPTION</th>
+                        <th class="text-center">EVENT COUNT</th>
+                        <th class="text-end pe-4">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold text-dark">@item.Name</td>
+                            <td class="text-muted small">@item.Description</td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-500 shadow-sm"
+                                        onclick="viewEvents(@item.Id)">
+                                    @item.EventCount events
+                                </button>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button class="btn btn-sm btn-light border rounded-circle shadow-sm"
+                                            onclick="openUpsertModal(@item.Id, '@item.Name', '@item.Description')">
+                                        <i class="bi bi-pencil-square text-primary"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light border rounded-circle shadow-sm"
+                                            onclick="deleteCategory(@item.Id)">
+                                        <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section FooterModals {
+    <div class="modal fade" id="upsertModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <form asp-action="Upsert" method="post">
+                    <div class="modal-header border-0 bg-light">
+                        <h5 class="fw-bold mb-0" id="upsertTitle">Add category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <input type="hidden" id="catId" name="Id" />
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">CATEGORY NAME</label>
+                            <input type="text" id="catName" name="Name" class="form-control rounded-3" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">DESCRIPTION</label>
+                            <textarea id="catDesc" name="Description" class="form-control rounded-3" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="eventsListModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 bg-light">
+                    <h5 class="fw-bold mb-0">Events in: <span id="displayCatName" class="text-primary"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="small text-muted bg-light">
+                                <tr>
+                                    <th class="ps-4 py-3">EVENT NAME</th>
+                                    <th>LOCATION</th>
+                                    <th>START DATE</th>
+                                    <th class="text-end pe-4">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="eventsContainer">
+                                @* Ajax Data *@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .modal {
+        z-index: 1060 !important;
+    }
+
+    .modal-backdrop {
+        z-index: 1050 !important;
+        background-color: rgba(0,0,0,0.5) !important;
+    }
+
+    .fw-500 {
+        font-weight: 500;
+    }
+
+    #eventsContainer .badge {
+        font-size: 11px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#upsertModal').appendTo("body");
+            $('#eventsListModal').appendTo("body");
+        });
+
+        function openUpsertModal(id, name, desc) {
+            $("#catId").val(id);
+            $("#catName").val(name);
+            $("#catDesc").val(desc);
+            $("#upsertTitle").text(id === 0 ? "Add new category" : "Edit category");
+
+            var modal = new bootstrap.Modal(document.getElementById('upsertModal'));
+            modal.show();
+        }
+
+        function viewEvents(id) {
+            $("#eventsContainer").html('<tr><td colspan="4" class="text-center py-5"><div class="spinner-border spinner-border-sm text-primary"></div></td></tr>');
+
+            var modal = new bootstrap.Modal(document.getElementById('eventsListModal'));
+            modal.show();
+
+            $.get("/Admin/Category/GetEventsByCategory/" + id, function (res) {
+                $("#displayCatName").text(res.categoryName);
+                let html = "";
+                if (res.events.length === 0) {
+                    html = '<tr><td colspan="4" class="text-center py-5 text-muted">No events found.</td></tr>';
+                } else {
+                    res.events.forEach(ev => {
+                        const statusClass = ev.status === 'Published' ? 'bg-success' : 'bg-warning text-dark';
+                        html += `<tr>
+                                <td class="ps-4 fw-bold text-dark">${ev.title}</td>
+                                <td class="small text-muted">${ev.location}</td>
+                                <td class="small">${ev.startDate}</td>
+                                <td class="text-end pe-4"><span class="badge rounded-pill ${statusClass}">${ev.status}</span></td>
+                            </tr>`;
+                    });
+                }
+                $("#eventsContainer").html(html);
+            });
+        }
+
+        function deleteCategory(id) {
+            if (confirm("Confirm deletion?")) {
+                $.post("/Admin/Category/Delete/" + id, function (res) {
+                    if (res.success) location.reload(); else alert(res.message);
+                });
+            }
+        }
+    </script>
+}

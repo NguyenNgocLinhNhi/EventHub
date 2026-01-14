@@ -3,16 +3,15 @@
 @inject UserManager<ApplicationUser> UserManager
 
 @{
-    // Lấy thông tin user hiện tại từ Database để hiển thị OrganizationName và Email
     var currentUser = await UserManager.GetUserAsync(User);
 }
 
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - EventHub Organizer</title>
+    <title>@ViewData["Title"] - EventHub organizer</title>
     
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap" rel="stylesheet">
@@ -20,16 +19,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        body { font-family: 'Arimo', sans-serif; background-color: #f4f7f6; overflow-x: hidden; }
+        body { 
+            font-family: 'Arimo', sans-serif;
+            background-color: #f4f7f6; 
+            overflow-x: hidden; 
+            margin: 0; 
+            color: #333;
+        }
         
-        /* Sidebar phong cách Emerald chuyên nghiệp */
         .sidebar { 
-            min-width: 280px; 
+            min-width: 280px;
             max-width: 280px;
-            min-height: 100vh; 
+            height: 100vh; 
             background-color: #00786F;
-            color: white; 
+            color: #ffffff; 
             position: fixed;
+            top: 0;
+            left: 0;
             transition: all 0.3s;
             z-index: 1000;
         }
@@ -39,22 +45,36 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
+            .sidebar-header small {
+                font-size: 13px !important; /* Tăng kích thước */
+                font-weight: 600 !important; /* Làm đậm hơn */
+                color: rgba(255, 255, 255, 0.8) !important; /* Màu trắng rõ hơn */
+            }
+
+        /* Tinh chỉnh font-weight và màu sắc cho nav-link */
         .sidebar .nav-link { 
-            color: rgba(255,255,255,0.8); 
+            color: #ffffff; /* Màu chữ trắng rõ nét hơn thay vì rgba */
             margin: 5px 15px; 
             padding: 12px 20px; 
             border-radius: 10px;
             display: flex;
             align-items: center;
             font-size: 15px;
+            font-weight: 600; /* Làm chữ đậm hơn một chút */
             transition: all 0.2s;
+            font-family: 'Arimo', sans-serif;
         }
         
-        .sidebar .nav-link i { font-size: 1.2rem; width: 30px; }
+        .sidebar .nav-link i { 
+            font-size: 1.2rem;
+            width: 30px; 
+            opacity: 0.9; /* Biểu tượng rõ hơn */
+        }
         
         .sidebar .nav-link:hover, .sidebar .nav-link.active { 
-            background: rgba(255,255,255,0.15); 
+            background: rgba(255,255,255,0.2); /* Nền hover đậm hơn một chút */
             color: #ffffff !important; 
+            font-weight: 800; /* Đậm hẳn khi active hoặc hover */
         }
 
         .sidebar-footer {
@@ -63,18 +83,47 @@
             border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        .user-info { padding: 10px 15px; display: flex; align-items: center; gap: 12px; }
-        .user-info i { font-size: 24px; color: rgba(255,255,255,0.7); }
-
-        .content-area { 
-            margin-left: 280px; 
-            flex: 1; 
-            padding: 25px 40px; 
-            min-height: 100vh;
+        .user-info { 
+            padding: 10px 15px;
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+        }
+        
+        .user-info i { 
+            font-size: 24px;
+            color: #ffffff; 
         }
 
-        .btn-emerald { background: #00786F; color: white; border-radius: 30px; border:none; padding: 10px 25px; }
-        .btn-emerald:hover { background: #005F5A; color: white; }
+        .user-info .text-white-50 {
+        font-size: 13px !important; /* Tăng kích thước từ 11px lên 13px */
+        font-weight: 500 !important; /* Làm chữ đậm vừa phải để dễ đọc */
+        color: rgba(255, 255, 255, 0.8) !important; /* Tăng độ hiển thị màu sắc */
+        margin-top: 2px;
+        }
+
+        .user-info .fw-bold {
+            font-size: 15px;
+            color: #ffffff;
+        }
+
+        .main-wrapper {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-area { 
+            padding: 25px 40px;
+            flex: 1;
+        }
+
+        .text-danger-custom {
+            color: #ff8787 !important; /* Màu đỏ sáng hơn để dễ nhìn trên nền xanh */
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -85,7 +134,7 @@
                     <i class="bi bi-calendar4-event fs-2 me-3"></i>
                     <div>
                         <h4 class="fw-bold mb-0">EventHub</h4>
-                        <small class="text-white-50">Organizer Panel</small>
+                        <small class="text-white-50">Organizer panel</small>
                     </div>
                 </div>
             </div>
@@ -94,26 +143,38 @@
                 <li class="nav-item">
                     <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "active" : "")" 
                        asp-area="Organizer" asp-controller="Dashboard" asp-action="Index">
-                        <i class="bi bi-grid-1x2"></i> Tổng quan
+                        <i class="bi bi-grid-1x2"></i> Dashboard
                     </a>
                 </li>
-               <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Event" ? "active" : "")" 
-                           asp-area="Organizer" asp-controller="Event" asp-action="Index">
-                            <i class="bi bi-calendar-event"></i> Quản lý sự kiện
-                        </a>
-                    </li>
-                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-ticket-perforated"></i> Quản lý vé</a>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Event" && ViewContext.RouteData.Values["Action"]?.ToString() != "LandingPageGallery" ? "active" : "")" 
+                       asp-area="Organizer" asp-controller="Event" asp-action="Index">
+                        <i class="bi bi-calendar-event"></i> Event management
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-layout-text-window-reverse"></i> Kho Landing page</a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Ticket" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")" 
+                       asp-area="Organizer" asp-controller="Ticket" asp-action="Index">
+                        <i class="bi bi-ticket-perforated"></i> Ticket management
+                    </a>               
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-plus-circle"></i> Tạo sự kiện</a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "LandingPageGallery" ? "active" : "")" 
+                       asp-area="Organizer" asp-controller="Event" asp-action="LandingPageGallery">
+                        <i class="bi bi-layout-text-window-reverse"></i> Landing page gallery
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="bi bi-currency-dollar"></i> Báo cáo doanh thu</a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Customers" ? "active" : "")" 
+                       asp-area="Organizer" asp-controller="Ticket" asp-action="Customers">
+                        <i class="bi bi-people"></i> Customer management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Report" ? "active" : "")" 
+                       asp-area="Organizer" asp-controller="Report" asp-action="Revenue">
+                        <i class="bi bi-currency-dollar"></i> Revenue report
+                    </a>
                 </li>
             </ul>
 
@@ -123,50 +184,35 @@
                     <div class="user-info mb-3">
                         <i class="bi bi-person-circle text-white"></i>
                         <div class="overflow-hidden">
-                            <p class="small fw-bold mb-0 text-truncate">@(currentUser.OrganizationName ?? "Tổ chức")</p>
+                            <p class="small fw-bold mb-0 text-truncate">@(currentUser.OrganizationName ?? "Organization")</p>
                             <p class="text-white-50 mb-0 text-truncate" style="font-size: 11px;">@currentUser.Email</p>
                         </div>
                     </div>
                 }
                 
-                <a class="nav-link mb-2" href="#"><i class="bi bi-gear"></i> Cài đặt</a>
+                <a class="nav-link mb-2 @(ViewContext.RouteData.Values["controller"]?.ToString() == "Settings" ? "active" : "")" 
+                   asp-area="Organizer" asp-controller="Settings" asp-action="Index">
+                    <i class="bi bi-gear me-2"></i> Settings
+                </a>
                 
                 <form asp-area="Organizer" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
                     <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">
-                        <i class="bi bi-box-arrow-right text-danger"></i> <span class="text-danger">Đăng xuất</span>
+                        <i class="bi bi-box-arrow-right text-danger-custom"></i> <span class="text-danger-custom">Logout</span>
                     </button>
                 </form>
             </div>
         </div>
 
-        <div class="content-area">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold">@ViewData["Title"]</h2>
-                <div class="d-flex align-items-center gap-3">
-                    <div class="bg-white p-2 rounded-circle shadow-sm px-3">
-                        <i class="bi bi-bell"></i>
-                    </div>
-                    <button class="btn btn-emerald rounded-pill">
-                        <i class="bi bi-plus-lg me-2"></i> Tạo sự kiện mới
-                    </button>
-                </div>
+        <div class="main-wrapper">
+            <div class="content-area">
+                @RenderBody()
             </div>
-
-            @RenderBody()
         </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     
-    <script>
-        window.addEventListener('pagehide', function (event) {
-            if (performance.navigation.type !== 1) { // Loại trừ nhấn F5
-                navigator.sendBeacon('/Organizer/Account/Logout');
-            }
-        });
-    </script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

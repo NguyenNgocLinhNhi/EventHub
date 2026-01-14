@@ -1,56 +1,112 @@
-﻿@{
+﻿@model EventManagementSystem.Web.ViewModels.ContactFormModel
+@{
     ViewData["Title"] = "Contact Us";
 }
 
-<div class="container-fluid pb-5 bg-primary hero-header">
-    <div class="container py-5 text-center text-lg-start">
-        <h1 class="display-1 mb-0 animated slideInLeft">Contact</h1>
+@* Section 1: Hero Header - Đồng bộ font display-1 và màu text-dark *@
+<div class="container-fluid pb-5 bg-primary hero-header mb-5">
+    <div class="container py-5">
+        <div class="row g-3 align-items-center">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="display-1 mb-0 animated slideInLeft text-dark">Contact</h1>
+            </div>
+            <div class="col-lg-6 animated slideInRight">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center justify-content-lg-end mb-0">
+                        <li class="breadcrumb-item">
+                            <a class="text-muted" asp-controller="Home" asp-action="Index" style="text-decoration: none;">Home</a>
+                        </li>
+                        <li class="breadcrumb-item text-primary active" aria-current="page">Contact</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
     </div>
 </div>
 
+@* Section 2: Contact Form *@
 <div class="container-xxl py-5">
     <div class="container">
+        @* Section Title *@
         <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-            <h1 class="mb-3">Get In Touch</h1>
+            <h6 class="text-primary section-title bg-white text-center px-3">Contact Us</h6>
+            <h1 class="display-6 mb-4">Get In Touch</h1>
             <p>Contact us for any questions regarding event management or partnership.</p>
         </div>
+
         <div class="row g-4">
             <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
-                <div class="bg-light rounded p-5">
+                <div class="bg-light rounded-4 p-5 shadow-sm border">
+
+                    @* Hiển thị thông báo thành công khi gửi form *@
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                            <i class="fa fa-check-circle me-2"></i>
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
                     <form asp-action="Contact" method="post">
+                        @Html.AntiForgeryToken()
                         <div class="row g-3">
+                            @* Trường nhập tên *@
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="name" placeholder="Your Name">
-                                    <label for="name">Your Name</label>
+                                    <input asp-for="Name" class="form-control" id="name" placeholder="Your Name">
+                                    <label asp-for="Name">Your Name</label>
+                                    <span asp-validation-for="Name" class="text-danger small"></span>
                                 </div>
                             </div>
+
+                            @* Trường nhập Email *@
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="email" class="form-control" id="email" placeholder="Your Email">
-                                    <label for="email">Your Email</label>
+                                    <input asp-for="Email" class="form-control" id="email" placeholder="Your Email">
+                                    <label asp-for="Email">Your Email</label>
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
                                 </div>
                             </div>
+
+                            @* Trường nhập tin nhắn *@
                             <div class="col-12">
                                 <div class="form-floating">
-                                    <textarea class="form-control" placeholder="Leave a message here" id="message" style="height: 150px"></textarea>
-                                    <label for="message">Message</label>
+                                    <textarea asp-for="Message" class="form-control" placeholder="Leave a message here" id="message" style="height: 150px"></textarea>
+                                    <label asp-for="Message">Message</label>
+                                    <span asp-validation-for="Message" class="text-danger small"></span>
                                 </div>
                             </div>
+
+                            @* Nút gửi *@
                             <div class="col-12 text-center">
-                                <button class="btn btn-primary w-100 py-3 rounded-pill" type="submit">Send Message</button>
+                                <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold" type="submit">Send Message</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
+
+            @* Bản đồ *@
             <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                 <div class="h-100" style="min-height: 400px;">
-                    <iframe class="rounded w-100 h-100"
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.463385612423!2d-73.98509668459387!3d40.74844097932845!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2s!4v1602113233816!5m2!1sen!2s"
+                    <iframe class="rounded-4 w-100 h-100 border shadow-sm"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4946681007846!2d106.65843061471842!3d10.77337429232356!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec3c161f315%3A0x1b4d5a1bc9a96e6d!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBCw6FjaCBraG9hIC0gxJDhuqFpIGjhu41jIFF14buRYyBnaWEgVFAuSENN!5e0!3m2!1svi!2s!4v1647416452145!5m2!1svi!2s"
                             frameborder="0" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@* Script hỗ trợ kiểm tra lỗi trực tiếp trên trình duyệt mà không cần load lại trang *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    /* Đồng bộ độ bo góc rounded-4 */
+    .rounded-4 {
+        border-radius: 1.5rem !important;
+    }
+</style>

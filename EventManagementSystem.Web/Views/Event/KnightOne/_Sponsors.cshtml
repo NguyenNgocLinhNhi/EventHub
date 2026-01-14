@@ -1,26 +1,59 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Sponsor>
+
+<style>
+    /* Đồng bộ font chữ Poppins tương tự như _Schedules và Layout */
+    #sponsors,
+    #sponsors h2,
+    #sponsors h5,
+    #sponsors p,
+    #sponsors .rank-title {
+        font-family: 'Poppins', sans-serif !important;
+    }
+
+        /* Tùy chỉnh để đồng bộ giao diện với phong cách của _Schedules */
+        #sponsors .rank-title {
+            font-weight: 700;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+</style>
+
 <section id="sponsors" class="clients section">
+    @* Tiêu đề section đồng bộ với cấu trúc của _Schedules *@
     <div class="container section-title" data-aos="fade-up">
-        <h2>Đối tác & Tài trợ</h2>
+        <h2>Partners & Sponsors</h2>
+        <p>Valued organizations supporting our event</p>
     </div>
+
     <div class="container" data-aos="fade-up" data-aos-delay="100">
         @if (Model != null && Model.Any())
         {
+            @* Nhóm theo Rank và sắp xếp tương tự cách OrderBy trong _Schedules *@
             var grouped = Model.GroupBy(s => s.Rank).OrderBy(g => g.Key);
             foreach (var group in grouped)
             {
-                <h5 class="text-center text-uppercase text-secondary mb-4">Hạng @group.Key</h5>
-                <div class="row g-0 clients-wrap justify-content-center mb-5">
-                    @foreach (var sponsor in group)
-                    {
-                        <div class="col-xl-3 col-md-4 client-logo">
-                            <a href="@(sponsor.WebsiteUrl ?? "#")" target="_blank">
-                                <img src="@sponsor.LogoUrl" class="img-fluid" alt="@sponsor.Name" title="@sponsor.Name">
-                            </a>
-                        </div>
-                    }
+                <div class="rank-group mb-5">
+                    <h5 class="text-center text-uppercase text-secondary rank-title">Rank @group.Key</h5>
+                    <div class="row g-0 clients-wrap justify-content-center">
+                        @foreach (var sponsor in group)
+                        {
+                            <div class="col-xl-3 col-md-4 client-logo">
+                                <a href="@(sponsor.WebsiteUrl ?? "#")" target="_blank">
+                                    <img src="@sponsor.LogoUrl" class="img-fluid" alt="@sponsor.Name" title="@sponsor.Name">
+                                </a>
+                            </div>
+                        }
+                    </div>
                 </div>
             }
+        }
+        else
+        {
+            @* Thông báo trống hiển thị theo phong cách của _Schedules *@
+            <div class="col-12 text-center">
+                <p>Sponsor information will be updated soon.</p>
+            </div>
         }
     </div>
 </section>

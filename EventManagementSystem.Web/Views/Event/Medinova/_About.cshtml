@@ -1,4 +1,12 @@
 ﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+<style>
+    /* Đồng bộ font Roboto cho view này */
+    #about, #about h1, #about h5, #about h6, #about p {
+        font-family: 'Roboto', sans-serif;
+    }
+</style>
+
 <div class="container-fluid py-5" id="about">
     <div class="container">
         <div class="row gx-5">
@@ -9,15 +17,16 @@
             </div>
             <div class="col-lg-7">
                 <div class="mb-4">
-                    <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Về hội nghị</h5>
-                    <h1 class="display-4">Chăm sóc y khoa tốt nhất cho cộng đồng</h1>
+                    <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">About the Conference</h5>
+                    <h1 class="display-4">Providing the Best Medical Care for the Community</h1>
                 </div>
                 <p>@Html.Raw(Model.Description)</p>
                 <div class="row g-3 pt-3">
                     <div class="col-sm-6 col-12">
                         <div class="bg-light text-center rounded py-4 px-3 border-start border-5 border-primary">
                             <i class="fa fa-calendar-alt fa-2x text-primary mb-3"></i>
-                            <h6>Bắt đầu: @($"{Model.StartDate:dd/MM/yyyy HH:mm}")</h6>
+                            @* Chuyển định dạng ngày sang MM/dd/yyyy phù hợp với tiếng Anh *@
+                            <h6>Starts: @($"{Model.StartDate:MM/dd/yyyy HH:mm}")</h6>
                         </div>
                     </div>
                     <div class="col-sm-6 col-12">

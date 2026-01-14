@@ -1,0 +1,138 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+@{
+    ViewData["Title"] = "Edit event";
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+}
+
+<div class="mb-4" style="font-family: 'Arimo', sans-serif;">
+    <a asp-action="Index" class="text-decoration-none text-muted small">
+        <i class="bi bi-arrow-left me-1"></i> Back to list
+    </a>
+    <h2 class="fw-bold mt-2">Edit: @Model.Title</h2>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 p-4" style="font-family: 'Arimo', sans-serif;">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        @* Hidden fields for important values *@
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="OrganizerId" />
+        <input type="hidden" asp-for="CreatedAt" />
+        <input type="hidden" asp-for="ImageUrl" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="row g-4">
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label fw-bold">Event name</label>
+                    <input asp-for="Title" class="form-control shadow-none border-2" placeholder="Enter event name..." />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold">Description</label>
+                    <textarea asp-for="Description" class="form-control shadow-none border-2" rows="6"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="StartDate" class="form-label fw-bold">Start date</label>
+                        <input asp-for="StartDate" class="form-control shadow-none border-2" type="datetime-local" />
+                        <span asp-validation-for="StartDate" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EndDate" class="form-label fw-bold">End date</label>
+                        <input asp-for="EndDate" class="form-control shadow-none border-2" type="datetime-local" />
+                        <span asp-validation-for="EndDate" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Location" class="form-label fw-bold">Location</label>
+                    <input asp-for="Location" class="form-control shadow-none border-2" />
+                    <span asp-validation-for="Location" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Event image</label>
+                    <div class="text-center p-3 border rounded-4 bg-light">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img id="previewImage" src="@Model.ImageUrl" class="img-fluid rounded-3 mb-3 shadow-sm" style="max-height: 200px; width: 100%; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <img id="previewImage" src="/images/event-default.jpg" class="img-fluid rounded-3 mb-3 d-none shadow-sm" style="max-height: 200px; width: 100%; object-fit: cover;" />
+                        }
+                        <input type="file" name="imageFile" class="form-control shadow-none border-2" onchange="previewFile(this)" />
+                        <small class="text-muted d-block mt-2">Leave blank to keep current image</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CategoryId" class="form-label fw-bold">Category</label>
+                    <select asp-for="CategoryId" class="form-select shadow-none border-2" asp-items="ViewBag.CategoryId"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label fw-bold">Publishing status</label>
+                    <select asp-for="Status" class="form-select shadow-none border-2">
+                        <option value="Published">Published</option>
+                        <option value="Draft">Draft</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check form-switch mt-4">
+                        <input class="form-check-input" type="checkbox" asp-for="IsActive">
+                        <label class="form-check-label fw-bold" asp-for="IsActive">Activate event</label>
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+                <button type="submit" class="btn btn-emerald w-100 py-3 fw-bold shadow-sm rounded-3">
+                    <i class="bi bi-save me-2"></i> UPDATE CHANGES
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .btn-emerald {
+        background-color: #00786F;
+        color: white;
+        transition: all 0.3s;
+    }
+
+        .btn-emerald:hover {
+            background-color: #005F5A;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #00786F;
+        box-shadow: none;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function previewFile(input) {
+            var file = $("input[name='imageFile']").get(0).files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    $("#previewImage").attr("src", reader.result).removeClass("d-none");
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+}

@@ -1,0 +1,39 @@
+﻿@model EventManagementSystem.Web.Models.Entities.LandingPageTemplate
+@{
+    ViewData["Title"] = "Add Template";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid p-4" style="font-family: 'Arimo', sans-serif;">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-4">Register new Template</h4>
+                    <form asp-action="Create">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">ID Code (Must match View Folder)</label>
+                                <input asp-for="Id" class="form-control" placeholder="Ex: Charitize" />
+                                <span asp-validation-for="Id" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small">Display Name</label>
+                                <input asp-for="Name" class="form-control" placeholder="Ex: Charity Template" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold small">Description</label>
+                                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-top d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-4 rounded-pill">Register template</button>
+                            <a asp-action="Index" class="btn btn-light px-4 rounded-pill border">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

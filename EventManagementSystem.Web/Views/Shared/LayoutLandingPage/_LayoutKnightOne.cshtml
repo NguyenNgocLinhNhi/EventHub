@@ -28,45 +28,52 @@
     <link href="~/Templates/KnightOne/assets/css/main.css" rel="stylesheet">
 
     <style>
+        /* Unified font for the entire layout */
+        body, h1, h2, h3, h4, h5, h6, .sitename, .navmenu, .cta-btn {
+            [cite_start]font-family: 'Poppins', sans-serif !important;
+            [cite: 3]
+        }
+
         body {
-            overflow-x: hidden;
+            [cite_start]overflow-x: hidden;
+            [cite: 3]
         }
 
         .btn-home-back {
             position: fixed;
-            top: 20px;
-            left: 20px;
+            [cite_start]top: 20px;
+            [cite: 4] left: 20px;
             z-index: 9999;
             background: rgba(0, 123, 255, 0.1);
             color: #007bff;
             border-radius: 50%;
             width: 40px;
             height: 40px;
-            display: flex;
-            align-items: center;
+            [cite_start]display: flex;
+            [cite: 5] align-items: center;
             justify-content: center;
             transition: 0.3s;
             text-decoration: none;
         }
 
-        .btn-home-back:hover {
-            background: #007bff;
-            color: white;
-        }
-        
-        /* Đảm bảo logo/sitename không bị quá dài */
+            .btn-home-back:hover {
+                background: #007bff;
+                color: white;
+            }
+
         .header .logo h1 {
             max-width: 300px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            [cite_start]white-space: nowrap;
+            [cite: 8] [cite_start]overflow: hidden;
+            [cite: 8] [cite_start]text-overflow: ellipsis;
+            [cite: 8]
         }
     </style>
 </head>
 
 <body class="index-page">
 
-    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Quay về trang chủ">
+    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Back to Home">
         <i class="bi bi-arrow-left"></i>
     </a>
 
@@ -79,33 +86,30 @@
 
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li><a href="#hero" class="active">Trang chủ</a></li>
-                    <li><a href="#about">Giới thiệu</a></li>
+                    <li><a href="#hero" class="active">Home</a></li>
+                    <li><a href="#about">About</a></li>
 
-                    @* Hiển thị Lịch trình nếu có dữ liệu *@
                     @if (Model.Schedules != null && Model.Schedules.Any())
                     {
-                        <li><a href="#schedule">Lịch trình</a></li>
+                        <li><a href="#schedule">Schedule</a></li>
                     }
 
-                    @* Hiển thị Diễn giả nếu có dữ liệu *@
                     @if (Model.Speakers != null && Model.Speakers.Any())
                     {
-                        <li><a href="#speakers">Diễn giả</a></li>
+                        <li><a href="#speakers">Speakers</a></li>
                     }
 
-                    @* Hiển thị Đối tác nếu có dữ liệu *@
                     @if (Model.Sponsors != null && Model.Sponsors.Any())
                     {
-                        <li><a href="#sponsors">Đối tác</a></li>
+                        <li><a href="#sponsors">Sponsors</a></li>
                     }
 
-                    <li><a href="#tickets">Vé tham dự</a></li>
+                    <li><a href="#tickets">Tickets</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
 
-            <a class="cta-btn" href="#tickets">Mua Vé Ngay</a>
+            <a class="cta-btn" href="#tickets">Get Tickets Now</a>
 
         </div>
     </header>
@@ -117,7 +121,7 @@
     <footer id="footer" class="footer dark-background">
         <div class="container">
             <h3 class="sitename">Eventus</h3>
-            <p>Nền tảng quản lý và tổ chức sự kiện chuyên nghiệp hàng đầu cho "@Model.Title".</p>
+            <p>The leading professional event management platform for "@Model.Title".</p>
             <div class="social-links d-flex justify-content-center mb-3">
                 <a href=""><i class="bi bi-twitter-x"></i></a>
                 <a href=""><i class="bi bi-facebook"></i></a>
@@ -133,7 +137,6 @@
     </footer>
 
     <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
     <div id="preloader"></div>
 
     <script src="~/Templates/KnightOne/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -144,9 +147,7 @@
     <script src="~/Templates/KnightOne/assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
     <script src="~/Templates/KnightOne/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
     <script src="~/Templates/KnightOne/assets/vendor/swiper/swiper-bundle.min.js"></script>
-
     <script src="~/Templates/KnightOne/assets/js/main.js"></script>
 
 </body>
-
 </html>

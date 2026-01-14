@@ -1,0 +1,211 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Event
+@{
+    ViewData["Title"] = "Create new event";
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+
+    // Initialize meta from ViewBag
+    var meta = ViewBag.TemplateMeta as Dictionary<string, string> ?? new Dictionary<string, string>();
+}
+
+<div class="mb-4" style="font-family: 'Arimo', sans-serif;">
+    <a asp-action="Index" class="text-decoration-none text-muted small">
+        <i class="bi bi-arrow-left me-1"></i> Back to list
+    </a>
+    <h2 class="fw-bold mt-2">Event & Landing Page setup</h2>
+</div>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" id="createEventForm" style="font-family: 'Arimo', sans-serif;">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="row g-4">
+        @* LEFT COLUMN: LANDING PAGE SECTIONS CONTENT *@
+        <div class="col-md-8">
+            <div id="templateSections" class="d-none">
+                <div class="card border-0 shadow-sm rounded-4 p-4 border-primary border-top border-4 mb-4">
+                    <h5 class="fw-bold mb-4 text-primary d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-magic me-2"></i>Landing Page content configuration</span>
+                        <span id="selectedTemplateName" class="badge bg-primary fs-6 fw-normal rounded-pill"></span>
+                    </h5>
+
+                    @* Section 1: Hero *@
+                    <div class="mb-4 p-3 bg-light rounded-3">
+                        <label class="form-label fw-bold text-dark"><i class="bi bi-star me-2"></i>Section 1: Hero Section (Headline)</label>
+                        <input name="TemplateMeta.HeroTitle" class="form-control border-0 shadow-none mb-2"
+                               value="@(meta.ContainsKey("HeroTitle") ? meta["HeroTitle"] : "")" placeholder="Main title on cover image..." />
+                        <input name="TemplateMeta.HeroSubtitle" class="form-control border-0 shadow-none"
+                               value="@(meta.ContainsKey("HeroSubtitle") ? meta["HeroSubtitle"] : "")" placeholder="Short description below title..." />
+                    </div>
+
+                    @* Section 2: About *@
+                    <div class="mb-4 p-3 bg-light rounded-3">
+                        <label class="form-label fw-bold text-dark"><i class="bi bi-info-circle me-2"></i>Section 2: About (Event introduction)</label>
+                        <textarea name="TemplateMeta.AboutContent" class="form-control border-0 shadow-none" rows="3"
+                                  placeholder="Briefly introduce why customers should join...">@(meta.ContainsKey("AboutContent") ? meta["AboutContent"] : "")</textarea>
+                    </div>
+
+                    @* Section 3: Schedule *@
+                    <div class="mb-4 p-3 bg-light rounded-3">
+                        <label class="form-label fw-bold text-dark"><i class="bi bi-calendar3 me-2"></i>Section 3: Schedule (Summary)</label>
+                        <textarea name="TemplateMeta.ScheduleBrief" class="form-control border-0 shadow-none" rows="3"
+                                  placeholder="Example: 08:00 Opening | 10:00 Discussion...">@(meta.ContainsKey("ScheduleBrief") ? meta["ScheduleBrief"] : "")</textarea>
+                    </div>
+
+                    @* Section 4: Speakers *@
+                    <div class="mb-4 p-3 bg-light rounded-3">
+                        <label class="form-label fw-bold text-dark"><i class="bi bi-person-badge me-2"></i>Section 4: Speakers (Guest list)</label>
+                        <input name="TemplateMeta.SpeakerList" class="form-control border-0 shadow-none"
+                               value="@(meta.ContainsKey("SpeakerList") ? meta["SpeakerList"] : "")" placeholder="Enter speakers or artists names (comma separated)..." />
+                    </div>
+
+                    @* Section 5: Sponsors & Media *@
+                    <div class="mb-4 p-3 bg-light rounded-3">
+                        <label class="form-label fw-bold text-dark"><i class="bi bi-trophy me-2"></i>Section 5: Sponsors & Media (Sponsors / Video)</label>
+                        <input name="TemplateMeta.SponsorInfo" class="form-control border-0 shadow-none mb-2"
+                               value="@(meta.ContainsKey("SponsorInfo") ? meta["SponsorInfo"] : "")" placeholder="Sponsor information or partner slogan..." />
+                        <input name="TemplateMeta.VideoYoutube" class="form-control border-0 shadow-none"
+                               value="@(meta.ContainsKey("VideoYoutube") ? meta["VideoYoutube"] : "")" placeholder="Youtube video link (if any)..." />
+                    </div>
+
+                    @* Section 6: Tickets CTA *@
+                    <div class="mb-0 p-3 bg-light rounded-3">
+                        <label class="form-label fw-bold text-dark"><i class="bi bi-ticket-perforated me-2"></i>Section 6: Tickets (Call to action)</label>
+                        <input name="TemplateMeta.TicketCTA" class="form-control border-0 shadow-none"
+                               value="@(meta.ContainsKey("TicketCTA") ? meta["TicketCTA"] : "")" placeholder="Example: Limited tickets available, register today!" />
+                    </div>
+                </div>
+            </div>
+
+            @* BASIC EVENT INFORMATION *@
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">System management information</h5>
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label fw-bold">Event name</label>
+                    <input asp-for="Title" class="form-control shadow-none border-2" placeholder="Enter event name..." />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold">Short description</label>
+                    <textarea asp-for="Description" class="form-control shadow-none border-2" rows="4"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="StartDate" class="form-label fw-bold">Start date</label>
+                        <input asp-for="StartDate" class="form-control shadow-none border-2" type="datetime-local" id="startDate" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EndDate" class="form-label fw-bold">End date</label>
+                        <input asp-for="EndDate" class="form-control shadow-none border-2" type="datetime-local" id="endDate" />
+                    </div>
+                </div>
+                <div class="mb-0">
+                    <label asp-for="Location" class="form-label fw-bold">Location</label>
+                    <input asp-for="Location" class="form-control shadow-none border-2" placeholder="Event address..." />
+                </div>
+            </div>
+        </div>
+
+        @* RIGHT COLUMN: ADDITIONAL SETTINGS & SAVE BUTTON *@
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 20px; z-index: 100;">
+                <div class="mb-4">
+                    <label asp-for="LandingPage" class="form-label fw-bold text-primary">1. Select Template</label>
+                    <select asp-for="LandingPage" id="templateSelector" asp-items="ViewBag.LandingPages" class="form-select shadow-none border-primary border-2">
+                        <option value="">-- Choose Template --</option>
+                    </select>
+                    <span asp-validation-for="LandingPage" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">2. Event cover image</label>
+                    <div class="image-upload-wrapper border-2 border-dashed rounded-4 p-3 text-center bg-light" style="border-style: dashed !important;">
+                        <img id="imgPreview" src="#" alt="Preview" class="img-fluid rounded-3 d-none mb-2" style="max-height: 180px; width: 100%; object-fit: cover;">
+                        <div id="uploadPlaceholder">
+                            <i class="bi bi-cloud-arrow-up fs-1 text-muted"></i>
+                            <p class="small text-muted mb-0">Upload 16:9 image</p>
+                        </div>
+                        <input type="file" name="imageFile" id="imageInput" class="form-control mt-2" accept="image/*" />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="CategoryId" class="form-label fw-bold">3. Category</label>
+                    <select asp-for="CategoryId" class="form-select border-2 shadow-none" asp-items="ViewBag.CategoryId">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                </div>
+
+                <hr class="my-4">
+
+                <button type="submit" class="btn btn-emerald w-100 py-3 fw-bold shadow-sm rounded-3" id="btnSubmit">
+                    <i class="bi bi-check-lg me-2"></i> SAVE EVENT
+                </button>
+                <p class="text-center small text-muted mt-3">Landing Page data will be updated automatically based on the selected Template.</p>
+            </div>
+        </div>
+    </div>
+</form>
+
+<style>
+    .btn-emerald {
+        background-color: #00786F;
+        color: white;
+        transition: all 0.3s;
+    }
+
+        .btn-emerald:hover {
+            background-color: #005F5A;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            function updateTemplateUI() {
+                var val = $("#templateSelector").val();
+                if (val) {
+                    $("#templateSections").removeClass("d-none");
+                    $("#selectedTemplateName").text($("#templateSelector option:selected").text());
+                } else {
+                    $("#templateSections").addClass("d-none");
+                }
+            }
+
+            $("#templateSelector").change(function () {
+                updateTemplateUI();
+            });
+
+            $("#imageInput").change(function () {
+                const file = this.files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function (e) {
+                        $("#imgPreview").attr("src", e.target.result).removeClass("d-none");
+                        $("#uploadPlaceholder").addClass("d-none");
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            $("#createEventForm").submit(function (e) {
+                var start = new Date($("#startDate").val());
+                var end = new Date($("#endDate").val());
+
+                if ($("#endDate").val() && end <= start) {
+                    alert("End date must occur after Start date!");
+                    e.preventDefault();
+                    return false;
+                }
+                $("#btnSubmit").html('<span class="spinner-border spinner-border-sm me-2"></span> Processing...');
+            });
+
+            updateTemplateUI();
+        });
+    </script>
+}

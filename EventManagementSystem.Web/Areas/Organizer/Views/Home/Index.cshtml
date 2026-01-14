@@ -1,47 +1,160 @@
 ﻿@{
-    ViewData["Title"] = "Organizer Home - Eventus";
+    ViewData["Title"] = "Comprehensive event management solution - Eventus";
     Layout = "_LayoutLanding";
 }
 
-<section class="hero-section text-white py-5" style="background-color: #00796b;">
-    <div class="container py-5">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">Host Amazing Events with <span class="text-info">Ease</span></h1>
-                <p class="lead mb-4">Join thousands of successful event organizers. Create, manage, and grow your events with our powerful platform.</p>
-                <div class="d-flex gap-3">
-                    <a href="#" class="btn btn-light btn-lg px-4 rounded-pill text-dark fw-bold">Get Started Free</a>
-                    <a href="#" class="btn btn-outline-light btn-lg px-4 rounded-pill">Sign In</a>
+<style>
+    body, h1, h2, h3, h4, h5, h6, p, span, a, li, button {
+        font-family: 'Arimo', sans-serif;
+    }
+
+    .hero-main {
+        background: linear-gradient(rgba(0, 77, 64, 0.85), rgba(0, 77, 64, 0.85)), url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        padding: 140px 0 100px;
+        color: white;
+        text-align: center;
+    }
+
+        .hero-main::after {
+            content: "";
+            position: absolute;
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: rgba(38, 198, 218, 0.15);
+            filter: blur(120px);
+            border-radius: 50%;
+        }
+
+    /* Solution Cards */
+    .solution-card {
+        border: none;
+        border-radius: 24px;
+        padding: 40px;
+        background: #fff;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: 1px solid #f0f0f0;
+        height: 100%;
+    }
+
+        .solution-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 30px 60px rgba(0, 77, 64, 0.08) !important;
+            border-color: #26c6da;
+        }
+
+    .icon-wrapper {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+        font-size: 1.8rem;
+    }
+
+    /* Stats Section */
+    .stat-box {
+        padding: 30px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+    }
+
+    /* Typography & Buttons */
+    .display-title {
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+    }
+
+    .btn-main {
+        background: #26c6da;
+        color: #004d40;
+        border: none;
+        padding: 16px 35px;
+        border-radius: 50px;
+        font-weight: 700;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-main:hover {
+            background: #fff !important;
+            transform: scale(1.05);
+            color: #004d40 !important;
+        }
+
+    .btn-outline-custom {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 14px 35px;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-outline-custom:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+            color: white;
+        }
+</style>
+
+<section class="hero-main">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7 text-center text-lg-start">
+                <span class="badge bg-info bg-opacity-25 text-info px-3 py-2 rounded-pill fw-bold mb-3" style="letter-spacing: 1px;">
+                    For professional organizers
+                </span>
+                <h1 class="display-title mb-4 fw-bold">
+                    Elevate your events with a <br>
+                    <span style="color: #26c6da;">comprehensive ecosystem</span> of solutions
+                </h1>
+                <p class="lead opacity-75 mb-5 px-lg-0 px-4" style="max-width: 600px;">
+                    Optimize operational workflows, boost ticket sales, and build world-class guest experiences on a single, unified platform.
+                </p>
+                <div class="d-flex flex-wrap justify-content-center justify-content-lg-start gap-3">
+                    <a href="/Organizer/Account/Register" class="btn btn-main fw-bold">
+                        Start for free <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                    <a href="/Organizer/Home/Events" class="btn btn-outline-custom fw-bold">
+                        Explore interface
+                    </a>
                 </div>
             </div>
-            <div class="col-lg-6 mt-5 mt-lg-0">
-                <div class="row g-3">
+
+            <div class="col-lg-5">
+                <div class="row g-4">
                     <div class="col-6">
-                        <div class="p-4 text-center rounded-4" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                            <i class="bi bi-calendar-check fs-1 mb-2"></i>
-                            <h3 class="fw-bold mb-0">2,500+</h3>
-                            <small>Events Created</small>
+                        <div class="stat-box mt-lg-5 text-center">
+                            <h2 class="fw-bold mb-1">500+</h2>
+                            <p class="small opacity-75 mb-0 text-uppercase">Trusted partners</p>
+                        </div>
+                        <div class="stat-box mt-4 text-center">
+                            <h2 class="fw-bold mb-1">98%</h2>
+                            <p class="small opacity-75 mb-0 text-uppercase">Satisfaction rate</p>
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="p-4 text-center rounded-4" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                            <i class="bi bi-people fs-1 mb-2"></i>
-                            <h3 class="fw-bold mb-0">50K+</h3>
-                            <small>Happy Attendees</small>
+                        <div class="stat-box text-center">
+                            <h2 class="fw-bold mb-1">1M+</h2>
+                            <p class="small opacity-75 mb-0 text-uppercase">Tickets issued</p>
                         </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="p-4 text-center rounded-4" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                            <i class="bi bi-graph-up-arrow fs-1 mb-2"></i>
-                            <h3 class="fw-bold mb-0">95%</h3>
-                            <small>Success Rate</small>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="p-4 text-center rounded-4" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                            <i class="bi bi-award fs-1 mb-2"></i>
-                            <h3 class="fw-bold mb-0">500+</h3>
-                            <small>Organizers</small>
+                        <div class="stat-box mt-4 text-center">
+                            <h2 class="fw-bold mb-1">24/7</h2>
+                            <p class="small opacity-75 mb-0 text-uppercase">Technical support</p>
                         </div>
                     </div>
                 </div>
@@ -50,27 +163,27 @@
     </div>
 </section>
 
-<section class="py-5 bg-white text-center">
+<section class="py-5" style="background: #fbfdfd;">
     <div class="container py-5">
-        <h2 class="fw-bold">Everything You Need to Succeed</h2>
-        <p class="text-muted mb-5">Powerful tools designed specifically for event organizers.</p>
+        <div class="text-center mb-5 pb-lg-4">
+            <h6 class="text-uppercase fw-bold text-teal mb-3" style="letter-spacing: 2px;">Core solutions</h6>
+            <h2 class="display-5 fw-bold">Why experts choose Eventus?</h2>
+        </div>
         <div class="row g-4">
-            @foreach (var feature in new[] { 
-                new { Icon = "bi-calendar-plus", Color = "info", Title = "Easy Event Creation", Desc = "Create and publish events in minutes with our intuitive interface. Add details, set pricing, and customize your event page." },
-                new { Icon = "bi-people", Color = "success", Title = "Attendee Management", Desc = "Track registrations, manage attendee lists, and communicate with your audience all in one place." },
-                new { Icon = "bi-bar-chart", Color = "primary", Title = "Analytics & Insights", Desc = "Get real-time analytics on ticket sales, revenue, and attendee demographics to optimize your events." },
-                new { Icon = "bi-shield-check", Color = "info", Title = "Secure Payments", Desc = "Accept payments safely with our secure payment processing. Multiple payment methods supported." },
-                new { Icon = "bi-lightning-charge", Color = "warning", Title = "Marketing Tools", Desc = "Promote your events with built-in marketing tools, email campaigns, and social media integration." },
-                new { Icon = "bi-headset", Color = "info", Title = "24/7 Support", Desc = "Get help whenever you need it with our dedicated support team available around the clock." }
-            })
+            @foreach (var item in new[]
+                        {
+                        new { Icon = "bi-ui-checks-grid", Title = "Premier interface design", Desc = "A diverse landing page ecosystem optimized for all devices to drive ticket purchasing behavior.", Color = "#00796b" },
+                        new { Icon = "bi-graph-up-arrow", Title = "Smart revenue management", Desc = "Real-time reporting systems help you monitor cash flow and campaign effectiveness anytime, anywhere.", Color = "#0d6efd" },
+                        new { Icon = "bi-qr-code-scan", Title = "High-speed check-in operations", Desc = "Modern QR scanning technology handles thousands of guests in minimal time, eliminating queues.", Color = "#198754" }
+                        })
             {
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm p-4 rounded-4 feature-card">
-                        <div class="icon-box mb-3 mx-auto rounded-3 bg-@feature.Color bg-opacity-10 text-@feature.Color d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                            <i class="bi @feature.Icon fs-3"></i>
+                <div class="col-lg-4">
+                    <div class="solution-card shadow-sm">
+                        <div class="icon-wrapper" style="background: @(item.Color)15; color: @item.Color;">
+                            <i class="@item.Icon"></i>
                         </div>
-                        <h5 class="fw-bold">@feature.Title</h5>
-                        <p class="text-muted small">@feature.Desc</p>
+                        <h4 class="fw-bold mb-3">@item.Title</h4>
+                        <p class="text-muted mb-0">@item.Desc</p>
                     </div>
                 </div>
             }
@@ -78,42 +191,40 @@
     </div>
 </section>
 
-<section class="py-5 bg-light text-center">
+<section class="py-5 bg-white overflow-hidden">
     <div class="container">
-        <h2 class="fw-bold">How It Works</h2>
-        <p class="text-muted mb-5">Get started in 3 simple steps</p>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="step-num bg-teal text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #00796b;">1</div>
-                <h5 class="fw-bold">Create Account</h5>
-                <p class="small text-muted">Sign up for free in less than 2 minutes. No credit card required.</p>
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1000&q=80"
+                     alt="Ecosystem" class="img-fluid rounded-5 shadow-lg">
             </div>
-            <div class="col-md-4">
-                <div class="step-num bg-teal text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #00796b;">2</div>
-                <h5 class="fw-bold">Create Your Event</h5>
-                <p class="small text-muted">Add event details, set ticket prices, and customize your event page.</p>
-            </div>
-            <div class="col-md-4">
-                <div class="step-num bg-teal text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #00796b;">3</div>
-                <h5 class="fw-bold">Sell Tickets</h5>
-                <p class="small text-muted">Publish your event and start selling tickets immediately.</p>
+            <div class="col-lg-6">
+                <h2 class="display-6 fw-bold mb-4">More than just a website, <br>it is a <span class="text-teal">brand experience</span></h2>
+                <p class="text-muted mb-4 lead">
+                    We don't just provide templates. We provide proven frameworks to tell your event's story in the most captivating way possible.
+                </p>
+                <ul class="list-unstyled mb-5">
+                    <li class="mb-3 d-flex align-items-center"><i class="bi bi-patch-check-fill text-teal me-3 fs-5"></i> <strong>Flexible customization</strong> tailored to your brand DNA.</li>
+                    <li class="mb-3 d-flex align-items-center"><i class="bi bi-patch-check-fill text-teal me-3 fs-5"></i> <strong>100% automated</strong> payment integration.</li>
+                    <li class="mb-3 d-flex align-items-center"><i class="bi bi-patch-check-fill text-teal me-3 fs-5"></i> <strong>Absolute data security</strong> for your guests.</li>
+                </ul>
+                <a href="/Organizer/Home/Events" class="btn btn-dark rounded-pill px-5 py-3 fw-bold">Explore interface ecosystem</a>
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-5 text-white text-center" style="background-color: #00695c;">
-    <div class="container py-4">
-        <h2 class="fw-bold">Ready to Host Your Next Event?</h2>
-        <p class="mb-4">Join our community of successful event organizers today.</p>
-        <a href="#" class="btn btn-light btn-lg px-5 rounded-pill fw-bold">Start For Free</a>
-        <p class="mt-3 small">Already have an account? <a href="#" class="text-info text-decoration-none">Sign in here</a></p>
+<section class="py-5">
+    <div class="container py-5">
+        <div class="p-5 rounded-5 text-center text-white shadow-lg"
+             style="background: linear-gradient(135deg, #004d40 0%, #00796b 100%);">
+            <h2 class="display-5 fw-bold mb-4">Ready to launch your next event?</h2>
+            <p class="lead mb-5 opacity-75">Join our community of over 500+ professional event organizers today.</p>
+            <div class="d-flex justify-content-center flex-wrap gap-3">
+                <a href="/Organizer/Account/Register" class="btn btn-main btn-lg px-5">Register account</a>
+                <a href="/Organizer/Home/Contact" class="btn btn-outline-custom btn-lg px-5">Contact consultation</a>
+            </div>
+            <p class="mt-4 small opacity-50 italic">No credit card required • Implementation support within 24 hours</p>
+        </div>
     </div>
 </section>
-
-
-<style>
-    .feature-card { transition: all 0.3s ease; }
-    .feature-card:hover { transform: translateY(-10px); }
-    .text-info { color: #26c6da !important; }
-</style>
