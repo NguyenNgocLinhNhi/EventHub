@@ -1,0 +1,63 @@
+﻿@model EventManagementSystem.Web.Models.Entities.Booking
+
+<div class="modal-header border-0 pb-0" style="font-family: 'Arimo', sans-serif;">
+    <h5 class="modal-title fw-bold">Order details #@Model.Id.ToString("D5")</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body p-4" style="font-family: 'Arimo', sans-serif;">
+    <div class="row mb-4">
+        <div class="col-sm-6">
+            <h6 class="text-muted small fw-bold text-uppercase">Customer</h6>
+            <p class="mb-0 fw-bold">@Model.CustomerName</p>
+            <p class="text-muted small">@Model.CustomerEmail</p>
+        </div>
+        <div class="col-sm-6 text-sm-end">
+            <h6 class="text-muted small fw-bold text-uppercase">Event</h6>
+            <p class="mb-0 fw-bold">@Model.Event?.Title</p>
+            <p class="text-muted small">@Model.BookingDate.ToString("dd/MM/yyyy HH:mm")</p>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="bg-light">
+                <tr>
+                    <th>Ticket type</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-end">Unit price</th>
+                    <th class="text-end">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detail in Model.BookingDetails)
+                {
+                    <tr>
+                        <td>@detail.TicketType?.Name</td>
+                        <td class="text-center">@detail.Quantity</td>
+                        <td class="text-end">@detail.UnitPrice.ToString("N0")đ</td>
+                        <td class="text-end fw-bold">@((detail.Quantity * detail.UnitPrice).ToString("N0"))đ</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-primary fw-bold">
+                    <td colspan="3" class="text-end">TOTAL AMOUNT</td>
+                    <td class="text-end">@Model.TotalAmount.ToString("N0")đ</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<div class="modal-footer border-0" style="font-family: 'Arimo', sans-serif;">
+    <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary rounded-3" onclick="window.print()">
+        <i class="bi bi-printer me-2"></i>Print invoice
+    </button>
+</div>
+
+<style>
+    /* Đảm bảo phông chữ được áp dụng cho toàn bộ modal */
+    .modal-content {
+        font-family: 'Arimo', sans-serif;
+    }
+</style>

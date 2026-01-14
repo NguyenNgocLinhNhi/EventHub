@@ -1,0 +1,108 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Event>
+@{
+    ViewData["Title"] = "Template usage List";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid p-4" style="font-family: 'Arimo', sans-serif;">
+    @* --- Navigation header --- *@
+    <div class="mb-4">
+        <a asp-action="Index" class="text-decoration-none small text-primary fw-bold">
+            <i class="bi bi-arrow-left me-1"></i> Back to Template gallery
+        </a>
+        <div class="d-flex justify-content-between align-items-end mt-2">
+            <div>
+                <h2 class="fw-bold mb-0 text-dark">Events using: <span class="text-primary">@ViewBag.TemplateName</span></h2>
+                <p class="text-muted small mb-0">List of all events applying interface code: <strong>#@ViewBag.TemplateId</strong></p>
+            </div>
+            <div class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
+                Total: @Model.Count() events
+            </div>
+        </div>
+    </div>
+
+    @* --- Event list table --- *@
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-muted small fw-bold text-uppercase">Event information</th>
+                        <th class="text-muted small fw-bold text-uppercase">Organizer</th>
+                        <th class="text-muted small fw-bold text-uppercase text-center">Start time</th>
+                        <th class="text-muted small fw-bold text-uppercase text-center">Status</th>
+                        <th class="text-end pe-4 text-muted small fw-bold text-uppercase">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted italic">
+                                <i class="bi bi-calendar-x fs-1 d-block mb-2 opacity-50"></i>
+                                No events have applied this interface template yet.
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var ev in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <img src="@(ev.ImageUrl ?? "/images/default-event.png")"
+                                         class="rounded-3 me-3 border" style="width: 55px; height: 55px; object-fit: cover;">
+                                    <div>
+                                        <div class="fw-bold text-dark">@ev.Title</div>
+                                        <small class="text-muted d-block mt-1">Id: #@ev.Id</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-500 text-dark">@ev.Organizer.FullName</div>
+                                <small class="text-muted">@ev.Organizer.Email</small>
+                            </td>
+                            <td class="text-center">
+                                <div class="small fw-bold text-dark">@ev.StartDate.ToString("dd/MM/yyyy")</div>
+                                <small class="text-muted">@ev.StartDate.ToString("HH:mm")</small>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge rounded-pill @(ev.IsActive ? "bg-success-light text-success" : "bg-warning-light text-warning")">
+                                    @(ev.IsActive ? "Running" : "Paused")
+                                </span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group gap-2">
+                                    <a asp-area="" asp-controller="Event" asp-action="Detail" asp-route-id="@ev.Id"
+                                       target="_blank" class="btn btn-sm btn-outline-info rounded-pill px-3 shadow-sm"
+                                       title="View landing page">
+                                        <i class="bi bi-eye-fill me-1"></i> View Landing
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-success-light {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .bg-warning-light {
+        background-color: #fff3e0;
+        color: #ef6c00;
+    }
+
+    .fw-500 {
+        font-weight: 500;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8faff;
+    }
+</style>

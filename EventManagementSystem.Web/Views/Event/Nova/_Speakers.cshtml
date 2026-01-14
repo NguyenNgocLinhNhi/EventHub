@@ -2,25 +2,70 @@
 
 @if (Model != null && Model.Any())
 {
+    <style>
+        /* Đồng bộ font chữ hệ thống với _LayoutNova, _Hero, _About và _Schedules */
+        #speakers,
+        #speakers h3,
+        #speakers h5,
+        #speakers p {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+        }
+
+        /* Tối ưu hiển thị thẻ diễn giả */
+        .speaker-card {
+            transition: all 0.3s ease;
+            border: 1px solid #eee !important;
+        }
+
+            .speaker-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+                border-color: #5864FF !important;
+            }
+
+            .speaker-card img {
+                border: 3px solid #f0f0f0;
+                transition: all 0.3s ease;
+            }
+
+            .speaker-card:hover img {
+                border-color: #5864FF;
+            }
+
+        .speaker-name {
+            color: #2e2e2e;
+            font-weight: 700;
+        }
+    </style>
+
     <section id="speakers" class="feature-section bg-light py-5">
         <div class="container">
             <div class="section-title text-center mb-60">
-                <h3>Diễn Giả</h3>
-                <p>Những chuyên gia đồng hành cùng sự kiện</p> [cite: 30]
+                @* Chuyển đổi tiêu đề và mô tả sang tiếng Anh *@
+                <h3 class="mb-2">Keynote Speakers</h3>
+                <p>Meet the experts leading the conversation</p>
             </div>
+
             <div class="row justify-content-center">
                 @foreach (var sp in Model)
                 {
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="speaker-card p-4 bg-white rounded shadow-sm text-center border">
-                            <img src="@(sp.ImageUrl ?? "/images/default-avatar.png")" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;" alt="@sp.Name" /> 
-                            <h5>@sp.Name</h5> [cite: 33]
-                            <p class="text-primary">@sp.JobTitle</p>
+                        <div class="speaker-card p-4 bg-white rounded shadow-sm text-center">
+                            <img src="@(sp.ImageUrl ?? "/images/default-avatar.png")"
+                                 class="rounded-circle mb-3"
+                                 style="width: 120px; height: 120px; object-fit: cover;"
+                                 alt="@sp.Name" />
+
+                            <h5 class="speaker-name">@sp.Name</h5>
+                            <p class="text-primary fw-bold">@sp.JobTitle</p>
+
                             @if (!string.IsNullOrEmpty(sp.SocialUrl))
                             {
-                                <a href="@sp.SocialUrl" target="_blank" class="text-info fs-4">
-                                    <i class="lni lni-linkedin-original"></i> [cite: 34]
-                                </a>
+                                <div class="mt-3">
+                                    <a href="@sp.SocialUrl" target="_blank" class="text-info fs-4">
+                                        <i class="lni lni-linkedin-original"></i>
+                                    </a>
+                                </div>
                             }
                         </div>
                     </div>

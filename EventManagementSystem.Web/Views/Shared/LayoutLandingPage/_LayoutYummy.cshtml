@@ -17,7 +17,7 @@
 
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     <link href="~/Templates/Yummy/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/Templates/Yummy/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -28,11 +28,23 @@
     <link href="~/Templates/Yummy/assets/css/main.css" rel="stylesheet">
 
     <style>
-        /* Custom CSS để fix lỗi hiển thị khi tích hợp */
+        /* Modern Font Synchronization */
+        :root {
+            --default-font: "Inter", system-ui, -apple-system, sans-serif;
+            --heading-font: "Plus Jakarta Sans", sans-serif;
+            --nav-font: "Inter", sans-serif;
+        }
+
         body {
+            font-family: var(--default-font);
             overflow-x: hidden;
         }
 
+        h1, h2, h3, h4, h5, h6, .sitename {
+            font-family: var(--heading-font);
+        }
+
+        /* Integration UI Fixes */
         .btn-home-back {
             position: fixed;
             top: 20px;
@@ -50,25 +62,26 @@
             text-decoration: none;
         }
 
-        .btn-home-back:hover {
-            background: #ce1212;
-            color: white;
-        }
+            .btn-home-back:hover {
+                background: #ce1212;
+                color: white;
+            }
 
-        /* Giới hạn độ dài tiêu đề sitename trên Navbar */
+        /* Navbar Sitename Limit */
         .header .logo h1 {
             max-width: 250px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             font-size: 1.5rem;
+            font-weight: 700;
         }
     </style>
 </head>
 
 <body class="index-page">
 
-    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Quay về trang chủ">
+    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Back to Home">
         <i class="bi bi-arrow-left"></i>
     </a>
 
@@ -82,39 +95,35 @@
 
             <nav id="navmenu" class="navmenu">
                 <ul>
-                    <li><a href="#hero" class="active">Trang chủ</a></li>
-                    <li><a href="#about">Giới thiệu</a></li>
-                    
-                    @* Chỉ hiển thị Lịch trình nếu có dữ liệu [cite: 75] *@
+                    <li><a href="#hero" class="active">Home</a></li>
+                    <li><a href="#about">About</a></li>
+
                     @if (Model.Schedules != null && Model.Schedules.Any())
                     {
-                        <li><a href="#schedule">Lịch trình</a></li>
+                        <li><a href="#schedule">Schedule</a></li>
                     }
 
-                    @* Chỉ hiển thị Khách mời/Diễn giả nếu có dữ liệu [cite: 57] *@
                     @if (Model.Speakers != null && Model.Speakers.Any())
                     {
-                        <li><a href="#speakers">Khách mời</a></li>
+                        <li><a href="#speakers">Speakers</a></li>
                     }
 
-                    @* Chỉ hiển thị Đối tác nếu có dữ liệu [cite: 67] *@
                     @if (Model.Sponsors != null && Model.Sponsors.Any())
                     {
-                        <li><a href="#sponsors">Đối tác</a></li>
+                        <li><a href="#sponsors">Sponsors</a></li>
                     }
 
-                    @* Chỉ hiển thị Vé tham dự nếu có dữ liệu [cite: 90] *@
                     @if (Model.TicketTypes != null && Model.TicketTypes.Any())
                     {
-                        <li><a href="#tickets">Vé tham dự</a></li>
+                        <li><a href="#tickets">Tickets</a></li>
                     }
 
-                    <li><a href="#contact">Liên hệ</a></li>
+                    
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
 
-            <a class="btn-getstarted" href="#tickets">Đặt vé</a>
+            <a class="btn-getstarted" href="#tickets">Book Now</a>
 
         </div>
     </header>
@@ -129,7 +138,7 @@
                 <div class="col-lg-4 col-md-6 d-flex">
                     <i class="bi bi-geo-alt icon"></i>
                     <div>
-                        <h4>Địa điểm</h4>
+                        <h4>Location</h4>
                         <p>@Model.Location</p>
                     </div>
                 </div>
@@ -137,15 +146,15 @@
                 <div class="col-lg-4 col-md-6 d-flex">
                     <i class="bi bi-clock icon"></i>
                     <div>
-                        <h4>Thời gian</h4>
+                        <h4>Date & Time</h4>
                         <p>
-                            <strong>Bắt đầu:</strong> <span>@Model.StartDate.ToString("dd/MM/yyyy HH:mm")</span>
+                            <strong>Starts:</strong> <span>@Model.StartDate.ToString("MMM dd, yyyy HH:mm")</span>
                         </p>
                     </div>
                 </div>
 
                 <div class="col-lg-4 col-md-6">
-                    <h4>Theo dõi chúng tôi</h4>
+                    <h4>Follow Us</h4>
                     <div class="social-links d-flex">
                         <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
                         <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
@@ -159,7 +168,7 @@
         <div class="container copyright text-center mt-4">
             <p>© <span>Copyright</span> <strong class="px-1 sitename">Eventus</strong> <span>All Rights Reserved</span></p>
             <div class="credits">
-                Hệ thống quản lý sự kiện chuyên nghiệp cho <strong>@Model.Title</strong>
+                Professional Event Management for <strong>@Model.Title</strong>
             </div>
         </div>
     </footer>
@@ -178,5 +187,4 @@
     <script src="~/Templates/Yummy/assets/js/main.js"></script>
 
 </body>
-
 </html>

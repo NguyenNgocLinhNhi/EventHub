@@ -1,26 +1,57 @@
 ﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+<style>
+    /* Đồng bộ font chữ hệ thống với _LayoutNova */
+    .hero-section-wrapper-5,
+    .hero-section-wrapper-5 h2,
+    .hero-section-wrapper-5 p,
+    .hero-section-wrapper-5 span,
+    .hero-section-wrapper-5 a {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    }
+
+    /* Tùy chỉnh màu sắc nút để khớp với yêu cầu về độ tương phản */
+    .hero-content-wrapper .button {
+        background-color: #5864FF;
+        color: #ffffff !important;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+        .hero-content-wrapper .button:hover {
+            background-color: #434ed9;
+            transform: translateY(-3px);
+        }
+</style>
+
 <section id="home" class="hero-section-wrapper-5">
     <div class="hero-section hero-style-5 img-bg" style="background-image: url('/Templates/Nova/assets/img/hero/hero-5/hero-bg.svg')">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="hero-content-wrapper">
+                        @* Hiển thị Category bằng tiếng Anh (mặc định là Event) *@
                         <span class="text-uppercase text-primary fw-bold mb-2 d-block">
-                            @(Model.Category?.Name ?? "Sự kiện") [cite: 19, 20]
+                            @(Model.Category?.Name ?? "Event")
                         </span>
-                        <h2 class="mb-30 wow fadeInUp" data-wow-delay=".2s">@Model.Title [cite: 21]</h2>
+
+                        <h2 class="mb-30 wow fadeInUp" data-wow-delay=".2s">@Model.Title</h2>
+
                         <p class="mb-30 wow fadeInUp" data-wow-delay=".4s">
                             <i class="lni lni-map-marker"></i> @Model.Location <br />
-                            <i class="lni lni-timer"></i> @Model.StartDate.ToString("HH:mm - dd/MM/yyyy") [cite: 22]
+                            @* Định dạng lại thời gian theo chuẩn tiếng Anh: HH:mm - MMM dd, yyyy *@
+                            <i class="lni lni-timer"></i> @Model.StartDate.ToString("HH:mm - MMMM dd, yyyy")
                         </p>
+
+                        @* Chuyển nút bấm sang tiếng Anh và điều hướng về phần Tickets (Pricing) *@
                         <a href="#pricing" class="button button-lg radius-50 wow fadeInUp" data-wow-delay=".6s">
-                            Đặt Vé Ngay <i class="lni lni-ticket"></i> [cite: 23]
+                            Book Tickets Now <i class="lni lni-ticket"></i>
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-6 align-self-end">
                     <div class="hero-image wow fadeInUp" data-wow-delay=".5s">
-                        <img src="@(Model.ImageUrl ?? "/Templates/Nova/assets/img/hero/hero-5/hero-img.svg")" class="img-fluid rounded shadow" alt="@Model.Title"> [cite: 25, 26]
+                        <img src="@(Model.ImageUrl ?? "/Templates/Nova/assets/img/hero/hero-5/hero-img.svg")" class="img-fluid rounded shadow" alt="@Model.Title">
                     </div>
                 </div>
             </div>

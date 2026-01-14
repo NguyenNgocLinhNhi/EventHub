@@ -1,0 +1,38 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Event>
+@{
+    ViewData["Title"] = "Approval List";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="container-fluid p-4">
+    <h3 class="fw-bold mb-4">Event Approval Queue</h3>
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <table class="table align-middle">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Event Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr id="row-@item.Id">
+                        <td class="ps-4">@item.Title</td>
+                        <td>
+                            <button onclick="approve(@item.Id)" class="btn btn-success btn-sm rounded-pill px-3">Duyệt</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function approve(id) {
+        if(confirm("Duyệt sự kiện này?")) {
+            $.post("/Admin/Event/ApproveEvent/" + id, function() {
+                $(`#row-${id}`).fadeOut();
+            });
+        }
+    }
+</script>

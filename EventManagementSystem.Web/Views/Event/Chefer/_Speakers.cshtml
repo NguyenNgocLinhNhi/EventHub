@@ -1,11 +1,26 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Speaker>
+
+<style>
+    /* Đồng bộ font: Oswald cho tiêu đề và Open Sans cho văn bản */
+    #speakers h1, #speakers h5, #speakers .section-title, #speakers h4 {
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+    }
+
+    #speakers p, #speakers .small {
+        font-family: 'Open Sans', sans-serif;
+    }
+</style>
+
 <div class="container-fluid p-5" id="speakers">
     <div class="mb-5 text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px; margin: auto;">
-        <h5 class="section-title text-primary">Đầu bếp bậc thầy</h5>
-        <h1 class="display-3 mb-0">Gặp gỡ các chuyên gia</h1>
+        @* Dịch sang tiếng Anh: Master Chefs / Meet Our Experts *@
+        <h5 class="section-title text-primary">Master Chefs</h5>
+        <h1 class="display-3 mb-0">Meet Our Experts</h1>
     </div>
     <div class="row g-5">
-        @foreach (var chef in Model) {
+        @foreach (var chef in Model)
+        {
             <div class="col-lg-4 col-md-6 wow fadeIn" data-wow-delay="0.1s">
                 <div class="team-item position-relative">
                     <div class="position-relative overflow-hidden rounded-circle rounded-bottom rounded-end">
@@ -14,6 +29,7 @@
                     <div class="position-absolute start-0 bottom-0 d-flex flex-column justify-content-center w-100 rounded-bottom text-center"
                          style="height: 100px; background: rgba(34, 36, 41, .9);">
                         <h5 class="text-light">@chef.Name</h5>
+                        @* Thông tin chức danh giữ nguyên từ dữ liệu nhưng font đã được đồng bộ *@
                         <p class="small text-uppercase text-secondary m-0">@chef.JobTitle</p>
                     </div>
                 </div>

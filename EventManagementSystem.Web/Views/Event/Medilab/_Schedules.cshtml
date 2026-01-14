@@ -1,9 +1,24 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Schedule>
+
+<style>
+    /* Synchronize Roboto font for the entire Schedule section */
+    #schedule,
+    #schedule h2,
+    #schedule h3,
+    #schedule h4,
+    #schedule p,
+    #schedule div,
+    #schedule small {
+        font-family: 'Roboto', sans-serif !important;
+    }
+</style>
+
 <section id="schedule" class="services section light-background">
     <div class="container section-title" data-aos="fade-up">
-        <h2>Lịch trình chi tiết</h2>
-        <p>Tiến trình các phiên thảo luận và hoạt động khoa học</p>
+        <h2>Detailed Schedule</h2>
+        <p>Timeline of discussion sessions and scientific activities</p>
     </div>
+
     <div class="container">
         <div class="row gy-4">
             @if (Model != null && Model.Any())
@@ -23,7 +38,7 @@
             }
             else
             {
-                <div class="col-12 text-center text-muted">Lịch trình đang được cập nhật...</div>
+                <div class="col-12 text-center text-muted">The schedule is currently being updated...</div>
             }
         </div>
     </div>

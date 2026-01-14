@@ -1,20 +1,22 @@
 ﻿@{
     ViewData["Title"] = "Our Services";
-    
     Layout = "_Layout";
 }
 
-<div class="container-fluid pb-5 bg-primary hero-header">
+@* Section 1: Hero Header - Đồng bộ font display-1 và text-dark từ About *@
+<div class="container-fluid pb-5 bg-primary hero-header mb-5">
     <div class="container py-5">
         <div class="row g-3 align-items-center">
             <div class="col-lg-6 text-center text-lg-start">
-                <h1 class="display-1 mb-0 animated slideInLeft">Services</h1>
+                <h1 class="display-1 mb-0 animated slideInLeft text-dark">Services</h1>
             </div>
             <div class="col-lg-6 animated slideInRight">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center justify-content-lg-end mb-0">
-                        <li class="breadcrumb-item"><a class="text-primary" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="breadcrumb-item text-secondary active" aria-current="page">Services</li>
+                        <li class="breadcrumb-item">
+                            <a class="text-muted" asp-controller="Home" asp-action="Index" style="text-decoration: none;">Home</a>
+                        </li>
+                        <li class="breadcrumb-item text-primary active" aria-current="page">Services</li>
                     </ol>
                 </nav>
             </div>
@@ -22,6 +24,7 @@
     </div>
 </div>
 
+@* Section 2: Services List - Đồng bộ font display-6 từ About *@
 <div class="container-xxl py-5">
     <div class="container">
         <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">

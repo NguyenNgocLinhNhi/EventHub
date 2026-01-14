@@ -17,7 +17,7 @@
 
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
 
     <link href="~/Templates/Medilab/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/Templates/Medilab/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -29,6 +29,11 @@
     <link href="~/Templates/Medilab/assets/css/main.css" rel="stylesheet">
 
     <style>
+        /* Unified font family for all elements */
+        body, h1, h2, h3, h4, h5, h6, .sitename, .navmenu, .cta-btn {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
         body {
             overflow-x: hidden;
         }
@@ -50,12 +55,12 @@
             text-decoration: none;
         }
 
-        .btn-home-back:hover {
-            background: #1977cc;
-            color: white;
-        }
+            .btn-home-back:hover {
+                background: #1977cc;
+                color: white;
+            }
 
-        /* Giới hạn độ dài tiêu đề sự kiện trên mobile */
+        /* Mobile title constraint */
         .sitename {
             max-width: 200px;
             overflow: hidden;
@@ -67,7 +72,7 @@
 
 <body class="index-page">
 
-    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Quay về trang chủ">
+    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn-home-back" title="Back to Home">
         <i class="bi bi-arrow-left"></i>
     </a>
 
@@ -94,32 +99,28 @@
 
                 <nav id="navmenu" class="navmenu">
                     <ul>
-                        <li><a href="#hero" class="active">Trang chủ</a></li>
-                        <li><a href="#about">Giới thiệu</a></li>
+                        <li><a href="#hero" class="active">Home</a></li>
+                        <li><a href="#about">About</a></li>
 
-                        @* Hiển thị Diễn giả/Bác sĩ nếu có dữ liệu *@
                         @if (Model.Speakers != null && Model.Speakers.Any())
                         {
-                            <li><a href="#speakers">Diễn giả</a></li>
+                            <li><a href="#speakers">Speakers</a></li>
                         }
 
-                        @* Hiển thị Lịch trình nếu có dữ liệu *@
                         @if (Model.Schedules != null && Model.Schedules.Any())
                         {
-                            <li><a href="#schedule">Lịch trình</a></li>
+                            <li><a href="#schedule">Schedule</a></li>
                         }
 
-                        @* Hiển thị Đối tác (Sponsors) nếu có dữ liệu - dùng ID gallery *@
                         @if (Model.Sponsors != null && Model.Sponsors.Any())
                         {
-                            <li><a href="#sponsors">Đối tác</a></li>
+                            <li><a href="#sponsors">Sponsors</a></li>
                         }
-
                     </ul>
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
 
-                <a class="cta-btn d-none d-sm-block" href="#tickets">Mua Vé Ngay</a>
+                <a class="cta-btn d-none d-sm-block" href="#tickets">Get Tickets</a>
             </div>
         </div>
     </header>
@@ -135,11 +136,11 @@
                     <a href="#hero" class="logo d-flex align-items-center">
                         <span class="sitename">Eventus - @Model.Title</span>
                     </a>
-                    <p>Hệ thống quản lý sự kiện chuyên nghiệp cho lĩnh vực @(Model.Category?.Name ?? "Y tế & Khoa học").</p>
+                    <p>Professional event management system for @(Model.Category?.Name ?? "Medical & Science") field.</p>
                 </div>
                 <div class="col-lg-6 col-md-12 text-md-end">
-                    <p><strong>Địa điểm:</strong> @Model.Location</p>
-                    <p><strong>Thời gian:</strong> @($"{Model.StartDate:dd/MM/yyyy}")</p>
+                    <p><strong>Location:</strong> @Model.Location</p>
+                    <p><strong>Time:</strong> @($"{Model.StartDate:MMMM dd, yyyy}")</p>
                 </div>
             </div>
         </div>

@@ -1,9 +1,18 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Speaker>
 
+<style>
+    /* Đồng bộ font Roboto cho toàn bộ section Speakers */
+    #speakers, #speakers h2, #speakers h4, #speakers p, #speakers span, #speakers div {
+        font-family: 'Roboto', sans-serif;
+    }
+</style>
+
 <section id="speakers" class="doctors section">
     <div class="container section-title" data-aos="fade-up">
-        <h2>Diễn giả & Chuyên gia</h2>
-        <p>Những người dẫn dắt các phiên thảo luận chuyên sâu trong hội nghị</p>
+        @* Chuyển "Diễn giả & Chuyên gia" -> "Speakers & Experts" *@
+        <h2>Speakers & Experts</h2>
+        @* Chuyển nội dung mô tả sang tiếng Anh *@
+        <p>Leading experts and speakers guiding in-depth discussion sessions at the conference</p>
     </div>
     <div class="container">
         <div class="row gy-4 justify-content-center">
@@ -14,9 +23,9 @@
                     <div class="col-lg-6" data-aos="fade-up">
                         <div class="team-member d-flex align-items-start border p-3 rounded shadow-sm bg-white">
                             <div class="pic">
-                                <img src="@(s.ImageUrl ?? "/Templates/Medinova/img/team-1.jpg")" 
-                                     class="img-fluid rounded-circle" 
-                                     style="width:150px; height:150px; object-fit:cover;" 
+                                <img src="@(s.ImageUrl ?? "/Templates/Medinova/img/team-1.jpg")"
+                                     class="img-fluid rounded-circle"
+                                     style="width:150px; height:150px; object-fit:cover;"
                                      alt="@s.Name">
                             </div>
                             <div class="member-info ps-4">
@@ -36,7 +45,8 @@
             }
             else
             {
-                <div class="col-12 text-center text-muted">Thông tin diễn giả đang được cập nhật.</div>
+                @* Chuyển thông báo cập nhật sang tiếng Anh *@
+                <div class="col-12 text-center text-muted">Speaker information is being updated.</div>
             }
         </div>
     </div>

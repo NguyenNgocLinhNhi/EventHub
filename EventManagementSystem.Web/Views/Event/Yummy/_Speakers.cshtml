@@ -1,12 +1,14 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Speaker>
+
 <section id="speakers" class="chefs section">
     <div class="container section-title" data-aos="fade-up">
-        <h2>Đội Ngũ</h2>
-        <p><span>Diễn Giả</span> <span class="description-title">Chuyên Nghiệp</span></p>
+        <h2 style="font-family: 'Plus Jakarta Sans', sans-serif;">Our Team</h2>
+        <p><span style="font-family: 'Inter', sans-serif;">Professional</span> <span class="description-title" style="font-family: 'Plus Jakarta Sans', sans-serif;">Speakers</span></p>
     </div>
+
     <div class="container">
         <div class="row gy-4 justify-content-center">
-            @if (Model != null)
+            @if (Model != null && Model.Any())
             {
                 foreach (var s in Model)
                 {
@@ -23,12 +25,18 @@
                                 </div>
                             </div>
                             <div class="member-info">
-                                <h4>@s.Name</h4>
-                                <span>@s.JobTitle</span>
+                                <h4 style="font-family: 'Plus Jakarta Sans', sans-serif;">@s.Name</h4>
+                                <span style="font-family: 'Inter', sans-serif;">@s.JobTitle</span>
                             </div>
                         </div>
                     </div>
                 }
+            }
+            else
+            {
+                <div class="col-12 text-center" data-aos="fade-up">
+                    <p style="font-family: 'Inter', sans-serif;">Speaker information is being updated...</p>
+                </div>
             }
         </div>
     </div>

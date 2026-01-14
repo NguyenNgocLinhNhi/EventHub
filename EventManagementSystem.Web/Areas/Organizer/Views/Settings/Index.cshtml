@@ -1,0 +1,174 @@
+﻿@model EventManagementSystem.Web.Models.Identity.ApplicationUser
+@{
+    ViewData["Title"] = "Account information";
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+}
+
+<div class="container-fluid py-4" style="font-family: 'Arimo', sans-serif;">
+    <h4 class="fw-bold mb-4 text-dark">Account information</h4>
+
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+        <div class="row g-4">
+            <div class="col-lg-4 border-end-lg">
+                <h5 class="fw-bold text-dark">Personal information</h5>
+                <p class="text-muted small">This information will be used to display on the organizer profile and system notifications.</p>
+                <div class="alert alert-info border-0 rounded-3 small">
+                    <i class="bi bi-info-circle me-2"></i> <strong>Note:</strong> Email is a unique identifier and cannot be changed.
+                </div>
+            </div>
+
+            <div class="col-lg-8 ps-lg-5">
+                <form id="settingsForm">
+                    @Html.AntiForgeryToken()
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Full name <span class="text-danger">*</span></label>
+                            <input type="text" name="FullName" class="form-control py-2" value="@Model.FullName" placeholder="Enter full name">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Email</label>
+                            <input type="email" class="form-control py-2 bg-light border-0" value="@Model.Email" readonly disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Phone number</label>
+                            <input type="text" name="PhoneNumber" class="form-control py-2 border-secondary-light" value="@Model.PhoneNumber">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted">Gender</label>
+                            <select name="Gender" class="form-select py-2 border-secondary-light">
+                                <option value="Nam" selected="@(Model.Gender == "Nam")">Male</option>
+                                <option value="Nữ" selected="@(Model.Gender == "Nữ")">Female</option>
+                                <option value="Khác" selected="@(Model.Gender == "Khác")">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted">Birth date</label>
+                            <input type="date" name="BirthDate" class="form-control py-2 border-secondary-light" value="@(Model.BirthDate?.ToString("yyyy-MM-dd"))">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-dark">Province / City</label>
+                            <select id="province" name="Region" class="form-select py-2 border-secondary-light"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-dark">District</label>
+                            <select id="district" name="District" class="form-select py-2 border-secondary-light"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-dark">Ward / Commune</label>
+                            <select id="ward" name="Ward" class="form-select py-2 border-secondary-light"></select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold text-muted">Specific address</label>
+                            <input type="text" name="Address" class="form-control py-2 border-secondary-light" value="@Model.Address" placeholder="House number, street name...">
+                        </div>
+                    </div>
+
+                    <div class="mt-5 d-flex justify-content-end gap-2">
+                        <button type="button" onclick="location.reload()" class="btn btn-light px-4 rounded-3">Cancel</button>
+                        <button type="submit" class="btn btn-primary px-5 rounded-3 shadow-sm">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: none;
+        }
+
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .btn-primary {
+        padding: 10px 30px;
+        font-weight: 500;
+    }
+
+    @@media (min-width: 992px) {
+        .border-end-lg {
+            border-right: 1px solid #dee2e6;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const host = "https://provinces.open-api.vn/api/";
+
+            const savedProvince = "@Html.Raw(Model.Region)";
+            const savedDistrict = "@Html.Raw(Model.District)";
+            const savedWard = "@Html.Raw(Model.Ward)";
+
+            // 1. Load Provinces
+            async function loadProvinces() {
+                const data = await $.getJSON(host + "?depth=1");
+                $("#province").append('<option value="">Select Province/City</option>');
+                $.each(data, function (index, item) {
+                    let isSelected = item.name === savedProvince ? "selected" : "";
+                    $("#province").append(`<option value="${item.name}" data-id="${item.code}" ${isSelected}>${item.name}</option>`);
+                });
+                if (savedProvince) $("#province").trigger("change");
+            }
+
+            // 2. Load Districts
+            $("#province").change(async function () {
+                const provinceId = $(this).find(':selected').data('id');
+                $("#district").html('<option value="">Select District</option>');
+                $("#ward").html('<option value="">Select Ward/Commune</option>');
+
+                if (provinceId) {
+                    const data = await $.getJSON(host + "p/" + provinceId + "?depth=2");
+                    $.each(data.districts, function (index, item) {
+                        let isSelected = item.name === savedDistrict ? "selected" : "";
+                        $("#district").append(`<option value="${item.name}" data-id="${item.code}" ${isSelected}>${item.name}</option>`);
+                    });
+                    if (savedDistrict) $("#district").trigger("change");
+                }
+            });
+
+            // 3. Load Wards
+            $("#district").change(async function () {
+                const districtId = $(this).find(':selected').data('id');
+                $("#ward").html('<option value="">Select Ward/Commune</option>');
+
+                if (districtId) {
+                    const data = await $.getJSON(host + "d/" + districtId + "?depth=2");
+                    $.each(data.wards, function (index, item) {
+                        let isSelected = item.name === savedWard ? "selected" : "";
+                        $("#ward").append(`<option value="${item.name}" ${isSelected}>${item.name}</option>`);
+                    });
+                }
+            });
+
+            loadProvinces();
+
+            // Handle Form Submission
+            $("#settingsForm").submit(function (e) {
+                e.preventDefault();
+                const btn = $(this).find("button[type='submit']");
+                btn.prop("disabled", true).text("Saving...");
+
+                $.post("/Organizer/Settings/UpdateProfile", $(this).serialize(), function (res) {
+                    btn.prop("disabled", false).text("Save changes");
+                    if (res.success) {
+                        alert(res.message);
+                    } else {
+                        alert("Error: " + res.message);
+                    }
+                });
+            });
+        });
+    </script>
+}

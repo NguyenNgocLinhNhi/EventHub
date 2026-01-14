@@ -1,10 +1,28 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Schedule>
 
+<style>
+    /* Đồng bộ font: Oswald cho tiêu đề và Open Sans cho văn bản */
+    #schedule h1, #schedule h4, #schedule .section-title {
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
+    }
+
+    #schedule p, #schedule small {
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    .section-title {
+        letter-spacing: 2px;
+        font-weight: 700;
+    }
+</style>
+
 <div class="container-fluid py-5 bg-dark" id="schedule">
     <div class="container">
         <div class="mb-5 text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px; margin: auto;">
-            <h5 class="section-title text-primary">Lịch trình</h5>
-            <h1 class="display-3 text-white mb-0">Tiến trình sự kiện</h1>
+            @* Dịch sang tiếng Anh: Schedule / Event Timeline *@
+            <h5 class="section-title text-primary">Schedule</h5>
+            <h1 class="display-3 text-white mb-0">Event Timeline</h1>
         </div>
         <div class="row g-4">
             @if (Model != null && Model.Any())
@@ -16,7 +34,8 @@
                         <div class="d-flex align-items-center p-4 rounded" style="background: #111111; border: 1px solid #333;">
                             <div class="flex-shrink-0 text-center border-end border-primary pe-4" style="width: 100px;">
                                 <h4 class="text-primary mb-0">@item.StartTime.ToString("HH:mm")</h4>
-                                <small class="text-secondary">Đến @item.EndTime.ToString("HH:mm")</small>
+                                @* Dịch sang tiếng Anh: To *@
+                                <small class="text-secondary">To @item.EndTime.ToString("HH:mm")</small>
                             </div>
                             <div class="ms-4">
                                 <h4 class="text-white mb-2">@item.Title</h4>
@@ -35,7 +54,8 @@
             else
             {
                 <div class="col-12 text-center text-secondary py-5">
-                    <p class="fs-4 italic">Lịch trình ẩm thực đang được hoàn thiện...</p>
+                    @* Thông báo tiếng Anh khi trống lịch trình *@
+                    <p class="fs-4 italic">Culinary schedule is being finalized...</p>
                 </div>
             }
         </div>

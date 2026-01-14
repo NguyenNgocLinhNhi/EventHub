@@ -26,7 +26,7 @@ namespace EventManagementSystem.Web.Models.Entities
         public int EventId { get; set; }
         [ForeignKey("EventId")]
         public virtual Event Event { get; set; } = null!;
-
+        public string? PaymentMethod { get; set; }
         public string? UserId { get; set; }
         public virtual ApplicationUser? User { get; set; }
 
@@ -35,6 +35,10 @@ namespace EventManagementSystem.Web.Models.Entities
         [Required]
         public string CustomerEmail { get; set; } = null!;
         public string? PhoneNumber { get; set; }
+
+        public bool IsCheckedIn { get; set; } = false;
+        public DateTime? CheckedInAt { get; set; }
+
         public virtual ICollection<BookingDetail> BookingDetails { get; set; } = new List<BookingDetail>();
     }
 }

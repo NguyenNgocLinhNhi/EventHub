@@ -1,0 +1,181 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Booking>
+@{
+    ViewData["Title"] = "Ticket management";
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+
+    var totalTickets = Model.Sum(b => b.BookingDetails?.Sum(d => d.Quantity) ?? 0);
+    var confirmed = Model.Count(b => b.Status == "Confirmed");
+    var pending = Model.Count(b => b.Status == "Pending");
+    var cancelled = Model.Count(b => b.Status == "Cancelled");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4" style="font-family: 'Arimo', sans-serif;">
+    <h2 class="fw-bold mb-0">Ticket management</h2>
+</div>
+
+<div class="row g-3 mb-4" style="font-family: 'Arimo', sans-serif;">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 rounded-4 text-center">
+            <div class="text-muted small fw-bold">Total Tickets</div>
+            <h3 class="fw-bold text-primary mb-0">@totalTickets.ToString("N0")</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 rounded-4 text-center">
+            <div class="text-muted small fw-bold">Confirmed</div>
+            <h3 class="fw-bold text-success mb-0">@confirmed</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 rounded-4 text-center">
+            <div class="text-muted small fw-bold">Pending</div>
+            <h3 class="fw-bold text-warning mb-0">@pending</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm p-3 rounded-4 text-center">
+            <div class="text-muted small fw-bold">Cancelled</div>
+            <h3 class="fw-bold text-danger mb-0">@cancelled</h3>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm p-3 mb-4 rounded-4" style="font-family: 'Arimo', sans-serif;">
+    <div class="row g-3">
+        <div class="col-md-7">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
+                <input type="text" id="ticketSearch" class="form-control border-start-0 shadow-none" placeholder="Search by Ticket ID, Customer Name, Email...">
+            </div>
+        </div>
+        <div class="col-md-5 d-flex gap-2">
+            <button class="btn btn-light border w-100 rounded-3"><i class="bi bi-filter me-2"></i>Filter</button>
+            <button class="btn btn-light border w-100 rounded-3"><i class="bi bi-download me-2"></i>Export Excel</button>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="font-family: 'Arimo', sans-serif;">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light text-muted small fw-bold">
+            <tr>
+                <th class="ps-4 py-3">Ticket ID</th>
+                <th>Customer</th>
+                <th>Event</th>
+                <th>Ticket type</th>
+                <th class="text-center">Quantity</th>
+                <th>Total Amount</th>
+                <th>Purchase Date</th>
+                <th class="text-end pe-4">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model)
+            {
+                <tr class="ticket-row">
+                    <td class="ps-4 fw-bold text-primary">#@booking.Id.ToString("D5")</td>
+                    <td>
+                        <div class="fw-bold">@booking.CustomerName</div>
+                        <div class="small text-muted">@booking.CustomerEmail</div>
+                    </td>
+                    <td class="small fw-medium">@booking.Event?.Title</td>
+                    <td>
+                        @foreach (var detail in booking.BookingDetails)
+                        {
+                            <span class="badge bg-info-light text-info rounded-pill px-2 small mb-1">@detail.TicketType?.Name</span>
+                        }
+                    </td>
+                    <td class="text-center fw-bold">@booking.BookingDetails.Sum(d => d.Quantity)</td>
+                    <td class="fw-bold text-success">@booking.TotalAmount.ToString("N0")đ</td>
+                    <td class="small">@booking.BookingDate.ToString("dd/MM/yyyy")</td>
+                    <td class="text-end pe-4">
+                        <div class="btn-group border rounded-3 overflow-hidden shadow-sm">
+                            <button type="button" class="btn btn-sm btn-white border-end btn-view-details" data-id="@booking.Id" title="View Details">
+                                <i class="bi bi-eye text-primary"></i>
+                            </button>
+                            <a href="#" class="btn btn-sm btn-white" title="Print Ticket"><i class="bi bi-printer text-dark"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true" style="font-family: 'Arimo', sans-serif;">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div id="detailsContent">
+                <div class="p-5 text-center">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted">Loading Details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Arimo', sans-serif;
+    }
+
+    .bg-info-light {
+        background-color: #e0f7fa;
+        color: #00bcd4;
+    }
+
+    .btn-white {
+        background: white;
+        border: none;
+        padding: 0.5rem 0.75rem;
+    }
+
+        .btn-white:hover {
+            background: #f8f9fa;
+        }
+
+    .modal-content {
+        overflow: hidden;
+    }
+
+    .ticket-row {
+        transition: background 0.2s;
+    }
+
+        .ticket-row:hover {
+            background-color: #fbfcfe !important;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Search Tickets
+            $("#ticketSearch").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $(".ticket-row").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            // Load Ticket Details into Modal
+            $(".btn-view-details").click(function () {
+                var id = $(this).data("id");
+
+                // Show modal
+                $("#detailsModal").modal("show");
+
+                // Reset content and show loading
+                $("#detailsContent").html('<div class="p-5 text-center"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Loading Details...</p></div>');
+
+                // AJAX call to Controller
+                $.get("/Organizer/Ticket/Details/" + id, function (data) {
+                    $("#detailsContent").html(data);
+                }).fail(function() {
+                    $("#detailsContent").html('<div class="p-4 text-center text-danger">Unable to load Data. Please try again later.</div>');
+                });
+            });
+        });
+    </script>
+}

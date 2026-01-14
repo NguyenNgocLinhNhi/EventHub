@@ -1,9 +1,18 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.TicketType>
 
+<style>
+    /* Đồng bộ font Roboto cho toàn bộ section Tickets */
+    #tickets, #tickets h1, #tickets h4, #tickets h5, #tickets li, #tickets a {
+        font-family: 'Roboto', sans-serif;
+    }
+</style>
+
 <section id="tickets" class="section py-5">
     <div class="container section-title text-center mb-5" data-aos="fade-up">
-        <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Vé tham dự</h5>
-        <h1 class="display-4">Đăng ký tham gia ngay</h1>
+        @* Chuyển "Vé tham dự" -> "Tickets" *@
+        <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Tickets</h5>
+        @* Chuyển "Đăng ký tham gia ngay" -> "Register Now" *@
+        <h1 class="display-4">Register Now</h1>
     </div>
     <div class="container">
         <div class="row gy-4 justify-content-center">
@@ -21,13 +30,15 @@
                                     @ticket.Price.ToString("N0") <small class="text-muted fw-light" style="font-size: 1rem;">VNĐ</small>
                                 </h1>
                                 <ul class="list-unstyled mt-3 mb-4 text-start ms-4">
-                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Còn lại: @ticket.Quantity</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Check-in ưu tiên</li>
+                                    @* Chuyển "Còn lại" -> "Remaining" *@
+                                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Remaining: @ticket.Quantity</li>
+                                    @* Chuyển "Check-in ưu tiên" -> "Priority Check-in" *@
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Priority Check-in</li>
                                 </ul>
                                 <div class="mt-auto">
-                                     @* Nút đặt vé *@
+                                    @* Chuyển "ĐẶT VÉ NGAY" -> "BOOK NOW" *@
                                     <a href="@Url.Action("BookingProcess", "Booking", new { id = ticket.EventId })" class="btn btn-primary w-100 py-3">
-                                        <i class="fa fa-shopping-cart me-2"></i>ĐẶT VÉ NGAY
+                                        <i class="fa fa-shopping-cart me-2"></i>BOOK NOW
                                     </a>
                                 </div>
                             </div>

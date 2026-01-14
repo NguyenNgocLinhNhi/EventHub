@@ -1,0 +1,85 @@
+﻿@model List<EventManagementSystem.Web.Areas.Organizer.Controllers.EventController.LandingPageTemplateEntity>
+@{
+    ViewData["Title"] = "Landing Page gallery";
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+}
+
+<div class="mb-4" style="font-family: 'Arimo', sans-serif;">
+    <h2 class="fw-bold mb-0">Landing Page gallery</h2>
+    <p class="text-muted">Choose the most suitable interface for your Event.</p>
+</div>
+
+<div class="row g-4" style="font-family: 'Arimo', sans-serif;">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 template-card">
+                <div class="position-relative">
+                    <img src="@item.ImageUrl" class="card-img-top" style="height: 200px; object-fit: cover;" alt="@item.Name">
+                    <div class="template-overlay d-flex align-items-center justify-content-center">
+                        <a href="~/Templates/@item.Id/index.html" target="_blank" class="btn btn-light rounded-pill px-4 fw-bold">
+                            View Demo
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <h5 class="fw-bold">@item.Name</h5>
+                    <p class="text-muted small flex-grow-1">@item.Description</p>
+
+                    <form asp-action="SelectTemplate" method="post">
+                        <input type="hidden" name="eventId" value="@ViewBag.EventId" />
+                        <input type="hidden" name="templateId" value="@item.Id" />
+                        <div class="d-grid mt-3">
+                            <a asp-action="Create" asp-route-templateId="@item.Id" class="btn btn-emerald rounded-3 py-2 fw-bold shadow-sm text-decoration-none text-center">
+                                <i class="bi bi-check2-circle me-2"></i>Use this Template
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .btn-emerald {
+        background-color: #00786F;
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+        .btn-emerald:hover {
+            background-color: #005d56;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .template-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .template-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+        }
+
+    .template-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 120, 111, 0.6);
+        opacity: 0;
+        transition: 0.3s;
+    }
+
+    .template-card:hover .template-overlay {
+        opacity: 1;
+    }
+
+    .card-body h5 {
+        color: #333;
+    }
+</style>

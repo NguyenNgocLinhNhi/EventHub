@@ -5,31 +5,31 @@
     Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
 }
 
-<div class="container-fluid p-4 bg-light">
+<div class="container-fluid p-4 bg-light" style="font-family: 'Arimo', sans-serif;">
     <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
-            <h2 class="fw-bold mb-0">Tổng quan</h2>
-            <p class="text-muted">Chào mừng trở lại, @(User.Identity?.Name ?? "Đối tác")</p>
+            <h2 class="fw-bold mb-0">Dashboard</h2>
+            <p class="text-muted">Welcome back, @(User.Identity?.Name ?? "Partner")</p>
         </div>
         <div class="d-flex gap-3 bg-white p-2 rounded-3 shadow-sm">
             <div class="px-2 text-center border-end">
-                <small class="text-muted d-block">Lượt xem</small>
+                <small class="text-muted d-block">Views</small>
                 <span class="fw-bold text-primary">@Model.TotalViews.ToString("N0")</span>
             </div>
             <div class="px-2 text-center">
-                <small class="text-muted d-block">Doanh thu</small>
+                <small class="text-muted d-block">Revenue</small>
                 <span class="fw-bold text-purple">@Model.TotalRevenue.ToString("N0") đ</span>
             </div>
         </div>
     </div>
 
     <div class="row mb-4">
-        @foreach (var stat in new[] { 
-            new { Title = "Tổng sự kiện", Value = Model.TotalEvents.ToString(), Color = "primary", Icon = "bi-calendar", Growth = "+12%" },
-            new { Title = "Vé đã bán", Value = Model.TotalTickets.ToString("N0"), Color = "success", Icon = "bi-ticket", Growth = "+23%" },
-            new { Title = "Doanh thu", Value = Model.TotalRevenue.ToString("N0") + " đ", Color = "purple", Icon = "bi-currency-dollar", Growth = "+18%" },
-            new { Title = "Khách hàng", Value = Model.TotalCustomers.ToString(), Color = "orange", Icon = "bi-people", Growth = "-3%" }
-        })
+        @foreach (var stat in new[] {
+                new { Title = "Total events", Value = Model.TotalEvents.ToString(), Color = "primary", Icon = "bi-calendar", Growth = "+12%" },
+                new { Title = "Tickets sold", Value = Model.TotalTickets.ToString("N0"), Color = "success", Icon = "bi-ticket", Growth = "+23%" },
+                new { Title = "Revenue", Value = Model.TotalRevenue.ToString("N0") + " đ", Color = "purple", Icon = "bi-currency-dollar", Growth = "+18%" },
+                new { Title = "Customers", Value = Model.TotalCustomers.ToString(), Color = "orange", Icon = "bi-people", Growth = "-3%" }
+                })
         {
             <div class="col-md-3">
                 <div class="card border-0 shadow-sm p-3 h-100 stat-card" style="border-radius: 20px;">
@@ -52,32 +52,29 @@
         <div class="col-md-8">
             <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 20px;">
                 <div class="d-flex justify-content-between mb-4">
-                    <h5 class="fw-bold">Sự kiện Gần Đây</h5>
-                    <a href="#" class="text-primary text-decoration-none small">Xem tất cả →</a>
+                    <h5 class="fw-bold">Recent events</h5>
+                    <a asp-area="Organizer" asp-controller="Event" asp-action="Index" class="text-primary text-decoration-none small hover-primary">View all</a>
                 </div>
-                
+
                 @if (!Model.RecentEvents.Any())
                 {
-                    <p class="text-center text-muted py-5">Chưa có sự kiện nào được tạo.</p>
+                    <p class="text-center text-muted py-5">No events have been created yet.</p>
                 }
                 else
                 {
                     @foreach (var ev in Model.RecentEvents)
                     {
-                        // Lấy tổng số vé đã bán thành công cho sự kiện này
                         var sold = ev.Bookings?
-                            .Where(b => b.Status == "Confirmed" || b.Status == "Success")
-                            .SelectMany(b => b.BookingDetails)
-                            .Sum(d => d.Quantity) ?? 0;
+                        .Where(b => b.Status == "Confirmed" || b.Status == "Success")
+                        .SelectMany(b => b.BookingDetails)
+                        .Sum(d => d.Quantity) ?? 0;
 
-                        // Lấy tổng kho vé (Capacity) = Vé còn lại + Vé đã bán
                         var currentStock = ev.TicketTypes?.Sum(t => t.Quantity) ?? 0;
                         var totalCapacity = currentStock + sold;
-                        
                         var percentage = totalCapacity > 0 ? (sold * 100) / totalCapacity : 0;
 
                         <div class="d-flex align-items-center mb-3 p-3 border rounded-4 bg-white shadow-sm transition-hover">
-                            <img src="@(string.IsNullOrEmpty(ev.ImageUrl) ? "/images/event-default.jpg" : ev.ImageUrl)" 
+                            <img src="@(string.IsNullOrEmpty(ev.ImageUrl) ? "/images/event-default.jpg" : ev.ImageUrl)"
                                  class="rounded-3 me-3" style="width: 70px; height: 70px; object-fit: cover;" />
                             <div class="flex-grow-1">
                                 <div class="d-flex justify-content-between align-items-center">
@@ -87,13 +84,13 @@
                                     </span>
                                 </div>
                                 <small class="text-muted">@ev.StartDate.ToString("dd/MM/yyyy HH:mm")</small>
-                                
+
                                 <div class="progress mt-2" style="height: 10px; border-radius: 10px;">
-                                    <div class="progress-bar" role="progressbar" style="width: @(percentage)%;" 
+                                    <div class="progress-bar" role="progressbar" style="width: @(percentage)%;"
                                          aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-1">
-                                    <small class="text-muted small">@sold / @totalCapacity vé đã bán</small>
+                                    <small class="text-muted small">@sold / @totalCapacity tickets sold</small>
                                     <small class="text-muted small fw-bold">@percentage%</small>
                                 </div>
                             </div>
@@ -105,11 +102,11 @@
 
         <div class="col-md-4">
             <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 20px;">
-                <h5 class="fw-bold mb-4">Giao dịch Gần Đây</h5>
-                
+                <h5 class="fw-bold mb-4">Recent transactions</h5>
+
                 @if (!Model.RecentBookings.Any())
                 {
-                    <p class="text-center text-muted py-5">Chưa có giao dịch phát sinh.</p>
+                    <p class="text-center text-muted py-5">No transactions found.</p>
                 }
                 else
                 {
@@ -125,7 +122,7 @@
                                     <span class="text-success small fw-bold">+@booking.TotalAmount.ToString("N0")đ</span>
                                 </div>
                                 <small class="text-muted text-truncate d-block" style="max-width: 150px;">
-                                    @(booking.Event?.Title ?? "Sự kiện")
+                                    @(booking.Event?.Title ?? "Event")
                                 </small>
                             </div>
                         </div>
@@ -140,25 +137,38 @@
     .stat-card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
     .transition-hover:hover {
-        border-color: #4facfe !important;
-        background-color: #f0faff !important;
+        border-color: #00786F !important;
+        background-color: #f0faf9 !important;
     }
+
     .hover-shadow:hover {
         background-color: #f8f9fa;
     }
+
     .transition {
         transition: all 0.2s ease-in-out;
     }
+
     .progress {
         background-color: #eaedf2;
     }
+
     .progress-bar {
-        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        background: linear-gradient(90deg, #00786F 0%, #00bfa5 100%);
     }
-    .text-purple { color: #8e44ad; }
+
+    .text-purple {
+        color: #8e44ad;
+    }
+
+    .text-primary {
+        color: #00786F !important;
+    }
 </style>

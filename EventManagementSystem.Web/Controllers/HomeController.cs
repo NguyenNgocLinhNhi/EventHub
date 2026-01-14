@@ -1,4 +1,4 @@
-using EventManagementSystem.Web.Data;
+﻿using EventManagementSystem.Web.Data;
 using EventManagementSystem.Web.Models;
 using EventManagementSystem.Web.Models.Entities;
 using EventManagementSystem.Web.ViewModels;
@@ -53,44 +53,62 @@ namespace EventManagementSystem.Web.Controllers
         }
 
         // =========================================================================
-        // H�M EVENTS: X? l� l?c danh s�ch s? ki?n
+        // HÀM EVENTS: X? lý l?c danh sách s? ki?n
         // =========================================================================
         public async Task<IActionResult> Events(int? categoryId, string searchString)
         {
-            // 1. Kh?i t?o Query l?y s? ki?n v� bao g?m d? li?u Category
+            // 1. Khởi tạo Query lấy sự kiện và bao gồm dữ liệu Category
             var eventsQuery = _context.Events
                 .Include(e => e.Category)
+                .Where(e => e.IsActive) // Chỉ lấy các sự kiện đang hoạt động
                 .AsQueryable();
 
-            // 2. LOGIC: L?c theo CategoryId (D�nh cho c�c n�t Category/Topic)
+            // 2. LOGIC: Lọc theo CategoryId (Dành cho các nút Category cụ thể)
             if (categoryId.HasValue)
             {
                 eventsQuery = eventsQuery.Where(e => e.CategoryId == categoryId.Value);
 
-                // L?y t�n danh m?c ?? hi?n th? l�n ti�u ?? trang (Breadcrumb/Header)
                 var selectedCat = await _context.Categories.FindAsync(categoryId);
                 ViewBag.CategoryName = selectedCat?.Name;
                 ViewBag.CurrentCategoryId = categoryId;
             }
 
-            // 3. LOGIC: L?c theo t? kh�a t�m ki?m (D�nh cho thanh Search)
+            // 3. LOGIC: Lọc theo từ khóa tìm kiếm (Mapping Anh-Việt)
             if (!string.IsNullOrEmpty(searchString))
             {
-                // T�m ki?m theo Ti�u ?? s? ki?n, V? tr� HO?C T�n danh m?c (Topic)
-                eventsQuery = eventsQuery.Where(e =>
-                    e.Title.Contains(searchString) ||
-                    e.Location.Contains(searchString) ||
-                    e.Category.Name.Contains(searchString));
-
                 ViewBag.CurrentFilter = searchString;
 
-                // N?u l?c theo t�n Topic tr�n trang ch?, c?p nh?t ti�u ?? hi?n th?
+                // Chuyển searchString về chữ thường để so sánh
+                string lowerSearch = searchString.ToLower();
+
+                // Ánh xạ từ khóa tiếng Anh từ URL sang cụm từ tiếng Việt tương ứng trong SeedData
+                string dbSearchTerm = lowerSearch switch
+                {
+                    "technology" => "Công nghệ",
+                    "music" => "Âm nhạc",
+                    "food" => "Ẩm thực",
+                    "education" => "Giáo dục",
+                    "business" => "Kinh doanh",
+                    "health" => "Y học",
+                    _ => searchString // Giữ nguyên nếu không nằm trong danh sách mapping
+                };
+
+                // Tìm kiếm theo Tiêu đề, Vị trí HOẶC Tên danh mục (sử dụng từ khóa đã ánh xạ)
+                eventsQuery = eventsQuery.Where(e =>
+                    e.Title.Contains(dbSearchTerm) ||
+                    e.Location.Contains(dbSearchTerm) ||
+                    e.Category.Name.Contains(dbSearchTerm) ||
+                    e.Title.Contains(searchString) || // Vẫn cho phép tìm bằng từ gốc (ví dụ tìm tên sự kiện "Tech Summit")
+                    e.Category.Name.Contains(searchString));
+
+                // Cập nhật tiêu đề hiển thị trên giao diện cho đẹp
                 if (string.IsNullOrEmpty(ViewBag.CategoryName))
                 {
                     ViewBag.CategoryName = searchString;
                 }
             }
 
+            // 4. Sắp xếp và thực thi truy vấn
             var events = await eventsQuery
                 .OrderByDescending(e => e.StartDate)
                 .ToListAsync();
@@ -119,9 +137,23 @@ namespace EventManagementSystem.Web.Controllers
             return View(categories);
         }
 
+        [HttpGet]
         public IActionResult Contact()
         {
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Contact(ContactFormModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                TempData["SuccessMessage"] = "Your message has been sent successfully!";
+                return RedirectToAction("Contact");
+            }
+
+            return View(model);
         }
     }
 }

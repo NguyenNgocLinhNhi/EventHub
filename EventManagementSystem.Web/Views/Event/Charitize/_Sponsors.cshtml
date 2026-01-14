@@ -3,11 +3,13 @@
 <div class="container-fluid py-5" id="sponsors">
     <div class="container">
         <div class="text-center mx-auto wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px;">
-            <p class="section-title bg-white text-center text-primary px-3">Đối tác</p>
-            <h1 class="display-6 mb-5">Đơn vị đồng hành & Tài trợ</h1>
+            @* .section-title will use Josefin Sans from Layout *@
+            <p class="section-title bg-white text-center text-primary px-3">Sponsors</p>
+            @* .display-6 will use Josefin Sans from Layout *@
+            <h1 class="display-6 mb-5">Our Partners & Sponsors</h1>
         </div>
-        
-        @* Phân nhóm theo hạng tài trợ (Kim cương, Vàng, Bạc...) *@
+
+        @* Group sponsors by rank (Diamond, Gold, Silver...) *@
         @{
             var groupedSponsors = Model.GroupBy(s => s.Rank).OrderBy(g => g.Key);
         }
@@ -15,7 +17,8 @@
         @foreach (var group in groupedSponsors)
         {
             <div class="mb-5 text-center">
-                <h4 class="text-uppercase text-secondary mb-4">Hạng @group.Key</h4>
+                @* h4 will use Josefin Sans from Layout *@
+                <h4 class="text-uppercase text-secondary mb-4">@group.Key Rank</h4>
                 <div class="row g-4 justify-content-center">
                     @foreach (var sponsor in group)
                     {

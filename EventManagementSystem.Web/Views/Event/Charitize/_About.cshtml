@@ -5,45 +5,51 @@
         <div class="row g-5 align-items-center">
             <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                 <div class="about-img">
-                    @* Nếu Model.ImageUrl null thì dùng ảnh mặc định của template *@
+                    @* Use default image if Model.ImageUrl is null *@
                     <img class="img-fluid w-100" src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/Templates/Charitize/img/about.jpg" : Model.ImageUrl)" alt="@Model.Title">
                 </div>
             </div>
             <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
-                <p class="section-title bg-white text-start text-primary pe-3">Về sự kiện</p>
+                @* .section-title will use Josefin Sans from Layout *@
+                <p class="section-title bg-white text-start text-primary pe-3">About Event</p>
+                @* .display-6 will use Josefin Sans from Layout *@
                 <h1 class="display-6 mb-4">@Model.Title</h1>
 
-                @* Hiển thị Category Name (Đã được Include trong Controller) *@
+                @* Show Category Name if available *@
                 @if (Model.Category != null)
                 {
-                    <p class="text-primary mb-2"><i class="fa fa-tag me-2"></i>Chủ đề: @Model.Category.Name</p>
+                    <p class="text-primary mb-2"><i class="fa fa-tag me-2"></i>Category: @Model.Category.Name</p>
                 }
 
+                @* Description will use Open Sans from Layout *@
                 <p class="mb-4">@Model.Description</p>
 
                 <div class="row g-4 pt-2">
                     <div class="col-sm-12">
+                        @* Location Section *@
                         <div class="d-flex align-items-center mb-3">
                             <div class="btn-lg-square bg-primary text-white rounded-circle">
                                 <i class="fa fa-map-marker-alt"></i>
                             </div>
                             <div class="ms-3">
-                                <h5 class="mb-0">Địa điểm</h5>
+                                <h5 class="mb-0">Location</h5>
                                 <span>@Model.Location</span>
                             </div>
                         </div>
 
+                        @* Start Time Section *@
                         <div class="d-flex align-items-center mb-3">
                             <div class="btn-lg-square bg-primary text-white rounded-circle">
                                 <i class="fa fa-calendar-alt"></i>
                             </div>
                             <div class="ms-3">
-                                <h5 class="mb-0">Thời gian bắt đầu</h5>
-                                @* Sửa lỗi ToString: StartDate là DateTime (không null) *@
-                                <span>@($"{Model.StartDate:dd/MM/yyyy HH:mm}")</span>
+                                <h5 class="mb-0">Start Time</h5>
+                                @* Formatted for English display: MMM dd, yyyy HH:mm *@
+                                <span>@($"{Model.StartDate:MMM dd, yyyy HH:mm}")</span>
                             </div>
                         </div>
 
+                        @* End Time Section *@
                         @if (Model.EndDate.HasValue)
                         {
                             <div class="d-flex align-items-center">
@@ -51,9 +57,9 @@
                                     <i class="fa fa-calendar-check"></i>
                                 </div>
                                 <div class="ms-3">
-                                    <h5 class="mb-0">Thời gian kết thúc</h5>
-                                    @* Sửa lỗi ToString: EndDate là DateTime? (nullable) *@
-                                    <span>@($"{Model.EndDate.Value:dd/MM/yyyy HH:mm}")</span>
+                                    <h5 class="mb-0">End Time</h5>
+                                    @* Formatted for English display: MMM dd, yyyy HH:mm *@
+                                    <span>@($"{Model.EndDate.Value:MMM dd, yyyy HH:mm}")</span>
                                 </div>
                             </div>
                         }
@@ -62,7 +68,8 @@
 
                 <div class="row g-4 pt-3">
                     <div class="col-sm-6">
-                        <a class="btn btn-primary py-3 px-5" href="#tickets">Đăng ký ngay</a>
+                        @* Button will use Josefin Sans from Layout *@
+                        <a class="btn btn-primary py-3 px-5" href="#tickets">Register Now</a>
                     </div>
                 </div>
             </div>

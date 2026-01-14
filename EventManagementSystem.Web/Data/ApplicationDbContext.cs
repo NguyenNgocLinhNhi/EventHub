@@ -24,6 +24,7 @@ namespace EventManagementSystem.Web.Data
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Sponsor> Sponsors { get; set; }
 
+        public DbSet<LandingPageTemplate> LandingPageTemplates { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

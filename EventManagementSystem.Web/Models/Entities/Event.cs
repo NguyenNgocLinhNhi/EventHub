@@ -31,6 +31,9 @@ namespace EventManagementSystem.Web.Models.Entities
         [Display(Name = "End Date")]
         public DateTime? EndDate { get; set; }
 
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public string Status { get; set; } = "Published";
         // ===== STATUS =====
         public bool IsActive { get; set; } = true;
 
@@ -67,6 +70,9 @@ namespace EventManagementSystem.Web.Models.Entities
         [ForeignKey("OrganizerId")]
         public virtual ApplicationUser Organizer { get; set; } = null!;
 
-    
-}
+        // Thêm vào cuối Model Event
+        [Display(Name = "Template Configuration")]
+        public string? TemplateConfig { get; set; } // Lưu chuỗi JSON các tùy chỉnh của giao diện
+
+    }
 }

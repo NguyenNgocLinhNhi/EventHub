@@ -1,26 +1,49 @@
 ﻿@model EventManagementSystem.Web.Models.Entities.Event
+
+<style>
+    /* Đồng bộ font chữ Poppins cho phần About tương tự như Layout */
+    #about, #about h2, #about h3, #about p, #about span, #about stong {
+        font-family: 'Poppins', sans-serif !important;
+    }
+</style>
+
 <section id="about" class="about section">
+    @* Section Title chuyển sang tiếng Anh *@
     <div class="container section-title" data-aos="fade-up">
-        <h2>Giới thiệu</h2>
-        <p>Chi tiết về sự kiện @Model.Title</p>
+        <h2>About</h2>
+        <p>Details about the event: @Model.Title</p>
     </div>
+
     <div class="container">
         <div class="row gy-4">
             <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
-                <h3>Chủ đề: @(Model.Category?.Name ?? "Đang cập nhật")</h3>
+                @* Category và nhãn thông tin chuyển sang tiếng Anh *@
+                <h3>Topic: @(Model.Category?.Name ?? "Updating...")</h3>
                 <p>@Model.Description</p>
                 <ul>
-                    <li><i class="bi bi-geo-alt"></i> <span><strong>Địa điểm:</strong> @Model.Location</span></li>
-                    <li><i class="bi bi-calendar-check"></i> <span><strong>Bắt đầu:</strong> @($"{Model.StartDate:dd/MM/yyyy HH:mm}")</span></li>
+                    <li>
+                        <i class="bi bi-geo-alt"></i>
+                        <span><strong>Location:</strong> @Model.Location</span>
+                    </li>
+                    <li>
+                        <i class="bi bi-calendar-check"></i>
+                        @* Định dạng ngày tháng chuyển sang MM/dd/yyyy chuẩn tiếng Anh *@
+                        <span><strong>Start:</strong> @($"{Model.StartDate:MM/dd/yyyy HH:mm}")</span>
+                    </li>
                     @if (Model.EndDate.HasValue)
                     {
-                        <li><i class="bi bi-clock"></i> <span><strong>Kết thúc:</strong> @($"{Model.EndDate.Value:dd/MM/yyyy HH:mm}")</span></li>
+                        <li>
+                            <i class="bi bi-clock"></i>
+                            <span><strong>End:</strong> @($"{Model.EndDate.Value:MM/dd/yyyy HH:mm}")</span>
+                        </li>
                     }
                 </ul>
             </div>
+
             <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                <p>Hãy nhanh tay đăng ký để giữ chỗ và tham gia cùng các chuyên gia hàng đầu trong lĩnh vực này.</p>
-                <a href="#tickets" class="read-more"><span>Đăng ký tham gia</span><i class="bi bi-arrow-right"></i></a>
+                @* Nội dung kêu gọi hành động chuyển sang tiếng Anh *@
+                <p>Register now to secure your spot and join leading experts in this field.</p>
+                <a href="#tickets" class="read-more"><span>Register Now</span><i class="bi bi-arrow-right"></i></a>
             </div>
         </div>
     </div>

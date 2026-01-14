@@ -1,9 +1,19 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Speaker>
+
+<style>
+    /* Đồng bộ font chữ Poppins cho phần Speakers tương tự như các View khác */
+    #speakers, #speakers h2, #speakers h4, #speakers p, #speakers span {
+        font-family: 'Poppins', sans-serif !important;
+    }
+</style>
+
 <section id="speakers" class="team section">
+    @* Tiêu đề section chuyển sang tiếng Anh *@
     <div class="container section-title" data-aos="fade-up">
-        <h2>Diễn giả</h2>
-        <p>Gặp gỡ những chuyên gia đồng hành cùng sự kiện</p>
+        <h2>Speakers</h2>
+        <p>Meet the experts joining our event</p>
     </div>
+
     <div class="container">
         <div class="row gy-4 justify-content-center">
             @if (Model != null && Model.Any())
@@ -33,7 +43,10 @@
             }
             else
             {
-                <div class="col-12 text-center"><p>Thông tin diễn giả sẽ được bổ sung sau.</p></div>
+                @* Thông báo trống chuyển sang tiếng Anh *@
+                <div class="col-12 text-center">
+                    <p>Speaker information will be updated soon.</p>
+                </div>
             }
         </div>
     </div>

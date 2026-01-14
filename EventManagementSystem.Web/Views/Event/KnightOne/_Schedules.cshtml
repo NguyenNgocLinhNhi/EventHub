@@ -1,9 +1,19 @@
 ﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Schedule>
+
+<style>
+    /* Đồng bộ font chữ Poppins cho phần Schedule tương tự như các View khác */
+    #schedule, #schedule h2, #schedule h3, #schedule h4, #schedule p, #schedule small {
+        font-family: 'Poppins', sans-serif !important;
+    }
+</style>
+
 <section id="schedule" class="services section light-background">
+    @* Tiêu đề section chuyển sang tiếng Anh *@
     <div class="container section-title" data-aos="fade-up">
-        <h2>Lịch trình</h2>
-        <p>Các mốc thời gian quan trọng diễn ra trong sự kiện</p>
+        <h2>Schedule</h2>
+        <p>Key milestones and timeline of the event</p>
     </div>
+
     <div class="container">
         <div class="row gy-4">
             @if (Model != null && Model.Any())
@@ -13,6 +23,7 @@
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
                         <div class="service-item position-relative">
                             <div class="icon"><i class="bi bi-clock"></i></div>
+                            @* Hiển thị thời gian *@
                             <h3>@item.StartTime.ToString("HH:mm") - @item.EndTime.ToString("HH:mm")</h3>
                             <h4>@item.Title</h4>
                             <p>@item.Description</p>
@@ -23,7 +34,10 @@
             }
             else
             {
-                <div class="col-12 text-center"><p>Đang cập nhật lịch trình...</p></div>
+                @* Thông báo trống chuyển sang tiếng Anh *@
+                <div class="col-12 text-center">
+                    <p>The schedule is being updated...</p>
+                </div>
             }
         </div>
     </div>

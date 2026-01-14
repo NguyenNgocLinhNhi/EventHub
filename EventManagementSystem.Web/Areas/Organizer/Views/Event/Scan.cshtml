@@ -1,0 +1,104 @@
+﻿@{
+    ViewData["Title"] = "Check-in scan";
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+}
+
+<div class="container py-4" style="font-family: 'Arimo', sans-serif;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
+                <h3 class="fw-bold mb-3">
+                    <i class="bi bi-qr-code-scan me-2 text-primary"></i>Ticket Check-in scan
+                </h3>
+                <p class="text-muted small mb-4">Please place the QR code into the scanning frame to confirm attendance</p>
+
+                <div id="reader" class="rounded-4 overflow-hidden shadow-sm" style="width: 100%;"></div>
+
+                <div id="scanResult" class="mt-4 p-3 rounded-3 d-none">
+                    <div id="statusIcon" class="fs-1 mb-2"></div>
+                    <h5 id="statusText" class="fw-bold mb-1"></h5>
+                    <p id="customerInfo" class="mb-0 small"></p>
+                    <p id="seatInfo" class="fw-bold text-danger mb-0"></p>
+                </div>
+
+                <div class="mt-4 pt-3 border-top">
+                    <a href="@Url.Action("Revenue", "Report")" class="btn btn-light btn-sm text-muted">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Report
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+@section Scripts {
+    <script>
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: 250 });
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // Send request to server to check ticket
+            $.post('/Organizer/Ticket/CheckIn', { code: decodedText }, function (res) {
+                const resultDiv = document.getElementById('scanResult');
+                const statusIcon = document.getElementById('statusIcon');
+                const statusText = document.getElementById('statusText');
+                const customerInfo = document.getElementById('customerInfo');
+                const seatInfo = document.getElementById('seatInfo');
+
+                resultDiv.classList.remove('d-none', 'alert-success', 'alert-danger');
+
+                if (res.success) {
+                    resultDiv.classList.add('alert-success');
+                    statusIcon.innerHTML = "🎉";
+                    statusText.innerText = res.message;
+                    customerInfo.innerText = "Customer: " + res.customer;
+                    seatInfo.innerText = "Seat: " + (res.seat || "No number");
+
+                    // Play success notification sound
+                    let audio = new Audio('https://www.soundjay.com/buttons/beep-07a.mp3');
+                    audio.play();
+                } else {
+                    resultDiv.classList.add('alert-danger');
+                    statusIcon.innerHTML = "❌";
+                    statusText.innerText = res.message;
+                    customerInfo.innerText = "";
+                    seatInfo.innerText = "";
+                }
+
+                // Allow re-scanning after 3 seconds
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+            });
+        }
+
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
+}
+
+<style>
+    body {
+        font-family: 'Arimo', sans-serif;
+    }
+
+    .alert-success {
+        background-color: #e6f9f1;
+        border: none;
+        color: #198754;
+    }
+
+    .alert-danger {
+        background-color: #fff5f5;
+        border: none;
+        color: #dc3545;
+    }
+
+    #reader {
+        border: 2px solid #f8f9fa !important;
+    }
+
+    #reader__scan_region {
+        background: #fff;
+    }
+</style>
