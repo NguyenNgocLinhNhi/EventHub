@@ -1,0 +1,63 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Check-in scan";
+    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
+                <h3 class="fw-bold mb-3">
+                    <i class="bi bi-qr-code-scan me-2 text-primary"></i>Ticket Check-in scan
+                </h3>
+                <p class="text-muted small mb-4">Event ID: @Model - Please scan the QR code to confirm attendance</p>
+
+                <div id="reader" class="rounded-4 overflow-hidden shadow-sm" style="width: 100%;"></div>
+
+                <div id="scanResult" class="mt-4 p-3 rounded-3 d-none">
+                    <div id="statusIcon" class="fs-1 mb-2"></div>
+                    <h5 id="statusText" class="fw-bold mb-1"></h5>
+                    <p id="customerInfo" class="mb-0 small"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+@section Scripts {
+    <script>
+        const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+
+        function onScanSuccess(decodedText) {
+            html5QrcodeScanner.pause(); // Tạm dừng để xử lý
+
+            $.post('/Organizer/Ticket/CheckIn', { 
+                code: decodedText, 
+                eventId: @Model 
+            }, function (res) {
+                const resultDiv = document.getElementById('scanResult');
+                resultDiv.classList.remove('d-none', 'alert-success', 'alert-danger');
+
+                if (res.success) {
+                    resultDiv.classList.add('alert-success');
+                    document.getElementById('statusIcon').innerHTML = "🎉";
+                    document.getElementById('statusText').innerText = res.message;
+                    document.getElementById('customerInfo').innerText = "Customer: " + res.customer;
+                    new Audio('https://www.soundjay.com/buttons/beep-07a.mp3').play();
+                } else {
+                    resultDiv.classList.add('alert-danger');
+                    document.getElementById('statusIcon').innerHTML = "❌";
+                    document.getElementById('statusText').innerText = res.message;
+                }
+
+                setTimeout(() => {
+                    resultDiv.classList.add('d-none');
+                    html5QrcodeScanner.resume();
+                }, 3000);
+            });
+        }
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
+}

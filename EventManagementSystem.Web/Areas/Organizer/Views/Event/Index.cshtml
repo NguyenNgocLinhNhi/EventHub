@@ -121,7 +121,16 @@
                     <td class="text-end pe-4">
                         <div class="btn-group border rounded-3 shadow-sm bg-white">
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-light border-end" title="View details"><i class="bi bi-eye text-primary"></i></a>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light border-end" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <a asp-area="Organizer" 
+                               asp-controller="Ticket" 
+                               asp-action="Scan" 
+                               asp-route-id="@item.Id" 
+                               class="btn btn-sm btn-light border-end" 
+                               title="Scan Check-in">
+                                <i class="bi bi-qr-code-scan text-primary"></i>
+                            </a>
+                            @* <a asp-action="Scan" asp-route-id="@item.Id" class="btn btn-sm btn-light border-end" title="Scan Check-in"><i class="bi bi-qr-code-scan text-primary"></i></a> *@
+                            @* <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light border-end" title="Edit"><i class="bi bi-pencil"></i></a> *@
                             <button type="button" onclick="deleteEvent(@item.Id)" class="btn btn-sm btn-light" title="Delete"><i class="bi bi-trash text-danger"></i></button>
                         </div>
                     </td>

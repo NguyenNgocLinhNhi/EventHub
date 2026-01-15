@@ -388,5 +388,117 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
                 return Json(new { success = false, message = "Lỗi hệ thống khi lưu dữ liệu!" });
             }
         }
+
+       /* public async Task<JsonResult> CheckIn(string code, int eventId)
+        {
+            try
+            {
+                // Sử dụng TicketCode và EventId để tìm kiếm
+                var ticket = await _context.BookingDetails
+                    .Include(d => d.Booking)
+                        .ThenInclude(b => b.User)
+                    .Include(d => d.TicketType)
+                    .FirstOrDefaultAsync(d => d.TicketCode == code && d.Booking.EventId == eventId);
+
+                if (ticket == null)
+                {
+                    return Json(new { success = false, message = "Vé không tồn tại hoặc không thuộc sự kiện này!" });
+                }
+
+                // Kiểm tra Status từ Model Booking
+                if (ticket.Booking.Status != "Confirmed")
+                {
+                    return Json(new { success = false, message = "Đơn hàng chưa được xác nhận thanh toán!" });
+                }
+
+                // Kiểm tra IsCheckedIn từ Model BookingDetail
+                if (ticket.IsCheckedIn)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = $"Vé đã dùng lúc {ticket.CheckInTime?.ToString("HH:mm")}", // Khớp trường CheckInTime
+                        customer = ticket.Booking.CustomerName // Khớp trường CustomerName
+                    });
+                }
+
+                // Cập nhật trạng thái dựa trên thuộc tính Model
+                ticket.IsCheckedIn = true;
+                ticket.CheckInTime = DateTime.Now; // Đồng bộ với thuộc tính CheckInTime trong BookingDetail.cs
+
+                _context.Update(ticket);
+                await _context.SaveChangesAsync();
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Check-in thành công!",
+                    customer = ticket.Booking.CustomerName,
+                    seat = ticket.SeatNumber // Khớp trường SeatNumber
+                });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, message = "Lỗi kết nối máy chủ!" });
+            }
+        }*/
+
+        [HttpPost]
+        public async Task<IActionResult> ApproveEvent(int id)
+        {
+            var ev = await _context.Events.FindAsync(id);
+            if (ev == null) return NotFound();
+
+            ev.Status = "Upcoming"; // Cập nhật trường Status
+            ev.IsActive = true;     // Cập nhật trường IsActive
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        // 1. Trả về giao diện Camera
+        public IActionResult Scan(int id) // id này là EventId lấy từ URL
+        {
+            if (id <= 0) return NotFound();
+
+            // Truyền ID này vào View làm Model để JS sử dụng
+            return View(id);
+        }
+
+        // 2. API xử lý quét mã và tự động lưu vào DB
+        [HttpPost]
+        public async Task<JsonResult> CheckIn(string code, int eventId)
+        {
+            // Tìm chi tiết vé và bao gồm thông tin Booking để lấy EventId
+            var ticket = await _context.BookingDetails
+                .Include(d => d.Booking)
+                .FirstOrDefaultAsync(d => d.TicketCode == code);
+
+            if (ticket == null)
+                return Json(new { success = false, message = "Mã vé không tồn tại!" });
+
+            // SO SÁNH ID: Kiểm tra vé có thuộc đúng sự kiện đang quét không
+            if (ticket.Booking.EventId != eventId)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = $"Vé này thuộc sự kiện #{ticket.Booking.EventId}. Bạn đang quét cho sự kiện #{eventId}!"
+                });
+            }
+
+            if (ticket.IsCheckedIn)
+                return Json(new { success = false, message = "Vé đã được sử dụng (Check-in rồi)!" });
+
+            // Lưu dữ liệu nếu khớp
+            ticket.IsCheckedIn = true;
+            ticket.CheckInTime = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+            return Json(new { success = true, message = "Check-in thành công!", customer = ticket.Booking.CustomerName });
+        }
+
+
+
     }
 }
