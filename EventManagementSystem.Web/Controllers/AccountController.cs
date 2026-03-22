@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace EventManagementSystem.Web.Controllers
 {
@@ -160,6 +161,93 @@ namespace EventManagementSystem.Web.Controllers
             }
             ViewBag.ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             return View(model);
+        }
+        // ===================== ĐĂNG NHẬP GOOGLE =====================
+
+        // 1. Khi người dùng bấm nút Google, hàm này sẽ điều hướng sang Google
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+        {
+            // Yêu cầu chuyển hướng đến trình cung cấp khóa ngoài (Google)
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return new ChallengeResult(provider, properties);
+        }
+
+        // 2. Sau khi chọn tài khoản Google xong, Google sẽ gọi về hàm này
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
+        {
+            returnUrl = returnUrl ?? Url.Content("~/");
+            if (remoteError != null)
+            {
+                ModelState.AddModelError(string.Empty, $"Lỗi từ dịch vụ ngoài: {remoteError}");
+                return View(nameof(Login));
+            }
+
+            // Lấy thông tin đăng nhập từ Google trả về
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            // Thử đăng nhập nếu User này đã từng đăng nhập bằng Google trước đây
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if (result.Succeeded)
+            {
+                return RedirectToLocal(returnUrl);
+            }
+
+            if (result.IsLockedOut) return View("Lockout");
+
+            // NẾU USER CHƯA CÓ TÀI KHOẢN (Lần đầu đăng nhập Google)
+            // Lấy Email từ Google để tạo tài khoản mới
+            var email = info.Principal.FindFirstValue(System.Security.Claims.ClaimTypes.Email);
+            var name = info.Principal.FindFirstValue(System.Security.Claims.ClaimTypes.Name);
+
+            if (email != null)
+            {
+                // Kiểm tra xem email này đã tồn tại trong hệ thống chưa
+                var user = await _userManager.FindByEmailAsync(email);
+
+                if (user == null)
+                {
+                    // TẠO USER MỚI
+                    user = new ApplicationUser
+                    {
+                        UserName = email,
+                        Email = email,
+                        FullName = name ?? email,
+                        EmailConfirmed = true // Mặc định tin tưởng email từ Google
+                    };
+
+                    var createResult = await _userManager.CreateAsync(user);
+                    if (createResult.Succeeded)
+                    {
+                        // QUAN TRỌNG: Gán quyền "USER" cho người đăng nhập Google
+                        await _userManager.AddToRoleAsync(user, "USER");
+
+                        // Liên kết tài khoản Google này với User vừa tạo
+                        await _userManager.AddLoginAsync(user, info);
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+
+                        return RedirectToLocal(returnUrl);
+                    }
+                }
+                else
+                {
+                    // Email đã tồn tại nhưng chưa liên kết Google -> Liên kết luôn
+                    await _userManager.AddLoginAsync(user, info);
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToLocal(returnUrl);
+                }
+            }
+
+            return View("Error");
         }
 
         // ===================== XÁC NHẬN EMAIL =====================

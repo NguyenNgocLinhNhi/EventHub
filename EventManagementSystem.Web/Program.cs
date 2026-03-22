@@ -4,6 +4,7 @@ using EventManagementSystem.Web.Models.Identity;
 using EventManagementSystem.Web.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,7 +71,18 @@ builder.Services.AddSession(options => {
 });
 
 builder.Services.AddHostedService<BookingCleanupService>();
+// 1. Cấu hình dịch vụ Đăng nhập từ bên ngoài (Google)
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        // Đọc thông tin từ file appsettings.json mà bạn vừa điền lúc nãy
+        IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+        options.ClientId = googleAuthNSection["ClientId"];
+        options.ClientSecret = googleAuthNSection["ClientSecret"];
 
+        // Đường dẫn trả về phải khớp với cái bạn đã khai báo trên Google Cloud
+        options.CallbackPath = "/signin-google";
+    });
 var app = builder.Build();
 
 // ===================== C?U HÌNH PIPELINE =====================

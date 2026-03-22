@@ -16,20 +16,41 @@ namespace EventManagementSystem.Web.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        // HÀM HỖ TRỢ: Gán Slug vào ViewBag để dùng chung cho Layout Menu
+        private void SetOrgContext(string slug)
         {
-            var allEvents = _context.Events
-                .Include(e => e.Category)
-                .Include(e => e.TicketTypes)
-                .Where(e => e.IsActive)
-                .OrderBy(e => e.StartDate);
+            ViewBag.OrgSlug = slug;
+        }
 
-            var spotlight = await allEvents
-                .FirstOrDefaultAsync(e => e.LandingPage == "Nova")
-                ?? await allEvents.FirstOrDefaultAsync();
+        [Route("")]
+        [Route("org/{slug?}")]
+        public async Task<IActionResult> Index(string slug)
+        {
+            SetOrgContext(slug);
+            var eventsQuery = _context.Events.Include(e => e.Category).Where(e => e.IsActive).AsQueryable();
+
+            if (!string.IsNullOrEmpty(slug))
+            {
+                // 1. Tìm chính xác User sở hữu Slug này
+                var organizer = await _context.Users.FirstOrDefaultAsync(x => x.Slug == slug);
+
+                if (organizer == null) return NotFound();
+
+                // 2. Lọc sự kiện THEO ID của User vừa tìm thấy
+                eventsQuery = eventsQuery.Where(e => e.OrganizerId == organizer.Id);
+
+                // Debug thử xem ID tìm được là ai (Xem ở cửa sổ Output)
+                System.Diagnostics.Debug.WriteLine($"Slug: {slug} belongs to ID: {organizer.Id}");
+            }
+
+            // 3. Thực thi lấy dữ liệu từ Query đã lọc
+            // Nếu là Org B chưa có sự kiện, allEvents sẽ là một danh sách trống.
+            var allEvents = eventsQuery.OrderBy(e => e.StartDate);
+
+            var spotlight = await allEvents.FirstOrDefaultAsync(); // Sẽ là null nếu B chưa có event
 
             var upcoming = await allEvents
-                .Where(e => spotlight == null || e.Id != spotlight.Id)
+                .Skip(spotlight == null ? 0 : 1) // Nếu ko có spotlight thì ko skip
                 .Take(6)
                 .ToListAsync();
 
@@ -42,46 +63,60 @@ namespace EventManagementSystem.Web.Controllers
             return View(viewModel);
         }
 
-        public IActionResult About()
+        [Route("org/{slug}/about")]
+        [Route("about")]
+        public IActionResult About(string slug)
         {
+            SetOrgContext(slug);
             return View();
         }
 
-        public IActionResult Services()
+        [Route("org/{slug}/services")]
+        [Route("services")]
+        public IActionResult Services(string slug)
         {
+            SetOrgContext(slug);
             return View();
         }
 
         // =========================================================================
-        // HÀM EVENTS: X? lý l?c danh sách s? ki?n
+        // HÀM EVENTS: Đã thêm lọc theo Slug
         // =========================================================================
-        public async Task<IActionResult> Events(int? categoryId, string searchString)
+        [Route("org/{slug}/events")]
+        [Route("events")]
+        public async Task<IActionResult> Events(string slug, int? categoryId, string searchString)
         {
-            // 1. Khởi tạo Query lấy sự kiện và bao gồm dữ liệu Category
+            SetOrgContext(slug);
+
             var eventsQuery = _context.Events
                 .Include(e => e.Category)
-                .Where(e => e.IsActive) // Chỉ lấy các sự kiện đang hoạt động
+                .Where(e => e.IsActive)
                 .AsQueryable();
 
-            // 2. LOGIC: Lọc theo CategoryId (Dành cho các nút Category cụ thể)
+            // Lọc theo Organizer nếu có slug trên URL
+            if (!string.IsNullOrEmpty(slug))
+            {
+                var organizer = await _context.Users.FirstOrDefaultAsync(x => x.Slug == slug);
+                if (organizer != null)
+                {
+                    eventsQuery = eventsQuery.Where(e => e.OrganizerId == organizer.Id);
+                }
+            }
+
+            // Lọc theo Category
             if (categoryId.HasValue)
             {
                 eventsQuery = eventsQuery.Where(e => e.CategoryId == categoryId.Value);
-
                 var selectedCat = await _context.Categories.FindAsync(categoryId);
                 ViewBag.CategoryName = selectedCat?.Name;
                 ViewBag.CurrentCategoryId = categoryId;
             }
 
-            // 3. LOGIC: Lọc theo từ khóa tìm kiếm (Mapping Anh-Việt)
+            // Lọc theo từ khóa tìm kiếm
             if (!string.IsNullOrEmpty(searchString))
             {
                 ViewBag.CurrentFilter = searchString;
-
-                // Chuyển searchString về chữ thường để so sánh
                 string lowerSearch = searchString.ToLower();
-
-                // Ánh xạ từ khóa tiếng Anh từ URL sang cụm từ tiếng Việt tương ứng trong SeedData
                 string dbSearchTerm = lowerSearch switch
                 {
                     "technology" => "Công nghệ",
@@ -90,25 +125,16 @@ namespace EventManagementSystem.Web.Controllers
                     "education" => "Giáo dục",
                     "business" => "Kinh doanh",
                     "health" => "Y học",
-                    _ => searchString // Giữ nguyên nếu không nằm trong danh sách mapping
+                    _ => searchString
                 };
 
-                // Tìm kiếm theo Tiêu đề, Vị trí HOẶC Tên danh mục (sử dụng từ khóa đã ánh xạ)
                 eventsQuery = eventsQuery.Where(e =>
                     e.Title.Contains(dbSearchTerm) ||
                     e.Location.Contains(dbSearchTerm) ||
                     e.Category.Name.Contains(dbSearchTerm) ||
-                    e.Title.Contains(searchString) || // Vẫn cho phép tìm bằng từ gốc (ví dụ tìm tên sự kiện "Tech Summit")
-                    e.Category.Name.Contains(searchString));
-
-                // Cập nhật tiêu đề hiển thị trên giao diện cho đẹp
-                if (string.IsNullOrEmpty(ViewBag.CategoryName))
-                {
-                    ViewBag.CategoryName = searchString;
-                }
+                    e.Title.Contains(searchString));
             }
 
-            // 4. Sắp xếp và thực thi truy vấn
             var events = await eventsQuery
                 .OrderByDescending(e => e.StartDate)
                 .ToListAsync();
@@ -116,43 +142,59 @@ namespace EventManagementSystem.Web.Controllers
             return View(events);
         }
 
-        public async Task<IActionResult> Categories(string searchString)
+        [Route("org/{slug}/categories")]
+        [Route("categories")]
+        public async Task<IActionResult> Categories(string slug, string searchString)
         {
+            SetOrgContext(slug);
+
             var categoriesQuery = _context.Categories
                 .Include(c => c.Events)
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(searchString))
+            // Nếu muốn chỉ hiện category mà Org đó có sự kiện (tùy chọn)
+            if (!string.IsNullOrEmpty(slug))
             {
-                categoriesQuery = categoriesQuery
-                    .Where(c => c.Name.Contains(searchString));
+                var organizer = await _context.Users.FirstOrDefaultAsync(x => x.Slug == slug);
+                if (organizer != null)
+                {
+                    // Chỉ lấy những category mà có ít nhất 1 event của Org này
+                    categoriesQuery = categoriesQuery.Where(c => c.Events.Any(e => e.OrganizerId == organizer.Id));
+                }
             }
 
-            var categories = await categoriesQuery
-                .OrderBy(c => c.Name)
-                .ToListAsync();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                categoriesQuery = categoriesQuery.Where(c => c.Name.Contains(searchString));
+            }
 
+            var categories = await categoriesQuery.OrderBy(c => c.Name).ToListAsync();
             ViewBag.CurrentFilter = searchString;
 
             return View(categories);
         }
 
         [HttpGet]
-        public IActionResult Contact()
+        [Route("org/{slug}/contact")]
+        [Route("contact")]
+        public IActionResult Contact(string slug)
         {
+            SetOrgContext(slug);
             return View();
         }
 
         [HttpPost]
+        [Route("org/{slug}/contact")]
+        [Route("contact")]
         [ValidateAntiForgeryToken]
-        public IActionResult Contact(ContactFormModel model)
+        public IActionResult Contact(string slug, ContactFormModel model)
         {
+            SetOrgContext(slug);
             if (ModelState.IsValid)
             {
                 TempData["SuccessMessage"] = "Your message has been sent successfully!";
-                return RedirectToAction("Contact");
+                return RedirectToAction("Contact", new { slug = slug });
             }
-
             return View(model);
         }
     }
