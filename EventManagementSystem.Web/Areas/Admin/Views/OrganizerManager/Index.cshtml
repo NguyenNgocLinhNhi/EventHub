@@ -5,7 +5,6 @@
 }
 
 <div class="container-fluid p-4" style="font-family: 'Arimo', sans-serif;">
-    @* --- Header --- *@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-0 text-dark">Organizer list</h2>
@@ -16,7 +15,6 @@
         </button>
     </div>
 
-    @* --- Filter --- *@
     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body p-3">
             <div class="row g-3">
@@ -39,7 +37,6 @@
         </div>
     </div>
 
-    @* --- Data table --- *@
     <div class="card border-0 shadow-sm rounded-4">
         <div class="table-responsive" style="overflow: visible !important;">
             <table class="table table-hover align-middle mb-0" id="organizerTable">
@@ -50,6 +47,7 @@
                         <th>REGION</th>
                         <th class="text-center">EVENTS</th>
                         <th>STATUS</th>
+                        <th>LINK</th>
                         <th class="text-end pe-4">ACTION</th>
                     </tr>
                 </thead>
@@ -68,26 +66,82 @@
                                     </div>
                                 </div>
                             </td>
+
                             <td><div class="small fw-500">@item.PhoneNumber</div></td>
-                            <td><span class="text-muted small org-region"><i class="bi bi-geo-alt me-1"></i>@item.Region</span></td>
-                            <td class="text-center">
-                                <span class="badge bg-blue-light text-blue rounded-pill">@item.TotalEvents events</span>
-                            </td>
+
                             <td>
-                                <span class="badge rounded-pill status-badge @(item.IsActive ? "bg-success-light text-success" : "bg-danger-light text-danger")" id="badge-@item.Id">
+                                <span class="text-muted small org-region">
+                                    <i class="bi bi-geo-alt me-1"></i>@item.Region
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="badge bg-blue-light text-blue rounded-pill">
+                                    @item.TotalEvents events
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge rounded-pill status-badge @(item.IsActive ? "bg-success-light text-success" : "bg-danger-light text-danger")"
+                                      id="badge-@item.Id">
                                     @(item.IsActive ? "Active" : "Locked")
                                 </span>
                             </td>
+
+                            <!-- LINK -->
+                            <td>
+    @if (string.IsNullOrEmpty(item.Slug))
+    {
+        <input type="text"
+               class="form-control form-control-sm slug-input"
+               placeholder="enter-slug"
+               data-id="@item.Id" />
+    }
+    else
+    {
+        <a href="/org/@item.Slug" target="_blank" class="text-primary">
+            /org/@item.Slug
+        </a>
+    }
+</td>
+
+                            <!-- ACTION -->
                             <td class="text-end pe-4">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <a asp-action="PurchaseHistory" asp-route-id="@item.Id" class="btn btn-sm btn-light border rounded-circle shadow-sm" title="History">
-                                        <i class="bi bi-clock-history text-info"></i>
-                                    </a>
-                                    <button class="btn btn-sm btn-light border rounded-circle shadow-sm btn-toggle-status" data-id="@item.Id">
-                                        <i class="bi @(item.IsActive ? "bi-lock-fill text-danger" : "bi-unlock-fill text-success")" id="icon-@item.Id"></i>
-                                    </button>
-                                </div>
-                            </td>
+    <div class="d-flex justify-content-end gap-2">
+
+        <!-- History -->
+        <a asp-action="PurchaseHistory" asp-route-id="@item.Id"
+           class="btn btn-sm btn-light border rounded-circle shadow-sm" title="History">
+            <i class="bi bi-clock-history text-info"></i>
+        </a>
+
+        <!-- Lock / Unlock -->
+        <button class="btn btn-sm btn-light border rounded-circle shadow-sm btn-toggle-status"
+                data-id="@item.Id">
+            <i class="bi @(item.IsActive ? "bi-lock-fill text-danger" : "bi-unlock-fill text-success")"
+               id="icon-@item.Id"></i>
+        </button>
+
+        <!-- ===== DUYỆT (khi chưa có slug) ===== -->
+        @if (string.IsNullOrEmpty(item.Slug))
+        {
+            <button class="btn btn-sm btn-light border rounded-circle shadow-sm btn-set-slug"
+                    data-id="@item.Id" title="Approve">
+                <i class="bi bi-check-lg text-success"></i>
+            </button>
+        }
+        else
+        {
+            <!-- ===== XÓA (khi đã có slug) ===== -->
+            <button class="btn btn-sm btn-light border rounded-circle shadow-sm btn-remove-slug"
+                    data-id="@item.Id" title="Remove">
+                <i class="bi bi-x-lg text-danger"></i>
+            </button>
+        }
+
+    </div>
+</td>
+
                         </tr>
                     }
                 </tbody>
@@ -96,125 +150,78 @@
     </div>
 </div>
 
-@* --- Modals --- *@
-@section FooterModals {
-    <div class="modal fade" id="broadcastModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header border-0 bg-warning bg-opacity-10">
-                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-megaphone me-2"></i>Send system notification</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <p class="small text-muted mb-3">The notification will be sent to the Email of all organizers.</p>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-uppercase">Subject</label>
-                        <input type="text" id="broadcastSubject" class="form-control rounded-3" placeholder="Enter subject...">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-uppercase">Message</label>
-                        <textarea id="broadcastMessage" class="form-control rounded-3" rows="5" placeholder="Enter content..."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" id="btnSendBroadcast" class="btn btn-warning rounded-pill px-4 fw-bold">
-                        <i class="bi bi-send-fill me-1"></i> Send now
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+<style>
+.modal { z-index:1060!important; }
+.modal-backdrop { z-index:1050!important; background-color:rgba(0,0,0,0.5)!important; }
+
+.avatar-circle {
+    width:40px;height:40px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1rem;
 }
 
-<style>
-    /* Z-index fix for modal display */
-    .modal {
-        z-index: 1060 !important;
-    }
-
-    .modal-backdrop {
-        z-index: 1050 !important;
-        background-color: rgba(0, 0, 0, 0.5) !important;
-    }
-
-    .avatar-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-    }
-
-    .bg-success-light {
-        background-color: #e8f5e9;
-        color: #2e7d32;
-    }
-
-    .bg-danger-light {
-        background-color: #ffebee;
-        color: #c62828;
-    }
-
-    .bg-blue-light {
-        background-color: #e3f2fd;
-        color: #0d6efd;
-    }
-
-    .fw-500 {
-        font-weight: 500;
-    }
+.bg-success-light { background:#e8f5e9;color:#2e7d32; }
+.bg-danger-light { background:#ffebee;color:#c62828; }
+.bg-blue-light { background:#e3f2fd;color:#0d6efd; }
+.fw-500 { font-weight:500; }
 </style>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            // Append modal to body to avoid z-index issues from layout
-            $('#broadcastModal').appendTo("body");
+<script>
+$(document).ready(function () {
 
-            // Search & Filter
-            $("#orgSearch, #regionFilter").on("keyup change", function() {
-                var search = $("#orgSearch").val().toLowerCase();
-                var region = $("#regionFilter").val().toLowerCase();
-                $("#organizerTable tbody tr").each(function() {
-                    var name = $(this).find(".org-name").text().toLowerCase();
-                    var email = $(this).find(".org-email").text().toLowerCase();
-                    var reg = $(this).find(".org-region").text().toLowerCase();
-                    $(this).toggle((name.includes(search) || email.includes(search)) && (region === "" || reg.includes(region)));
-                });
-            });
-
-            // Send Broadcast
-            $("#btnSendBroadcast").click(function () {
-                const subject = $("#broadcastSubject").val();
-                const message = $("#broadcastMessage").val();
-                if (!subject || !message) return alert("Please fill in all information.");
-
-                if (confirm("Send notification to ALL organizers?")) {
-                    $(this).prop("disabled", true).html('<span class="spinner-border spinner-border-sm"></span> Sending...');
-                    $.post("/Admin/OrganizerManager/SendBroadcast", { subject, message }, function (res) {
-                        alert(res.success ? "Sent successfully!" : "Error: " + res.message);
-                        location.reload();
-                    });
-                }
-            });
-
-            // Toggle Status
-            $(".btn-toggle-status").click(function () {
-                const id = $(this).data("id");
-                if(confirm("Confirm status change?")) {
-                    $.post("/Admin/OrganizerManager/ToggleStatus", { id }, function (res) {
-                        if (res.success) location.reload();
-                    });
-                }
-            });
+    $("#orgSearch, #regionFilter").on("keyup change", function() {
+        var search = $("#orgSearch").val().toLowerCase();
+        var region = $("#regionFilter").val().toLowerCase();
+        $("#organizerTable tbody tr").each(function() {
+            var name = $(this).find(".org-name").text().toLowerCase();
+            var email = $(this).find(".org-email").text().toLowerCase();
+            var reg = $(this).find(".org-region").text().toLowerCase();
+            $(this).toggle((name.includes(search) || email.includes(search)) && (region === "" || reg.includes(region)));
         });
+    });
 
-        function openBroadcastModal() {
-            var myModal = new bootstrap.Modal(document.getElementById('broadcastModal'));
-            myModal.show();
+    $(document).on("click", ".btn-set-slug", function () {
+        const id = $(this).data("id");
+        const slug = $(this).closest("tr").find(".slug-input").val();
+
+        if (!slug) return alert("Nhập slug!");
+
+        $.ajax({
+            url: "/Admin/OrganizerManager/SetSlug",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ id: id, slug: slug }),
+            success: function (res) {
+                if (res.success) {
+                    alert("Cấp link thành công!");
+                    location.reload();
+                } else {
+                    alert(res.message);
+                }
+            }
+        });
+    });
+
+    $(document).on("click", ".btn-remove-slug", function () {
+        const id = $(this).data("id");
+
+        if (confirm("Xóa link?")) {
+            $.post("/Admin/OrganizerManager/RemoveSlug", { id }, function (res) {
+                if (res.success) location.reload();
+            });
         }
-    </script>
+    });
+
+    $(".btn-toggle-status").click(function () {
+        const id = $(this).data("id");
+        if(confirm("Confirm status change?")) {
+            $.post("/Admin/OrganizerManager/ToggleStatus", { id }, function (res) {
+                if (res.success) location.reload();
+            });
+        }
+    });
+
+});
+</script>
 }

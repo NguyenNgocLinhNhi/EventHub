@@ -5,6 +5,30 @@
     Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
 }
 
+@* ===== THÊM: CHECK PENDING ===== *@
+@if (!Model.IsApproved || string.IsNullOrEmpty(Model.Slug))
+{
+    <div class="container text-center mt-5">
+        <div class="card border-0 shadow-sm p-5 rounded-4">
+            <h2 class="text-warning fw-bold">⏳ Account Pending Approval</h2>
+            <p class="text-muted mt-3">
+                Your account is waiting for admin approval.
+            </p>
+            <p class="text-muted">
+                You cannot access full features until your public link is assigned.
+            </p>
+
+            <div class="mt-4">
+                <span class="badge bg-warning text-dark px-3 py-2">
+                    Status: Pending
+                </span>
+            </div>
+        </div>
+    </div>
+
+    return;
+}
+
 <div class="container-fluid p-4 bg-light" style="font-family: 'Arimo', sans-serif;">
     <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
@@ -22,6 +46,17 @@
             </div>
         </div>
     </div>
+
+    @* ===== THÊM: HIỂN THỊ LINK ===== *@
+    @if (Model.IsApproved && !string.IsNullOrEmpty(Model.Slug))
+    {
+        <div class="alert alert-success">
+            Your public page:
+            <a href="/org/@Model.Slug" target="_blank">
+                /org/@Model.Slug
+            </a>
+        </div>
+    }
 
     <div class="row mb-4">
         @foreach (var stat in new[] {
@@ -138,10 +173,10 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-        }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
 
     .transition-hover:hover {
         border-color: #00786F !important;

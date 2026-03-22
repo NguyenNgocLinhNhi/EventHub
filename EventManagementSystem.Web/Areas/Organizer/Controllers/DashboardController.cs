@@ -25,7 +25,24 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
         {
             var userId = _userManager.GetUserId(User);
 
-            // Nạp thêm TicketTypes để biết tổng số vé ban đầu của từng sự kiện
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
+            // ===== CASE: CHƯA APPROVED =====
+            if (!user.IsApproved || string.IsNullOrEmpty(user.Slug))
+            {
+                var pendingModel = new OrganizerDashboardViewModel
+                {
+                    IsApproved = false,
+                    Slug = user.Slug
+                };
+
+                return View(pendingModel);
+            }
+
+            // ===== CASE: ĐÃ APPROVED =====
             var myEvents = await _context.Events
                 .Where(e => e.OrganizerId == userId)
                 .Include(e => e.TicketTypes)
@@ -35,14 +52,15 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
 
             var viewModel = new OrganizerDashboardViewModel
             {
+                IsApproved = true,
+                Slug = user.Slug,
+
                 TotalEvents = myEvents.Count,
 
-                // Tổng doanh thu từ các đơn hàng thành công
                 TotalRevenue = myEvents.SelectMany(e => e.Bookings)
                                        .Where(b => b.Status == "Confirmed" || b.Status == "Success")
                                        .Sum(b => b.TotalAmount),
 
-                // Tổng số vé đã bán thực tế
                 TotalTickets = myEvents.SelectMany(e => e.Bookings)
                                        .Where(b => b.Status == "Confirmed" || b.Status == "Success")
                                        .SelectMany(b => b.BookingDetails)
@@ -50,10 +68,13 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
 
                 TotalCustomers = myEvents.SelectMany(e => e.Bookings)
                                          .Select(b => b.CustomerEmail)
-                                         .Distinct().Count(),
+                                         .Distinct()
+                                         .Count(),
 
-                // Lấy các sự kiện gần đây nhất
-                RecentEvents = myEvents.OrderByDescending(e => e.StartDate).Take(5).ToList(),
+                RecentEvents = myEvents
+                    .OrderByDescending(e => e.StartDate)
+                    .Take(5)
+                    .ToList(),
 
                 RecentBookings = await _context.Bookings
                     .Include(b => b.Event)

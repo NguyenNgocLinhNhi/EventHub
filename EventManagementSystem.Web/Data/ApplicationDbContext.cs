@@ -84,6 +84,12 @@ namespace EventManagementSystem.Web.Data
                 .WithMany(e => e.Sponsors)
                 .HasForeignKey(s => s.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
+            // Event - Ozganize
+            builder.Entity<Event>()
+            .HasOne(e => e.Organizer)
+            .WithMany(u => u.Events)
+            .HasForeignKey(e => e.OrganizerId)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
