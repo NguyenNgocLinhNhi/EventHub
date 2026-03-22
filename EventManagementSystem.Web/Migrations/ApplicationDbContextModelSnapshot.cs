@@ -4,19 +4,16 @@ using EventManagementSystem.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EventManagementSystem.Web.Data.Migrations
+namespace EventManagementSystem.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260322045453_AddAdminSystemSettings")]
-    partial class AddAdminSystemSettings
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,6 +189,9 @@ namespace EventManagementSystem.Web.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsReadByAttendee")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReadByOrganizer")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsReplied")
