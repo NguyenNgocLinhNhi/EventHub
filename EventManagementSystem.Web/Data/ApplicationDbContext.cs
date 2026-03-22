@@ -23,6 +23,10 @@ namespace EventManagementSystem.Web.Data
         public DbSet<Speaker> Speakers { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Sponsor> Sponsors { get; set; }
+        public DbSet<ContactInquiry> ContactInquiries { get; set; }
+        public DbSet<TeamMember> TeamMembers { get; set; }
+        public DbSet<OrganizationInfo> OrganizationInfos { get; set; }
+        public DbSet<AdminSystemSetting> AdminSystemSettings { get; set; }
 
         public DbSet<LandingPageTemplate> LandingPageTemplates { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
@@ -84,12 +88,6 @@ namespace EventManagementSystem.Web.Data
                 .WithMany(e => e.Sponsors)
                 .HasForeignKey(s => s.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
-            // Event - Ozganize
-            builder.Entity<Event>()
-            .HasOne(e => e.Organizer)
-            .WithMany(u => u.Events)
-            .HasForeignKey(e => e.OrganizerId)
-            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

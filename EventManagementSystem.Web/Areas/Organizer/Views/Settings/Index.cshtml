@@ -1,174 +1,554 @@
-﻿@model EventManagementSystem.Web.Models.Identity.ApplicationUser
+﻿@model EventManagementSystem.Web.Areas.Organizer.ViewModels.SettingsViewModel
 @{
-    ViewData["Title"] = "Account information";
-    Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+    ViewData["Title"] = "Account & Organization Settings";
+    Layout = "_LayoutOrganizer";
 }
 
-<div class="container-fluid py-4" style="font-family: 'Arimo', sans-serif;">
-    <h4 class="fw-bold mb-4 text-dark">Account information</h4>
+<style>
+    /* Custom Styling */
+    .nav-tabs .nav-link {
+        color: #495057;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        border-radius: 0;
+    }
 
-    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
-        <div class="row g-4">
-            <div class="col-lg-4 border-end-lg">
-                <h5 class="fw-bold text-dark">Personal information</h5>
-                <p class="text-muted small">This information will be used to display on the organizer profile and system notifications.</p>
-                <div class="alert alert-info border-0 rounded-3 small">
-                    <i class="bi bi-info-circle me-2"></i> <strong>Note:</strong> Email is a unique identifier and cannot be changed.
+        .nav-tabs .nav-link.active {
+            color: #00786F;
+            border-bottom: 3px solid #00786F;
+            background: transparent;
+        }
+
+    .settings-card {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .profile-img-container {
+        position: relative;
+        width: 180px;
+        margin: 0 auto;
+    }
+
+    .profile-img-preview {
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 4px solid #f8f9fa;
+    }
+
+    .upload-badge {
+        position: absolute;
+        bottom: -10px;
+        right: -10px;
+        background: #00786F;
+        color: white;
+        padding: 8px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 3px solid white;
+    }
+
+    .form-label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #555;
+    }
+
+    .member-card {
+        transition: transform 0.2s;
+        border: 1px solid #eee;
+    }
+
+        .member-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+    .visibility-toggle {
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: color 0.2s;
+    }
+
+        .visibility-toggle.visible {
+            color: #00786F;
+        }
+
+        .visibility-toggle.hidden {
+            color: #adb5bd;
+        }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="d-flex align-items-center mb-4">
+        <div class="bg-primary bg-opacity-10 p-3 rounded-3 me-3">
+            <i class="bi bi-person-gear text-primary fs-3"></i>
+        </div>
+        <div>
+            <h3 class="fw-bold mb-0">Settings</h3>
+            <p class="text-muted mb-0">Configure your professional identity and organization branding.</p>
+        </div>
+    </div>
+
+    <div class="card settings-card overflow-hidden">
+        <div class="card-header bg-white border-bottom p-0">
+            <ul class="nav nav-tabs" id="settingsTab" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#personal">
+                        <i class="bi bi-people-fill me-2"></i>Team Members
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#organization">
+                        <i class="bi bi-building me-2"></i>Company Info
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#security">
+                        <i class="bi bi-lock me-2"></i>Security
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#notify">
+                        <i class="bi bi-bell me-2"></i>Notifications
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body p-4 p-lg-5">
+            <div class="tab-content">
+
+                <div class="tab-pane fade show active" id="personal">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">Management Team Members</h5>
+                        <button type="button" class="btn btn-success btn-sm rounded-pill px-3 shadow-sm" onclick="addMemberFrame()">
+                            <i class="bi bi-plus-circle me-1"></i> Add New Member
+                        </button>
+                    </div>
+
+                    <div class="row g-4" id="team-members-list">
+                        @if (Model.TeamMembers != null)
+                        {
+                            foreach (var member in Model.TeamMembers)
+                            {
+                                <div class="col-md-6 member-item" id="member-row-@member.Id">
+                                    <div class="card member-card p-3 rounded-4 bg-light bg-opacity-50">
+                                        <form class="team-member-form" enctype="multipart/form-data">
+                                            <input type="hidden" name="Id" value="@member.Id" />
+
+                                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="position-relative">
+                                                        <img src="@(string.IsNullOrEmpty(member.ImageUrl) ? "/img/default-avatar.png" : member.ImageUrl)"
+                                                             class="rounded-circle border shadow-sm"
+                                                             style="width: 70px; height: 70px; object-fit: cover;"
+                                                             id="preview-@member.Id">
+                                                        <label for="file-@member.Id" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 rounded-circle p-1" style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                                            <i class="bi bi-camera" style="font-size: 0.6rem;"></i>
+                                                        </label>
+                                                        <input type="file" name="imageFile" id="file-@member.Id" hidden accept="image/*"
+                                                               onchange="document.getElementById('preview-@member.Id').src = window.URL.createObjectURL(this.files[0])">
+                                                    </div>
+                                                    <div class="ms-3">
+                                                        <h6 class="fw-bold mb-0">Member #@member.Id</h6>
+                                                        <span class="small text-muted">Dev Team</span>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex gap-2">
+                                                    <i class="bi @(member.IsVisible ? "bi-eye visible" : "bi-eye-slash hidden") visibility-toggle"
+                                                       onclick="toggleMemberVisibility(@member.Id, this)" title="Toggle Visibility"></i>
+                                                    <i class="bi bi-trash text-danger cursor-pointer fs-5" onclick="deleteMember(@member.Id)" title="Delete Member"></i>
+                                                </div>
+                                            </div>
+
+                                            <div class="row g-2">
+                                                <div class="col-6">
+                                                    <label class="form-label small">Full Name</label>
+                                                    <input type="text" name="FullName" value="@member.FullName" class="form-control form-control-sm" required>
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="form-label small">Position</label>
+                                                    <input type="text" name="Position" value="@member.Position" class="form-control form-control-sm" required>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label class="form-label small">Facebook</label>
+                                                    <input type="text" name="FacebookUrl" value="@member.FacebookUrl" class="form-control form-control-sm" placeholder="URL">
+                                                </div>
+                                                <div class="col-4">
+                                                    <label class="form-label small">Zalo</label>
+                                                    <input type="text" name="ZaloUrl" value="@member.ZaloUrl" class="form-control form-control-sm" placeholder="Phone">
+                                                </div>
+                                                <div class="col-4">
+                                                    <label class="form-label small">Github</label>
+                                                    <input type="text" name="GithubUrl" value="@member.GithubUrl" class="form-control form-control-sm" placeholder="URL">
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <button type="button" class="btn btn-primary btn-sm w-100 rounded-pill btn-save-member">
+                                                    <i class="bi bi-save me-1"></i> Save Changes
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-lg-8 ps-lg-5">
-                <form id="settingsForm">
-                    @Html.AntiForgeryToken()
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold">Full name <span class="text-danger">*</span></label>
-                            <input type="text" name="FullName" class="form-control py-2" value="@Model.FullName" placeholder="Enter full name">
+                <div class="tab-pane fade" id="organization">
+                    <form id="brandingForm" enctype="multipart/form-data">
+                        <div class="row g-4">
+                            <div class="col-lg-3 text-center border-end">
+                                <div class="profile-img-container mb-3">
+                                    <img id="orgPreview" src="@(Model.AvatarUrl ?? "/img/default-org.png")" class="profile-img-preview shadow-sm">
+                                    <label for="logoInput" class="upload-badge shadow">
+                                        <i class="bi bi-camera-fill"></i>
+                                    </label>
+                                    <input type="file" id="logoInput" name="logoFile" hidden accept="image/*">
+                                </div>
+                                <h6 class="fw-bold mb-0">Organization Logo</h6>
+                                <p class="small text-muted mt-2">Publicly visible to all attendees</p>
+                            </div>
+                            <div class="col-lg-9 ps-lg-4">
+                                <div class="row g-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label">Organization Official Name</label>
+                                        <input type="text" asp-for="OrganizationName" class="form-control" placeholder="e.g. SkinLab Event Solutions">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Org Type</label>
+                                        <select asp-for="OrgType" class="form-select">
+                                            <option value="Company">Company</option>
+                                            <option value="StudentClub">Student Club</option>
+                                            <option value="Freelancer">Freelancer</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Public Hotline</label>
+                                        <input type="text" asp-for="OrgHotline" class="form-control" placeholder="Customer support phone">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Public Org Email</label>
+                                        <input type="email" asp-for="OrgEmail" class="form-control" placeholder="contact@organization.com">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Organization Address</label>
+                                        <input type="text" asp-for="OrgAddress" class="form-control" placeholder="Full physical address">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Organization Introduction (Bio)</label>
+                                        <textarea asp-for="OrganizationBio" class="form-control" rows="4" placeholder="Tell attendees about your organization's mission..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-end">
+                                    <button type="submit" class="btn btn-primary px-5 rounded-pill">Save Organization Details</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold text-muted">Email</label>
-                            <input type="email" class="form-control py-2 bg-light border-0" value="@Model.Email" readonly disabled>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small fw-bold text-muted">Phone number</label>
-                            <input type="text" name="PhoneNumber" class="form-control py-2 border-secondary-light" value="@Model.PhoneNumber">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small fw-bold text-muted">Gender</label>
-                            <select name="Gender" class="form-select py-2 border-secondary-light">
-                                <option value="Nam" selected="@(Model.Gender == "Nam")">Male</option>
-                                <option value="Nữ" selected="@(Model.Gender == "Nữ")">Female</option>
-                                <option value="Khác" selected="@(Model.Gender == "Khác")">Other</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small fw-bold text-muted">Birth date</label>
-                            <input type="date" name="BirthDate" class="form-control py-2 border-secondary-light" value="@(Model.BirthDate?.ToString("yyyy-MM-dd"))">
-                        </div>
+                    </form>
+                </div>
 
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold text-dark">Province / City</label>
-                            <select id="province" name="Region" class="form-select py-2 border-secondary-light"></select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold text-dark">District</label>
-                            <select id="district" name="District" class="form-select py-2 border-secondary-light"></select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small fw-bold text-dark">Ward / Commune</label>
-                            <select id="ward" name="Ward" class="form-select py-2 border-secondary-light"></select>
-                        </div>
-
-                        <div class="col-md-12">
-                            <label class="form-label small fw-bold text-muted">Specific address</label>
-                            <input type="text" name="Address" class="form-control py-2 border-secondary-light" value="@Model.Address" placeholder="House number, street name...">
+                <div class="tab-pane fade" id="security">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="alert alert-info border-0 shadow-sm d-flex align-items-center mb-4">
+                                <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                                <span class="small">Password must be at least 6 characters and include a mix of symbols.</span>
+                            </div>
+                            <form id="passwordForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" asp-for="OldPassword" class="form-control rounded-3" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" asp-for="NewPassword" class="form-control rounded-3" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" asp-for="ConfirmPassword" class="form-control rounded-3" required>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <button type="submit" class="btn btn-danger px-5 rounded-pill">Update Security Credentials</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
+                </div>
 
-                    <div class="mt-5 d-flex justify-content-end gap-2">
-                        <button type="button" onclick="location.reload()" class="btn btn-light px-4 rounded-3">Cancel</button>
-                        <button type="submit" class="btn btn-primary px-5 rounded-3 shadow-sm">Save changes</button>
-                    </div>
-                </form>
+                <div class="tab-pane fade" id="notify">
+                    <form id="notifyForm">
+                        <div class="card bg-light border-0 rounded-4">
+                            <div class="card-body px-4">
+                                <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                                    <div>
+                                        <h6 class="fw-bold mb-1"><i class="bi bi-cart-check me-2 text-success"></i>Ticket Sales Alerts</h6>
+                                        <p class="small text-muted mb-0">Get notified every time a new ticket is booked successfully.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input asp-for="NotifySales" class="form-check-input" type="checkbox" style="width: 45px; height: 22px;">
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                                    <div>
+                                        <h6 class="fw-bold mb-1"><i class="bi bi-chat-dots me-2 text-primary"></i>Customer Inquiry Alerts</h6>
+                                        <p class="small text-muted mb-0">Notify when attendees send questions about your events.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input asp-for="NotifyInquiries" class="form-check-input" type="checkbox" style="width: 45px; height: 22px;">
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                                    <div>
+                                        <h6 class="fw-bold mb-1"><i class="bi bi-patch-check me-2 text-info"></i>Event Approval Status</h6>
+                                        <p class="small text-muted mb-0">Receive updates when Admin approves or rejects your submitted events.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input asp-for="NotifyEventStatus" class="form-check-input" type="checkbox" style="width: 45px; height: 22px;">
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                                    <div>
+                                        <h6 class="fw-bold mb-1"><i class="bi bi-arrow-left-right me-2 text-danger"></i>Refund & Cancellation</h6>
+                                        <p class="small text-muted mb-0">Be alerted when a buyer requests a ticket refund or cancellation.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input asp-for="NotifyRefunds" class="form-check-input" type="checkbox" style="width: 45px; height: 22px;">
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center py-3">
+                                    <div>
+                                        <h6 class="fw-bold mb-1"><i class="bi bi-wallet2 me-2 text-warning"></i>Payout & Financial Reports</h6>
+                                        <p class="small text-muted mb-0">Get notified when event revenue is processed or reports are ready.</p>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input asp-for="NotifyPayouts" class="form-check-input" type="checkbox" style="width: 45px; height: 22px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-end">
+                            <button type="submit" class="btn btn-primary px-5 rounded-pill shadow-sm">Save All Preferences</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-    .form-control, .form-select {
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
-    }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #0d6efd;
-            box-shadow: none;
-        }
-
-    .bg-light {
-        background-color: #f8f9fa !important;
-    }
-
-    .btn-primary {
-        padding: 10px 30px;
-        font-weight: 500;
-    }
-
-    @@media (min-width: 992px) {
-        .border-end-lg {
-            border-right: 1px solid #dee2e6;
-        }
-    }
-</style>
-
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function () {
-            const host = "https://provinces.open-api.vn/api/";
-
-            const savedProvince = "@Html.Raw(Model.Region)";
-            const savedDistrict = "@Html.Raw(Model.District)";
-            const savedWard = "@Html.Raw(Model.Ward)";
-
-            // 1. Load Provinces
-            async function loadProvinces() {
-                const data = await $.getJSON(host + "?depth=1");
-                $("#province").append('<option value="">Select Province/City</option>');
-                $.each(data, function (index, item) {
-                    let isSelected = item.name === savedProvince ? "selected" : "";
-                    $("#province").append(`<option value="${item.name}" data-id="${item.code}" ${isSelected}>${item.name}</option>`);
-                });
-                if (savedProvince) $("#province").trigger("change");
+        // Organization Logo Preview
+        document.getElementById('logoInput').onchange = function (evt) {
+            const [file] = this.files;
+            if (file) {
+                document.getElementById('orgPreview').src = URL.createObjectURL(file);
             }
+        };
 
-            // 2. Load Districts
-            $("#province").change(async function () {
-                const provinceId = $(this).find(':selected').data('id');
-                $("#district").html('<option value="">Select District</option>');
-                $("#ward").html('<option value="">Select Ward/Commune</option>');
+        // General Ajax Form Handler for static tabs
+        async function submitAjaxForm(formId, url, hasFile = false) {
+            const form = document.getElementById(formId);
+            const formData = hasFile ? new FormData(form) : new URLSearchParams(new FormData(form));
 
-                if (provinceId) {
-                    const data = await $.getJSON(host + "p/" + provinceId + "?depth=2");
-                    $.each(data.districts, function (index, item) {
-                        let isSelected = item.name === savedDistrict ? "selected" : "";
-                        $("#district").append(`<option value="${item.name}" data-id="${item.code}" ${isSelected}>${item.name}</option>`);
-                    });
-                    if (savedDistrict) $("#district").trigger("change");
-                }
-            });
-
-            // 3. Load Wards
-            $("#district").change(async function () {
-                const districtId = $(this).find(':selected').data('id');
-                $("#ward").html('<option value="">Select Ward/Commune</option>');
-
-                if (districtId) {
-                    const data = await $.getJSON(host + "d/" + districtId + "?depth=2");
-                    $.each(data.wards, function (index, item) {
-                        let isSelected = item.name === savedWard ? "selected" : "";
-                        $("#ward").append(`<option value="${item.name}" ${isSelected}>${item.name}</option>`);
-                    });
-                }
-            });
-
-            loadProvinces();
-
-            // Handle Form Submission
-            $("#settingsForm").submit(function (e) {
-                e.preventDefault();
-                const btn = $(this).find("button[type='submit']");
-                btn.prop("disabled", true).text("Saving...");
-
-                $.post("/Organizer/Settings/UpdateProfile", $(this).serialize(), function (res) {
-                    btn.prop("disabled", false).text("Save changes");
-                    if (res.success) {
-                        alert(res.message);
-                    } else {
-                        alert("Error: " + res.message);
-                    }
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
                 });
+                const result = await response.json();
+
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: result.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    if (formId === 'passwordForm') form.reset();
+                } else {
+                    Swal.fire('Failed', result.message || 'Error occurred', 'error');
+                }
+            } catch (e) {
+                Swal.fire('Error', 'Server connection failed', 'error');
+            }
+        }
+
+        // --- TEAM MEMBERS LOGIC ---
+
+        // Add a new member frame dynamically
+        async function addMemberFrame() {
+            try {
+                const response = await fetch('/Organizer/Settings/CreateTeamMember', { method: 'POST' });
+                const result = await response.json();
+
+                if (result.success) {
+                    const member = result.member;
+                    const html = `
+                        <div class="col-md-6 member-item" id="member-row-${member.id}">
+                            <div class="card member-card p-3 rounded-4 bg-light bg-opacity-50">
+                                <form class="team-member-form" enctype="multipart/form-data">
+                                    <input type="hidden" name="Id" value="${member.id}" />
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="position-relative">
+                                                <img src="/img/default-avatar.png" class="rounded-circle border shadow-sm" style="width: 70px; height: 70px; object-fit: cover;" id="preview-${member.id}">
+                                                <label for="file-${member.id}" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 rounded-circle p-1" style="width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                                    <i class="bi bi-camera" style="font-size: 0.6rem;"></i>
+                                                </label>
+                                                <input type="file" name="imageFile" id="file-${member.id}" hidden accept="image/*" onchange="document.getElementById('preview-${member.id}').src = window.URL.createObjectURL(this.files[0])">
+                                            </div>
+                                            <div class="ms-3">
+                                                <h6 class="fw-bold mb-0">#${member.id}</h6>
+                                                <span class="small text-muted">New Member</span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <i class="bi bi-eye visible visibility-toggle" onclick="toggleMemberVisibility(${member.id}, this)" title="Toggle Visibility"></i>
+                                            <i class="bi bi-trash text-danger cursor-pointer fs-5" onclick="deleteMember(${member.id})" title="Delete Member"></i>
+                                        </div>
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-6"><label class="form-label small">Full Name</label><input type="text" name="FullName" class="form-control form-control-sm" required></div>
+                                        <div class="col-6"><label class="form-label small">Position</label><input type="text" name="Position" class="form-control form-control-sm" required></div>
+                                        <div class="col-4"><label class="form-label small">Facebook</label><input type="text" name="FacebookUrl" class="form-control form-control-sm" placeholder="URL"></div>
+                                        <div class="col-4"><label class="form-label small">Zalo</label><input type="text" name="ZaloUrl" class="form-control form-control-sm" placeholder="Phone"></div>
+                                        <div class="col-4"><label class="form-label small">Github</label><input type="text" name="GithubUrl" class="form-control form-control-sm" placeholder="URL"></div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-primary btn-sm w-100 rounded-pill btn-save-member">
+                                            <i class="bi bi-save me-1"></i> Save Member
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>`;
+                    document.getElementById('team-members-list').insertAdjacentHTML('beforeend', html);
+                    Swal.fire({ icon: 'success', title: 'Frame Added!', text: 'New member frame added successfully.', timer: 1500, showConfirmButton: false });
+                }
+            } catch (e) {
+                Swal.fire('Error', 'Could not add member frame.', 'error');
+            }
+        }
+
+        // Toggle Visibility immediately via Eye Icon
+        async function toggleMemberVisibility(id, element) {
+            try {
+                const response = await fetch(`/Organizer/Settings/ToggleMemberVisibility?id=${id}`, { method: 'POST' });
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.isVisible) {
+                        element.classList.replace('bi-eye-slash', 'bi-eye');
+                        element.classList.replace('hidden', 'visible');
+                    } else {
+                        element.classList.replace('bi-eye', 'bi-eye-slash');
+                        element.classList.replace('visible', 'hidden');
+                    }
+                    Swal.fire({ icon: 'success', title: 'Updated!', text: 'Visibility changed.', timer: 1000, showConfirmButton: false });
+                }
+            } catch (e) {
+                Swal.fire('Error', 'Failed to toggle visibility.', 'error');
+            }
+        }
+
+        // Delete Member from database and UI
+        async function deleteMember(id) {
+            const confirm = await Swal.fire({
+                title: 'Are you sure?',
+                text: "This action will permanently remove this member.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
             });
+
+            if (confirm.isConfirmed) {
+                try {
+                    const response = await fetch(`/Organizer/Settings/DeleteTeamMember?id=${id}`, { method: 'POST' });
+                    const result = await response.json();
+                    if (result.success) {
+                        document.getElementById(`member-row-${id}`).remove();
+                        Swal.fire('Deleted!', 'Member has been removed.', 'success');
+                    }
+                } catch (e) {
+                    Swal.fire('Error', 'Failed to delete member.', 'error');
+                }
+            }
+        }
+
+        // Event Delegation for Save Member Button
+        document.addEventListener('click', async function(e) {
+            const button = e.target.closest('.btn-save-member');
+            if (button) {
+                const form = button.closest('form');
+                const formData = new FormData(form);
+
+                button.disabled = true;
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+                try {
+                    const response = await fetch('/Organizer/Settings/UpdateTeamMember', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Saved!',
+                            text: result.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire('Error!', result.message, 'error');
+                    }
+                } catch (e) {
+                    Swal.fire('Error', 'Connection to server failed.', 'error');
+                } finally {
+                    button.disabled = false;
+                    button.innerHTML = originalHTML;
+                }
+            }
         });
+
+        // Tab Submits Registration
+        document.getElementById('brandingForm').onsubmit = (e) => {
+            e.preventDefault();
+            submitAjaxForm('brandingForm', '/Organizer/Settings/UpdateBranding', true);
+        };
+
+        document.getElementById('passwordForm').onsubmit = (e) => {
+            e.preventDefault();
+            const newPass = document.getElementsByName('NewPassword')[0].value;
+            const confirmPass = document.getElementsByName('ConfirmPassword')[0].value;
+            if(newPass !== confirmPass) {
+                return Swal.fire('Error', 'Passwords mismatch!', 'error');
+            }
+            submitAjaxForm('passwordForm', '/Organizer/Settings/ChangePassword');
+        };
+
+        document.getElementById('notifyForm').onsubmit = (e) => {
+            e.preventDefault();
+            submitAjaxForm('notifyForm', '/Organizer/Settings/UpdateNotifications');
+        };
     </script>
 }

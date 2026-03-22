@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EventManagementSystem.Web.Migrations
+namespace EventManagementSystem.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -21,6 +21,27 @@ namespace EventManagementSystem.Web.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.AdminSystemSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("SettingKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SettingValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AdminSystemSettings");
+                });
 
             modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.Booking", b =>
                 {
@@ -142,6 +163,71 @@ namespace EventManagementSystem.Web.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.ContactInquiry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int?>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsReadByAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReadByAttendee")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReadByOrganizer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReplied")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("RepliedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReplyMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("ContactInquiries");
+                });
+
             modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.Event", b =>
                 {
                     b.Property<int>("Id")
@@ -225,6 +311,40 @@ namespace EventManagementSystem.Web.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("LandingPageTemplates");
+                });
+
+            modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.OrganizationInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgHotline")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrgType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrganizationBio")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrganizationName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrganizationInfos");
                 });
 
             modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.Schedule", b =>
@@ -331,6 +451,45 @@ namespace EventManagementSystem.Web.Migrations
                     b.ToTable("Sponsors");
                 });
 
+            modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.TeamMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FacebookUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GithubUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ZaloUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TeamMembers");
+                });
+
             modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.TicketType", b =>
                 {
                     b.Property<int>("Id")
@@ -371,6 +530,9 @@ namespace EventManagementSystem.Web.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("BirthDate")
                         .HasColumnType("datetime2");
 
@@ -398,9 +560,6 @@ namespace EventManagementSystem.Web.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -414,6 +573,24 @@ namespace EventManagementSystem.Web.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("NotifyEventStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotifyInquiries")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotifyPayouts")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotifyRefunds")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotifySales")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OrganizationBio")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OrganizationName")
                         .IsRequired()
@@ -432,9 +609,6 @@ namespace EventManagementSystem.Web.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Slug")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -630,6 +804,15 @@ namespace EventManagementSystem.Web.Migrations
                     b.Navigation("TicketType");
                 });
 
+            modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.ContactInquiry", b =>
+                {
+                    b.HasOne("EventManagementSystem.Web.Models.Entities.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId");
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("EventManagementSystem.Web.Models.Entities.Event", b =>
                 {
                     b.HasOne("EventManagementSystem.Web.Models.Entities.Category", "Category")
@@ -639,9 +822,9 @@ namespace EventManagementSystem.Web.Migrations
                         .IsRequired();
 
                     b.HasOne("EventManagementSystem.Web.Models.Identity.ApplicationUser", "Organizer")
-                        .WithMany("Events")
+                        .WithMany()
                         .HasForeignKey("OrganizerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -775,8 +958,6 @@ namespace EventManagementSystem.Web.Migrations
             modelBuilder.Entity("EventManagementSystem.Web.Models.Identity.ApplicationUser", b =>
                 {
                     b.Navigation("Bookings");
-
-                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }

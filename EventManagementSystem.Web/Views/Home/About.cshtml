@@ -1,9 +1,10 @@
-﻿@{
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.TeamMember>
+@{
     ViewData["Title"] = "About Us - Discover Experiences with Eventus";
     Layout = "_Layout";
 }
 
-@* Section 1: Hero Header (Đã đồng bộ font và style) *@
+@* Section 1: Hero Header *@
 <div class="container-fluid pb-5 bg-primary hero-header mb-5">
     <div class="container py-5">
         <div class="row g-3 align-items-center">
@@ -13,11 +14,9 @@
             <div class="col-lg-6 animated slideInRight">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center justify-content-lg-end mb-0">
-                        @* Link Home: Đổi thành màu xám đậm (text-muted) *@
                         <li class="breadcrumb-item">
                             <a class="text-muted" asp-controller="Home" asp-action="Index" style="text-decoration: none;">Home</a>
                         </li>
-                        @* Trang hiện tại: Đổi thành màu Primary (xanh đậm) và thêm fw-bold để thật sự nổi bật *@
                         <li class="breadcrumb-item text-primary active" aria-current="page">About</li>
                     </ol>
                 </nav>
@@ -56,53 +55,49 @@
     </div>
 </div>
 
-@* Section 3: Team (Đồng bộ style display-6 từ Index) *@
+@* Section 3: Team (Dữ liệu động từ Database) *@
 <div class="container-xxl py-5">
     <div class="container">
         <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
             <h6 class="text-primary section-title bg-white text-center px-3">Our Team</h6>
             <h1 class="display-6 mb-4">Dedicated People for Your Experience</h1>
         </div>
+
         <div class="row g-4">
-            @* Team Member 1 *@
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="team-item text-center p-4 shadow-sm border rounded-4 bg-white">
-                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="https://i.pravatar.cc/300?u=a1" alt="Minh Anh">
-                    <h5>Minh Anh</h5>
-                    <p class="text-primary mb-3">Event Curation Expert</p>
-                    <div class="d-flex justify-content-center gap-2">
-                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
+            @* CẬP NHẬT: Thêm .Where(m => m.IsVisible) để chỉ hiện những người được mở Mắt trong Settings *@
+            @if (Model != null && Model.Any(m => m.IsVisible))
+            {
+                int delay = 1;
+                foreach (var item in Model.Where(m => m.IsVisible))
+                {
+                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.@(delay)s">
+                        <div class="team-item text-center p-4 shadow-sm border rounded-4 bg-white">
+                            <img class="img-fluid border rounded-circle w-75 p-2 mb-4"
+                                 src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/img/default-avatar.png" : item.ImageUrl)"
+                                 alt="@item.FullName"
+                                 style="aspect-ratio: 1/1; object-fit: cover;">
+
+                            <h5>@item.FullName</h5>
+                            <p class="text-primary mb-3">@item.Position</p>
+
+                            <div class="d-flex justify-content-center gap-2">
+                                <a class="btn btn-square btn-outline-primary rounded-circle" href="javascript:void(0)"><i class="fab fa-facebook-f"></i></a>
+                                <a class="btn btn-square btn-outline-primary rounded-circle" href="javascript:void(0)" title="Zalo"><i class="bi bi-chat-text-fill"></i></a>
+                                <a class="btn btn-square btn-outline-primary rounded-circle" href="@item.GithubUrl" target="_blank"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
                     </div>
+                    delay += 2;
+                }
+            }
+            else
+            {
+                @* Trường hợp Database trống hoặc TẤT CẢ thành viên đều bị ẩn *@
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-people text-muted fs-1 mb-3 d-block"></i>
+                    <p class="text-muted italic">Updating our team...</p>
                 </div>
-            </div>
-            @* Team Member 2 *@
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                <div class="team-item text-center p-4 shadow-sm border rounded-4 bg-white">
-                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="https://i.pravatar.cc/300?u=quocbao" alt="Quoc Bao">
-                    <h5>Quoc Bao</h5>
-                    <p class="text-primary mb-3">Head of Support</p>
-                    <div class="d-flex justify-content-center gap-2">
-                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
-            @* Team Member 3 *@
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                <div class="team-item text-center p-4 shadow-sm border rounded-4 bg-white">
-                    <img class="img-fluid border rounded-circle w-75 p-2 mb-4" src="https://i.pravatar.cc/300?img=32" alt="Thanh Thao">
-                    <h5>Thanh Thao</h5>
-                    <p class="text-primary mb-3">Community Manager</p>
-                    <div class="d-flex justify-content-center gap-2">
-                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-square btn-outline-primary rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 </div>

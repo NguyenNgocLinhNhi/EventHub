@@ -1,10 +1,36 @@
 ﻿@using EventManagementSystem.Web.Models.Identity
-@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity 
+@using EventManagementSystem.Web.Data
+@inject ApplicationDbContext _context
 @inject UserManager<ApplicationUser> UserManager
 
 @{
     var currentUser = await UserManager.GetUserAsync(User);
+    var organizerRole = _context.Roles.FirstOrDefault(r => r.Name == "Organizer");
+
+    // Chỉ lấy danh sách thắc mắc hỗ trợ chưa đọc
+    var allNotifications = new List<dynamic>();
+    int unreadInquiriesCount = 0;
+
+    if (organizerRole != null)
+    {
+        allNotifications = (from i in _context.ContactInquiries
+                            join ur in _context.UserRoles on i.UserId equals ur.UserId
+                            where i.EventId == null && !i.IsReadByAdmin && ur.RoleId == organizerRole.Id
+                            orderby i.CreatedAt descending
+                            select new
+                            {
+                                Id = i.Id,
+                                Title = "New support: " + i.Subject,
+                                Time = i.CreatedAt,
+                                Url = Url.Action("Index", "SupportManager", new { area = "Admin" }),
+                                Icon = "bi-chat-dots-fill text-primary"
+                            }).Take(10).ToList<dynamic>();
+
+        unreadInquiriesCount = allNotifications.Count;
+    }
 }
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -302,6 +328,58 @@
             .sidebar.collapsed ~ .main-wrapper {
                 margin-left: var(--sidebar-collapsed-width);
             }
+
+            /* Ẩn badge khi sidebar bị thu nhỏ để tránh vỡ giao diện */
+            .sidebar.collapsed .nav-link .badge {
+                display: none !important;
+            }
+
+        /* Hiệu ứng nhấp nháy cho badge thông báo mới (tùy chọn) */
+        .badge.bg-danger {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+            animation: pulse-red 2s infinite;
+        }
+
+        @@keyframes pulse-red {
+            0%
+
+        {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+        }
+
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+        }
+
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        }
+
+        .notification-item .dropdown-item {
+            white-space: normal;
+            padding-right: 40px !important;
+            transition: background 0.2s;
+        }
+
+        .notification-item .dropdown-item:hover {
+            background-color: var(--admin-bg-light);
+        }
+
+        .notification-item .btn-close {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .notification-item:hover .btn-close {
+            opacity: 0.5;
+        }
+
+        .notification-item .btn-close:hover {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -348,12 +426,23 @@
                     <i class="bi bi-currency-dollar me-2"></i> Revenue Report
                 </a>
 
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "SupportManager" ? "active" : "")"
+                   asp-area="Admin" asp-controller="SupportManager" asp-action="Index">
+                    <div class="d-flex align-items-center w-100 justify-content-between">
+                        <div>
+                            <i class="bi bi-chat-dots-fill me-2"></i>
+                            <span>Support Inquiries</span>
+                        </div>
 
-                @* <span class="menu-label">System</span>
-
-                <a class="nav-link" href="#">
-                    <i class="bi bi-gear-fill"></i> <span>Platform configuration</span>
-                </a> *@
+                        @if (unreadInquiriesCount > 0)
+                        {
+                            <span class="badge rounded-pill bg-danger animated pulse infinite"
+                                  style="font-size: 0.7rem; padding: 0.4em 0.6em;">
+                                @unreadInquiriesCount
+                            </span>
+                        }
+                    </div>
+                </a>
             </div>
 
             <div class="sidebar-footer">
@@ -369,6 +458,12 @@
                         </div>
                     </div>
                 }
+
+                <a class="nav-link mb-2 @(ViewContext.RouteData.Values["controller"]?.ToString() == "Settings" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Settings" asp-action="Index">
+                    <i class="bi bi-gear-fill me-2"></i>
+                    <span>System Configuration</span>
+                </a>
 
                 <form asp-area="Organizer" asp-controller="Account" asp-action="Logout" method="post" id="adminLogoutForm">
                     @Html.AntiForgeryToken()
@@ -386,6 +481,43 @@
             </button>
             <div class="ms-3">
                 <h6 class="mb-0 fw-bold text-muted">Admin System - Eventus</h6>
+            </div>
+
+            <div class="ms-auto d-flex align-items-center">
+                <div class="dropdown me-3">
+                    <button class="btn btn-link p-0 position-relative" id="notifDrop" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-4 text-muted"></i>
+                        @if (unreadInquiriesCount > 0)
+                        {
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                                @unreadInquiriesCount
+                            </span>
+                        }
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-3 p-0" style="width: 320px;">
+                        <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light rounded-top-4">
+                            <h6 class="fw-bold mb-0">Notifications</h6>
+                        </div>
+                        <div style="max-height: 350px; overflow-y: auto;">
+                            @foreach (var note in allNotifications)
+                            {
+                                @* Sửa lại ID đơn giản hơn *@
+                                <div class="notification-item position-relative border-bottom" id="note-@note.Id">
+                                    <a href="@note.Url" class="dropdown-item p-3 d-flex align-items-start gap-3"
+                                       onclick="markRead(@note.Id)">
+                                        <div class="bg-light p-2 rounded-3"><i class="bi @note.Icon"></i></div>
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="mb-1 text-dark fw-bold small text-wrap">@note.Title</p>
+                                            <small class="text-muted"><i class="bi bi-clock me-1"></i>@note.Time.ToString("dd/MM HH:mm")</small>
+                                        </div>
+                                    </a>
+                                    <button class="btn-close position-absolute top-50 end-0 translate-middle-y me-2"
+                                            onclick="dismissNote(@note.Id)"></button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -419,6 +551,32 @@
                 }
             });
         });
+
+        function markRead(id) {
+            $.post('/Admin/SupportManager/MarkAsRead', { id: id, type: 'Inquiry' });
+        }
+
+        function dismissNote(id) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            $.post('/Admin/SupportManager/MarkAsRead', { id: id, type: 'Inquiry' }, function (res) {
+                if (res.success) {
+                    $(`#note-${id}`).fadeOut(300);
+                    updateBadgeCount();
+                }
+            });
+        }
+
+        function updateBadgeCount() {
+            let countBadge = $('.badge.bg-danger');
+            let currentCount = parseInt(countBadge.text());
+            if (currentCount > 1) {
+                countBadge.text(currentCount - 1);
+            } else {
+                countBadge.remove();
+            }
+        }
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

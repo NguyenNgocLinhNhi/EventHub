@@ -1,0 +1,202 @@
+﻿@model EventManagementSystem.Web.Areas.Admin.ViewModels.AdminSystemSettingsViewModel
+@{
+    ViewData["Title"] = "System Configuration";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid p-4">
+    <div class="mb-4">
+        <h2 class="fw-bold">System Configuration</h2>
+        <p class="text-muted">Quản lý các thiết lập vận hành toàn hệ thống.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white border-bottom py-3">
+            <ul class="nav nav-pills card-header-pills" id="settingsTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#general" type="button">
+                        <i class="bi bi-gear me-2"></i>General
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#email" type="button">
+                        <i class="bi bi-envelope me-2"></i>Email Server
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#timezone" type="button">
+                        <i class="bi bi-clock me-2"></i>Timezone & Localization
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <form id="adminSettingsForm" method="post" enctype="multipart/form-data">
+            <div class="card-body p-4">
+                <div class="tab-content" id="settingsTabsContent">
+
+                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4 text-center border-end">
+                                <label class="form-label d-block fw-bold">System Logo</label>
+                                <div class="mb-3">
+                                    <img src="@(string.IsNullOrEmpty(Model.SystemLogoUrl) ? "/img/no-image.jpg" : Model.SystemLogoUrl)"
+                                         id="logoPreview" class="img-thumbnail rounded-3 shadow-sm" style="max-height: 150px;">
+                                </div>
+                                <input type="file" name="logoFile" id="logoInput" class="form-control form-control-sm" accept="image/*">
+                                <small class="text-muted d-block mt-2">Dùng cho Header và Email template.</small>
+                            </div>
+                            <div class="col-md-8 ps-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">System Display Name</label>
+                                    <input asp-for="SystemName" class="form-control" placeholder="Ví dụ: Eventus System">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">System Description</label>
+                                    <textarea asp-for="SystemDescription" class="form-control" rows="3"
+                                              placeholder="Enter a brief description of the system..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="email" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">SMTP Server</label>
+                                <input asp-for="SmtpServer" class="form-control" placeholder="smtp.gmail.com">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Port</label>
+                                <input asp-for="SmtpPort" class="form-control" type="number">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <div class="form-check form-switch mb-2">
+                                    <input asp-for="EnableSsl" class="form-check-input" type="checkbox">
+                                    <label class="form-check-label fw-bold">Enable SSL/TLS</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">SMTP Username</label>
+                                <input asp-for="SmtpUser" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">SMTP Password</label>
+                                <div class="input-group">
+                                    <input asp-for="SmtpPass" class="form-control" type="password"
+                                           id="smtpPassInput" value="@Model.SmtpPass"> @* Thêm value ở đây *@
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="timezone" role="tabpanel">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Default System Timezone</label>
+                            <select asp-for="DefaultTimeZone" class="form-select">
+                                <option value="SE Asia Standard Time">(GMT+07:00) Bangkok, Hanoi, Jakarta</option>
+                                <option value="UTC">Coordinated Universal Time (UTC)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light p-3 text-end">
+                <button type="button" class="btn btn-light rounded-pill px-4 me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                    <i class="bi bi-save me-2"></i>Save Configurations
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Preview ảnh Logo ngay khi chọn file
+        document.getElementById('logoInput').onchange = function (evt) {
+            const [file] = this.files;
+            if (file) {
+                document.getElementById('logoPreview').src = URL.createObjectURL(file);
+            }
+        };
+
+        // Xử lý gửi Form bằng AJAX
+        $('#adminSettingsForm').on('submit', function (e) {
+            e.preventDefault();
+
+            // 1. Hiệu ứng Loading trên nút bấm
+            var $btn = $(this).find('button[type="submit"]');
+            var originalText = $btn.html();
+            $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Saving...');
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '/Admin/Settings/UpdateSettings',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    // Khôi phục nút bấm
+                    $btn.prop('disabled', false).html(originalText);
+
+                    if (res.success) {
+                        // 2. Hiển thị thông báo thành công
+                        showToast('success', res.message || 'Configurations updated successfully!');
+
+                        // Reload lại sau 1.5 giây để cập nhật Logo mới trên Header
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showToast('danger', 'Error: ' + res.message);
+                    }
+                },
+                error: function () {
+                    $btn.prop('disabled', false).html(originalText);
+                    showToast('danger', 'System error! Could not connect to the server.');
+                }
+            });
+        });
+
+        // Hàm hiển thị thông báo động (Toast)
+        function showToast(type, message) {
+            const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill';
+            const toastHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-4 shadow-lg"
+                     role="alert" style="z-index: 9999; min-width: 300px;">
+                    <div class="d-flex align-items-center">
+                        <i class="bi ${icon} fs-4 me-3"></i>
+                        <div>${message}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            $('body').append(toastHtml);
+
+            // Tự động biến mất sau 4 giây
+            setTimeout(function() {
+                $(".alert").fadeOut(500, function() { $(this).remove(); });
+            }, 4000);
+        }
+
+        // Chức năng Ẩn/Hiện mật khẩu
+        $('#togglePassword').on('click', function() {
+            const input = $('#smtpPassInput');
+            const icon = $(this).find('i');
+
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+                icon.removeClass('bi-eye').addClass('bi-eye-slash');
+            } else {
+                input.attr('type', 'password');
+                icon.removeClass('bi-eye-slash').addClass('bi-eye');
+            }
+        });
+    </script>
+}

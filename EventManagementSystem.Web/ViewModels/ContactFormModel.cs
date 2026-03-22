@@ -16,5 +16,6 @@ namespace EventManagementSystem.Web.ViewModels
         [Required(ErrorMessage = "Please enter your message.")]
         [MinLength(10, ErrorMessage = "Message must be at least 10 characters.")]
         public string Message { get; set; }
+        public int? EventId { get; set; }
     }
 }

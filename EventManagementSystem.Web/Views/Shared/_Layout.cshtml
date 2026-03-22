@@ -1,11 +1,15 @@
 ﻿@using EventManagementSystem.Web.Extensions
 @using EventManagementSystem.Web.Models.Identity
 @using Microsoft.AspNetCore.Identity
+@using EventManagementSystem.Web.Data
+@using Microsoft.EntityFrameworkCore
 @inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext _context
 @{
     var template = ViewBag.TemplateName as string;
-    // Lấy slug từ ViewBag để truyền vào các link điều hướng
-    string currentSlug = ViewBag.OrgSlug;
+
+    var orgInfo = await _context.OrganizationInfos.FirstOrDefaultAsync();
 }
 
 <!DOCTYPE html>
@@ -28,6 +32,7 @@
 
     @* Nạp CSS động dựa trên template của sự kiện *@
     @{
+
         if (!string.IsNullOrEmpty(template))
         {
             <link href="~/Templates/@template/css/bootstrap.min.css" rel="stylesheet">
@@ -77,8 +82,7 @@
     <div class="container-fluid sticky-top">
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light border-bottom border-2 border-white">
-                @* LOGO - Thêm slug *@
-                <a asp-controller="Home" asp-action="Index" asp-route-slug="@currentSlug" class="navbar-brand">
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand">
                     <h1 class="mb-0 text-dark">Eventus</h1>
                 </a>
 
@@ -92,51 +96,71 @@
                             var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
                         }
 
-                        @* MENU ITEMS - Thêm slug vào tất cả các link *@
-                        <a asp-controller="Home" asp-action="Index" asp-route-slug="@currentSlug"
+                        <a asp-controller="Home" asp-action="Index"
                            class="nav-item nav-link @(currentAction == "Index" ? "active" : "")">Home</a>
 
-                        <a asp-controller="Home" asp-action="About" asp-route-slug="@currentSlug"
+                        <a asp-controller="Home" asp-action="About"
                            class="nav-item nav-link @(currentAction == "About" ? "active" : "")">About</a>
 
-                        <a asp-controller="Home" asp-action="Services" asp-route-slug="@currentSlug"
+                        <a asp-controller="Home" asp-action="Services"
                            class="nav-item nav-link @(currentAction == "Services" ? "active" : "")">Services</a>
 
-                        <a asp-controller="Home" asp-action="Events" asp-route-slug="@currentSlug"
+                        <a asp-controller="Home" asp-action="Events"
                            class="nav-item nav-link @(currentAction == "Events" ? "active" : "")">Events</a>
 
-                        <a asp-controller="Home" asp-action="Categories" asp-route-slug="@currentSlug"
+                        <a asp-controller="Home" asp-action="Categories"
                            class="nav-item nav-link @(currentAction == "Categories" ? "active" : "")">Categories</a>
 
-                        <a asp-controller="Home" asp-action="Contact" asp-route-slug="@currentSlug"
+                        <a asp-controller="Home" asp-action="Contact"
                            class="nav-item nav-link @(currentAction == "Contact" ? "active" : "")">Contact</a>
                     </div>
 
-                    @if (SignInManager.IsSignedIn(User) && !User.IsInRole("Admin") && !User.IsInRole("Organizer"))
-                    {
-                        <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="d-flex align-items-center">
-                            <div class="nav-item dropdown ms-3">
+                    <div class="d-flex align-items-center ms-auto">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            var userId = UserManager.GetUserId(User);
+                            var unreadCount = _context.ContactInquiries
+                            .Count(i => i.UserId == userId && i.IsReplied && !i.IsReadByAttendee);
+
+                            @* Chuông thông báo *@
+                            <a asp-controller="Support" asp-action="MyInquiries" class="nav-link position-relative me-3 p-0 text-dark">
+                                <i class="bi bi-bell fs-4"></i>
+                                @if (unreadCount > 0)
+                                {
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                          style="font-size: 0.6rem; padding: 0.35em 0.5em; margin-top: 5px;">
+                                        @unreadCount
+                                    </span>
+                                }
+                            </a>
+
+                            @* Dropdown User *@
+                            <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle btn btn-outline-primary rounded-pill px-3" data-bs-toggle="dropdown">
                                     <i class="fas fa-user-circle me-1"></i> Hello, @(User.Identity?.Name)
                                 </a>
                                 <div class="dropdown-menu bg-light rounded-0 rounded-bottom m-0 shadow">
                                     <a asp-controller="Manage" asp-action="Index" class="dropdown-item">My Profile</a>
-                                    <a asp-controller="Manage" asp-action="MyEvents" class="dropdown-item">My Events</a>
+                                    <a asp-controller="Manage" asp-action="MyEvents" class="dropdown-item text-nowrap">My Events</a>
+                                    <a asp-controller="Support" asp-action="MyInquiries" class="dropdown-item">Support Inquiries</a>
                                     <div class="dropdown-divider"></div>
-                                    <button type="submit" class="dropdown-item text-danger border-0 bg-transparent w-100 text-start">
-                                        <i class="fas fa-power-off me-2"></i> Log Off
-                                    </button>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                        <button type="submit" class="dropdown-item text-danger border-0 bg-transparent w-100 text-start">
+                                            <i class="fas fa-power-off me-2"></i> Log Off
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
-                        </form>
-                    }
-                    else
-                    {
-                        <div class="ms-3 d-none d-lg-flex">
-                            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary rounded-pill py-2 px-4 me-2">Log in</a>
-                            <a asp-controller="Account" asp-action="Register" class="btn btn-outline-primary rounded-pill py-2 px-4 me-2">Register</a>
-                        </div>
-                    }
+                        }
+                        else
+                        {
+                            @* Cụm nút Login/Register khi Đăng xuất *@
+                            <div class="d-flex">
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary rounded-pill py-2 px-4 me-2">Log in</a>
+                                <a asp-controller="Account" asp-action="Register" class="btn btn-primary rounded-pill py-2 px-4 text-white">Register</a>
+                            </div>
+                        }
+                    </div>
                 </div>
             </nav>
         </div>
@@ -146,24 +170,23 @@
         @RenderBody()
     </div>
 
-    @* Footer *@
+    @* Footer - Đã đổi sang Tag Helpers *@
     <div class="container-fluid bg-dark text-white-50 footer pt-5">
         <div class="container py-5">
             <div class="row g-5">
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.1s">
-                    <a asp-controller="Home" asp-action="Index" asp-route-slug="@currentSlug" class="d-inline-block mb-3">
-                        <h1 class="text-white">Eventus</h1>
+                    <a href="@Url.Action("Index", "Home")" class="d-inline-block mb-3">
+                        <h1 class="text-white">@(orgInfo?.OrganizationName ?? "Eventus")</h1>
                     </a>
                     <p class="mb-0">
-                        Eventus – Smart event management solution. Effortlessly create your events and
-                        use professional form templates for quick and simple participant registration.
+                        @(orgInfo?.OrganizationBio ?? "Eventus – Smart event management solution. Effortlessly create your events.")
                     </p>
                 </div>
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.3s">
                     <h5 class="text-white mb-4">Get In Touch</h5>
-                    <p><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
-                    <p><i class="fa fa-phone-alt me-3"></i>+09999999999</p>
-                    <p><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                    <p><i class="fa fa-map-marker-alt me-3"></i>@(orgInfo?.OrgAddress ?? "Your Address")</p>
+                    <p><i class="fa fa-phone-alt me-3"></i>@(orgInfo?.OrgHotline ?? "Your Hotline")</p>
+                    <p><i class="fa fa-envelope me-3"></i>@(orgInfo?.OrgEmail ?? "Your Email")</p>
                     <div class="d-flex pt-2">
                         <a class="btn btn-outline-primary btn-square border-2 me-2" href="#"><i class="fab fa-twitter"></i></a>
                         <a class="btn btn-outline-primary btn-square border-2 me-2" href="#"><i class="fab fa-facebook-f"></i></a>
@@ -174,19 +197,19 @@
                 </div>
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.5s">
                     <h5 class="text-white mb-4">Popular Link</h5>
-                    <a class="btn btn-link" asp-controller="Home" asp-action="About" asp-route-slug="@currentSlug">About Us</a>
-                    <a class="btn btn-link" asp-controller="Home" asp-action="Contact" asp-route-slug="@currentSlug">Contact Us</a>
+                    <a class="btn btn-link" href="@Url.Action("About", "Home")">About Us</a>
+                    <a class="btn btn-link" href="@Url.Action("Events", "Home")">Browse Events</a>
+                    <a class="btn btn-link" href="@Url.Action("Categories", "Home")">Event Categories</a>
+                    <a class="btn btn-link" href="@Url.Action("Contact", "Home")">Contact Us</a>
                     <a class="btn btn-link" href="#">Privacy Policy</a>
-                    <a class="btn btn-link" href="#">Terms & Condition</a>
-                    <a class="btn btn-link" href="#">Career</a>
                 </div>
                 <div class="col-md-6 col-lg-3 wow fadeIn" data-wow-delay="0.7s">
                     <h5 class="text-white mb-4">Our Services</h5>
-                    <a class="btn btn-link" href="#">Interior Design</a>
-                    <a class="btn btn-link" href="#">Project Planning</a>
-                    <a class="btn btn-link" href="#">Renovation</a>
-                    <a class="btn btn-link" href="#">Implement</a>
-                    <a class="btn btn-link" href="#">Landscape Design</a>
+                    <a class="btn btn-link" href="@Url.Action("Services", "Home")">Event Planning</a>
+                    <a class="btn btn-link" href="@Url.Action("Services", "Home")">Attendee Management</a>
+                    <a class="btn btn-link" href="@Url.Action("Events", "Home")">Ticketing System</a>
+                    <a class="btn btn-link" href="@Url.Action("Services", "Home")">Marketing & Promotion</a>
+                    <a class="btn btn-link" href="@Url.Action("Contact", "Home")">Customer Support</a>
                 </div>
             </div>
         </div>
@@ -199,7 +222,7 @@
                     </div>
                     <div class="col-md-6 text-center text-md-end">
                         <div class="footer-menu">
-                            <a asp-controller="Home" asp-action="Index" asp-route-slug="@currentSlug">Home</a>
+                            <a href="@Url.Action("Index", "Home")">Home</a>
                             <a href="#">Cookies</a>
                             <a href="#">Help</a>
                             <a href="#">FAQs</a>
@@ -229,6 +252,7 @@
             <script src="~/js/main.js"></script>
         }
     }
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

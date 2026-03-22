@@ -1,0 +1,260 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.ContactInquiry>
+@using Microsoft.AspNetCore.Identity
+@using EventManagementSystem.Web.Models.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "System Help & Support";
+    Layout = "_LayoutOrganizer";
+
+    // Thêm dòng này để định nghĩa biến currentUser trong phạm vi file View này
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+<style>
+    /* Tùy chỉnh màu sắc đồng bộ với Layout Organizer */
+    .bg-organizer {
+        background-color: #00786F !important;
+    }
+
+    .text-organizer {
+        color: #00786F !important;
+    }
+
+    .btn-organizer {
+        background-color: #00786F;
+        color: white;
+        border-radius: 10px;
+        padding: 10px 20px;
+        transition: 0.3s;
+    }
+
+        .btn-organizer:hover {
+            background-color: #005d56;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .card-hover {
+        transition: all 0.3s ease;
+        border: 1px solid #eee;
+    }
+
+        .card-hover:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transform: translateY(-3px);
+        }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">System Help Center</h3>
+            <p class="text-muted mb-0">Contact the administration directly for technical or operational support.</p>
+        </div>
+        <button class="btn btn-organizer shadow-sm" data-bs-toggle="modal" data-bs-target="#newInquiryModal">
+            <i class="bi bi-plus-circle me-2"></i> Create New Request
+        </button>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-3 bg-light p-3 me-3 text-primary"><i class="bi bi-chat-left-dots fs-4"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-1 small uppercase fw-bold">Total Inquiries</h6>
+                        <h4 class="fw-bold mb-0">@Model.Count()</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                <div class="d-flex align-items-center text-warning">
+                    <div class="rounded-3 bg-warning bg-opacity-10 p-3 me-3"><i class="bi bi-clock-history fs-4"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-1 small uppercase fw-bold">Pending Response</h6>
+                        <h4 class="fw-bold mb-0">@Model.Count(i => !i.IsReplied)</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                <div class="d-flex align-items-center text-success">
+                    <div class="rounded-3 bg-success bg-opacity-10 p-3 me-3"><i class="bi bi-check2-circle fs-4"></i></div>
+                    <div>
+                        <h6 class="text-muted mb-1 small uppercase fw-bold">Resolved</h6>
+                        <h4 class="fw-bold mb-0">@Model.Count(i => i.IsReplied)</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-3 border-bottom-0">
+            <h5 class="mb-0 fw-bold">Support History</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Subject & Content</th>
+                        <th>Sent Date</th>
+                        <th class="text-center">Status</th>
+                        <th class="pe-4 text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="4" class="text-center py-5 text-muted">You haven't sent any support requests yet.</td></tr>
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">@item.Subject</div>
+                                <div class="text-muted small text-truncate" style="max-width: 400px;">@item.Message</div>
+                            </td>
+                            <td>
+                                <div class="small">@item.CreatedAt.ToString("dd/MM/yyyy")</div>
+                                <div class="text-muted" style="font-size: 0.7rem;">@item.CreatedAt.ToString("HH:mm")</div>
+                            </td>
+                            <td class="text-center">
+                                @if (item.IsReplied)
+                                {
+                                    <span class="status-badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Replied
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">
+                                        <i class="bi bi-hourglass-split me-1"></i> Pending
+                                    </span>
+                                }
+                            </td>
+                            <td class="pe-4 text-end">
+                                <button class="btn btn-light btn-sm rounded-3 border px-3"
+                                        onclick="viewDetail('@item.Id', '@item.Subject', `@item.Message`, `@item.ReplyMessage`, `@item.RepliedAt?.ToString("dd/MM/yyyy HH:mm")`)">
+                                    Details
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="newInquiryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Submit Support Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="inquiryForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Subject</label>
+                        <input type="text" id="newSubject" class="form-control rounded-3" placeholder="e.g., Payment issue, Template request..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Inquiry Content</label>
+                        <textarea id="newMessage" class="form-control rounded-3" rows="5" placeholder="Describe the issue you are facing in detail..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-organizer rounded-pill px-4">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header bg-organizer text-white border-0">
+                <h5 class="modal-title fw-bold">Support Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="mb-4">
+                    <h6 class="text-organizer fw-bold small uppercase mb-2">Your Question:</h6>
+                    <p id="viewSubject" class="fw-bold mb-1 fs-5"></p>
+                    <div class="p-3 bg-light rounded-3" id="viewMessage"></div>
+                </div>
+                <hr class="opacity-10">
+                <div id="replySection">
+                    <h6 class="text-success fw-bold small uppercase mb-2">Response from Administration:</h6>
+                    <div class="p-4 rounded-3 border-start border-4 border-success" style="background-color: #f8fff9;">
+                        <p id="viewReply" class="mb-2"></p>
+                        <small class="text-muted fst-italic" id="viewRepliedAt"></small>
+                    </div>
+                </div>
+                <div id="noReplyYet" class="text-center py-4 text-muted fst-italic">
+                    <i class="bi bi-info-circle me-2"></i> This request is under review. Please check back later.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function viewDetail(id, subject, message, reply, repliedAt) {
+            document.getElementById('viewSubject').innerText = subject;
+            document.getElementById('viewMessage').innerText = message;
+
+            if (reply && reply !== 'null' && reply !== '') {
+                document.getElementById('viewReply').innerText = reply;
+                document.getElementById('viewRepliedAt').innerText = "Vào lúc: " + repliedAt;
+                document.getElementById('replySection').style.display = 'block';
+                document.getElementById('noReplyYet').style.display = 'none';
+            } else {
+                document.getElementById('replySection').style.display = 'none';
+                document.getElementById('noReplyYet').style.display = 'block';
+            }
+
+            // Logic cập nhật trạng thái đã đọc tại đây (Ajax gọi MarkAsRead)
+
+            new bootstrap.Modal(document.getElementById('detailModal')).show();
+        }
+
+        // Xử lý gửi form bằng Ajax để mượt mà
+        document.getElementById('inquiryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = {
+                FullName: '@(currentUser?.FullName ?? "Organizer")',
+                Email: '@(currentUser?.Email)',
+                Subject: document.getElementById('newSubject').value,
+                Message: document.getElementById('newMessage').value
+            };
+
+            // Gọi hàm SubmitContact bạn đã viết trong HomeController
+            const response = await fetch('/Organizer/Home/SubmitContact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            const result = await response.json();
+            if (result.success) {
+                location.reload();
+            }
+        });
+    </script>
+}

@@ -14,6 +14,57 @@ namespace EventManagementSystem.Web.Data
             // Tự động Migrate database nếu có thay đổi cấu trúc
             context.Database.Migrate();
 
+            // =========================================================
+            // === TẠO DỮ LIỆU ĐỘI NGŨ PHÁT TRIỂN (TEAM MEMBERS) ===
+            // =========================================================
+            if (!context.TeamMembers.Any())
+            {
+                context.Database.ExecuteSqlRaw("TRUNCATE TABLE TeamMembers");
+                context.TeamMembers.AddRange(
+                    new TeamMember
+                    {
+                        FullName = "Nguyễn Ngọc Linh Nhi",
+                        Position = "Project Leader",
+                        Description = "Chịu trách nhiệm quản lý chung và thiết kế hệ thống.",
+                        ImageUrl = "/img/team/member1.jpg",
+                        FacebookUrl = "https://facebook.com/user1",
+                        ZaloUrl = "0901234567",
+                        GithubUrl = "https://github.com/NguyenNgocLinhNhi"
+                    },
+                    new TeamMember
+                    {
+                        FullName = "Hiệu Thị Sô Ny",
+                        Position = "Backend Developer",
+                        Description = "Chuyên gia xử lý logic nghiệp vụ và tối ưu hóa Database.",
+                        ImageUrl = "/img/team/member2.jpg",
+                        FacebookUrl = "https://facebook.com/user2",
+                        ZaloUrl = "0907654321",
+                        GithubUrl = "https://github.com/hieuthisony"
+                    },
+                    new TeamMember
+                    {
+                        FullName = "Lê Lý Kiều My",
+                        Position = "Frontend Developer",
+                        Description = "Thiết kế giao diện người dùng mượt mà và hiện đại.",
+                        ImageUrl = "/img/team/member3.jpg",
+                        FacebookUrl = "https://facebook.com/user3",
+                        ZaloUrl = "0903456789",
+                        GithubUrl = "https://github.com/asd12-gif"
+                    },
+                    new TeamMember
+                    {
+                        FullName = "Phùng Nhã Ái Như",
+                        Position = "UI/UX Designer",
+                        Description = "Xây dựng trải nghiệm người dùng và thiết kế hình ảnh sự kiện.",
+                        ImageUrl = "/img/team/member4.jpg",
+                        FacebookUrl = "https://facebook.com/user4",
+                        ZaloUrl = "0904567890",
+                        GithubUrl = "https://github.com/monligt"
+                    }
+                );
+                context.SaveChanges();
+            }
+
             // QUAN TRỌNG: Kiểm tra nếu đã có dữ liệu Booking thì KHÔNG chạy Seed để bảo vệ lịch sử vé
             if (context.Bookings.Any())
             {
@@ -731,6 +782,7 @@ namespace EventManagementSystem.Web.Data
 
                 context.SaveChanges();
             }
+            
         }
-        }
+    }
 }
