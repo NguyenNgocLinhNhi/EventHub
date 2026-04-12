@@ -1,7 +1,18 @@
-﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Event>
+﻿@using EventManagementSystem.Web.Models.Entities
+@model IEnumerable<EventManagementSystem.Web.Models.Entities.Event>
 @{
     ViewData["Title"] = "Event management";
     Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
+
+    // Tính tổng số vé thực tế đã bán của tất cả các sự kiện (không tính vé đã hủy)
+    var totalSoldAll = Model.SelectMany(e => e.Bookings ?? new List<Booking>())
+                            .Where(b => b.Status == "Confirmed")
+                            .SelectMany(b => b.BookingDetails)
+                            .Where(d => !d.IsCancelled)
+                            .Sum(d => d.Quantity);
+
+    var confirmedCount = Model.Sum(e => e.Bookings?.Count(b => b.Status == "Confirmed") ?? 0);
+    var cancelledCount = Model.Sum(e => e.Bookings?.Count(b => b.Status == "Cancelled") ?? 0);
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4" style="font-family: 'Arimo', sans-serif;">
@@ -53,12 +64,15 @@
             @foreach (var item in Model)
             {
                 var confirmedBookings = item.Bookings?.Where(b => b.Status == "Confirmed").ToList()
-                ?? new List<EventManagementSystem.Web.Models.Entities.Booking>();
+                                        ?? new List<EventManagementSystem.Web.Models.Entities.Booking>();
 
-                var sold = confirmedBookings.SelectMany(b => b.BookingDetails).Sum(d => d.Quantity);
-                var totalCapacity = item.TicketTypes?.Sum(t => t.Quantity) ?? 0;
+                var sold = confirmedBookings.SelectMany(b => b.BookingDetails.Where(d => !d.IsCancelled)).Sum(d => d.Quantity);
+                var totalCapacity = item.TicketTypes?.Sum(t => t.Quantity) + sold ?? sold;
                 var percent = totalCapacity > 0 ? (sold * 100 / totalCapacity) : 0;
-                var revenue = confirmedBookings.Sum(b => b.TotalAmount);
+                var revenue = confirmedBookings
+                            .Sum(b => b.BookingDetails
+                                    .Where(d => !d.IsCancelled)
+                                    .Sum(d => d.UnitPrice * d.Quantity));
 
                 var now = DateTime.Now;
                 string statusText;

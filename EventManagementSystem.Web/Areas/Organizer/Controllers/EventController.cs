@@ -50,6 +50,18 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
                 .FirstOrDefaultAsync(e => e.Id == id && e.OrganizerId == userId);
 
             if (@event == null) return NotFound();
+
+            // LẤY DỮ LIỆU ĐÁNH GIÁ
+            var reviews = await _context.Reviews
+                .Where(r => r.EventId == id)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            // Tính toán các chỉ số để hiển thị trên View
+            ViewBag.AverageRating = reviews.Any() ? reviews.Average(r => r.Rating) : 0;
+            ViewBag.TotalReviews = reviews.Count;
+            ViewBag.ReviewsList = reviews; // Truyền danh sách đánh giá xuống View
+
             return View(@event);
         }
         // ===================== CREATE: TẠO MỚI =====================

@@ -40,5 +40,7 @@ namespace EventManagementSystem.Web.Models.Entities
         public DateTime? CheckedInAt { get; set; }
 
         public virtual ICollection<BookingDetail> BookingDetails { get; set; } = new List<BookingDetail>();
+
+        public bool IsReadByOrganizer { get; set; } = false;
     }
 }

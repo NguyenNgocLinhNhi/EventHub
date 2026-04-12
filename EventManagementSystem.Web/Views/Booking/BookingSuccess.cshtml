@@ -5,44 +5,108 @@
 }
 
 <div class="container py-5">
-    <div class="text-center mb-5 no-print">
-        <div class="display-3 text-success animate__animated animate__bounceIn">
-            <i class="bi bi-check-circle-fill"></i>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show no-print animate__animated animate__fadeInDown" role="alert">
+            <i class="bi bi-check-circle me-2"></i> @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        <h2 class="fw-bold mt-2">Booking Successful!</h2>
-        <p class="text-muted">Information for <b>@Model.BookingDetails.Count ticket(s)</b> has been sent to your email: <b>@Model.CustomerEmail</b>.</p>
+    }
+    @* Trong BookingSuccess.cshtml, thay đổi phần tiêu đề *@
+    <div class="text-center mb-5 no-print">
+        <div class="display-3 @(Model.Status == "Cancelled" ? "text-danger" : "text-success") animate__animated animate__bounceIn">
+            <i class="bi @(Model.Status == "Cancelled" ? "bi-x-circle-fill" : "bi-check-circle-fill")"></i>
+        </div>
+
+        @if (Model.Status == "Cancelled")
+        {
+            <h2 class="fw-bold mt-2">Cancellation Confirmed</h2>
+            <p class="text-danger fw-bold">This booking has been fully canceled and refunded.</p>
+        }
+        else if (TempData["Message"] != null)
+        {
+            <h2 class="fw-bold mt-2">Update Successful!</h2>
+            <p class="text-muted">Your ticket status has been updated. Remaining tickets are shown below.</p>
+        }
+        else
+        {
+            <h2 class="fw-bold mt-2">Booking Successful!</h2>
+            <p class="text-muted">Information for <b>@Model.BookingDetails.Count(d => !d.IsCancelled) active ticket(s)</b> has been sent to <b>@Model.CustomerEmail</b>.</p>
+        }
     </div>
 
+    @if (Model.Event != null && (Model.Event.StartDate - DateTime.Now).TotalHours >= 24)
+    {
+        <div class="text-end mb-4 no-print">
+            <form asp-action="CancelFullBooking" method="post" onsubmit="return confirm('Are you sure you want to cancel the ENTIRE booking and receive a 100% refund?')">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="bookingId" value="@Model.Id" />
+                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-4">
+                    <i class="bi bi-x-circle me-2"></i>Cancel Entire Booking
+                </button>
+            </form>
+        </div>
+    }
+
     <div class="row justify-content-center g-4">
-        @* Display individual tickets based on booked seats *@
         @foreach (var detail in Model.BookingDetails)
         {
             <div class="col-md-6 col-lg-4">
-                <div class="ticket shadow-sm mb-4 animate__animated animate__fadeInUp">
+                @* Thêm class ticket-cancelled nếu vé đã bị hủy *@
+                <div class="ticket shadow-sm mb-4 animate__animated animate__fadeInUp @(detail.IsCancelled ? "ticket-cancelled" : "")">
+
                     <div class="ticket-header p-3 text-white text-center" style="background: #006D5B;">
-                        <h6 class="text-uppercase mb-0 fw-bold">@Model.Event?.Title</h6>
-                        <small>Order ID: #@Model.Id</small>
+                        <h6 class="text-uppercase mb-0 fw-bold">@Model.Event?.Title </h6>
+                        <small>Order ID: #@Model.Id </small>
                     </div>
 
                     <div class="ticket-body p-4 bg-white position-relative">
                         <div class="text-center mb-3">
-                            <label class="text-muted small d-block">SEAT NUMBER</label>
-                            <h2 class="fw-bold text-primary">@(detail.SeatNumber ?? "N/A")</h2>
+                            <label class="text-muted small d-block">SEAT NUMBER </label>
+                            <h2 class="fw-bold text-primary">@(detail.SeatNumber ?? "N/A") </h2>
                         </div>
 
                         <div class="border-top pt-3">
-                            <p class="mb-1"><b>Customer:</b> @Model.CustomerName</p>
-                            <p class="mb-0 small"><b>Booking Date:</b> @Model.BookingDate.ToString("MMMM dd, yyyy")</p>
+                            <p class="mb-1"><b>Customer:</b> @Model.CustomerName </p>
+                            <p class="mb-0 small"><b>Booking Date:</b> @Model.BookingDate.ToString("MMMM dd, yyyy") </p>
                         </div>
 
                         <div class="ticket-divider my-3"></div>
 
                         <div class="text-center">
-                            @* Independent QR Code for each seat based on ticket detail ID *@
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=TICKET_DET_@detail.Id"
-                                 class="img-fluid border p-1" style="max-width: 120px;"
-                                 alt="Check-in QR" />
-                            <p class="small text-muted mt-2">Validation Code: <br><b>TICKET-@detail.Id</b></p>
+                            @if (detail.IsCancelled)
+                            {
+                                @* Nếu vé đã hủy: Hiện ảnh Placeholder báo hủy, không hiện QR thật *@
+                                <img src="https://placehold.co/120x120/white/red?text=VOID"
+                                     class="img-fluid border p-1" style="max-width: 120px;" alt="Ticket Void" />
+                                <p class="small text-danger mt-2 fw-bold">THIS TICKET IS NO LONGER VALID</p>
+                            }
+                            else
+                            {
+                                @* Nếu vé còn hiệu lực: Hiện QR Code dựa trên TicketCode  *@
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=@detail.TicketCode"
+                                     class="img-fluid border p-1" style="max-width: 120px;" alt="Check-in QR" />
+                                <p class="small text-muted mt-2">Validation Code: <br><b>@detail.TicketCode</b></p>
+                            }
+
+                            @* Chỉ hiện nút Hủy nếu vé CHƯA bị hủy và thời gian diễn ra sự kiện > 24h  *@
+                            @if (!detail.IsCancelled && Model.Event != null && (Model.Event.StartDate - DateTime.Now).TotalHours >= 24)
+                            {
+                                <div class="mt-3 no-print border-top pt-3">
+                                    <a asp-action="CancelTicket" asp-route-ticketCode="@detail.TicketCode"
+                                       [cite_start]class="btn btn-danger btn-sm w-100" 
+                                       onclick="return confirm('This ticket will be invalidated and 100% refunded. Proceed?')">
+                                        <i class="bi bi-trash me-1"></i>Cancel This Ticket 
+                                    </a>
+                                </div>
+                            }
+                            else if (detail.IsCancelled)
+                            {
+                                @* Thông báo trạng thái đã hủy cho người dùng biết *@
+                                <div class="mt-3 no-print pt-2">
+                                    <span class="badge bg-secondary w-100 py-2">Ticket Cancelled</span>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -128,5 +192,30 @@
         body {
             background: white !important;
         }
+    }
+
+    /* Class làm mờ vé đã hủy */
+    .ticket-cancelled {
+        opacity: 0.6;
+        filter: grayscale(1);
+        position: relative;
+        cursor: not-allowed;
+    }
+
+    /* Hiệu ứng đóng dấu VOID/CANCELLED đè lên vé */
+    .ticket-cancelled::after {
+        content: "VOID / CANCELLED";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-20deg);
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: rgba(220, 53, 69, 0.8);
+        border: 4px solid rgba(220, 53, 69, 0.8);
+        padding: 5px 15px;
+        z-index: 10;
+        white-space: nowrap;
+        pointer-events: none;
     }
 </style>

@@ -472,10 +472,11 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
             // Tìm chi tiết vé và bao gồm thông tin Booking để lấy EventId
             var ticket = await _context.BookingDetails
                 .Include(d => d.Booking)
+                .ThenInclude(b => b.Event)
                 .FirstOrDefaultAsync(d => d.TicketCode == code);
 
             if (ticket == null)
-                return Json(new { success = false, message = "Mã vé không tồn tại!" });
+                return Json(new { success = false, message = "Ticket code not found!" });
 
             // SO SÁNH ID: Kiểm tra vé có thuộc đúng sự kiện đang quét không
             if (ticket.Booking.EventId != eventId)
@@ -483,22 +484,109 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
                 return Json(new
                 {
                     success = false,
-                    message = $"Vé này thuộc sự kiện #{ticket.Booking.EventId}. Bạn đang quét cho sự kiện #{eventId}!"
+                    message = $"Event mismatch: This ticket belongs to Event #{ticket.Booking.EventId}, but you are scanning for Event #{eventId}."
                 });
             }
 
+            // Kiểm tra xem vé đã được sử dụng để điểm danh trước đó chưa
             if (ticket.IsCheckedIn)
-                return Json(new { success = false, message = "Vé đã được sử dụng (Check-in rồi)!" });
+            {
+                string checkInTime = ticket.CheckInTime?.ToString("HH:mm dd/MM") ?? "N/A";
+                return Json(new
+                {
+                    success = false,
+                    message = $"Already used: This ticket was already checked in at {checkInTime}."
+                });
+            }
 
-            // Lưu dữ liệu nếu khớp
-            ticket.IsCheckedIn = true;
-            ticket.CheckInTime = DateTime.Now;
+            // Cập nhật trạng thái điểm danh vào Cơ sở dữ liệu
+            try
+            {
+                ticket.IsCheckedIn = true;
+                ticket.CheckInTime = DateTime.Now;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception dbEx)
+            {
+                // Trường hợp lỗi lưu Database (vd: mất kết nối SQL)
+                return Json(new { success = false, message = "Database error: Could not save check-in status. Please try again." });
+            }
 
-            await _context.SaveChangesAsync();
-            return Json(new { success = true, message = "Check-in thành công!", customer = ticket.Booking.CustomerName });
+            // Gửi Email thông báo
+            string emailStatus = "Email sent successfully.";
+            try
+            {
+                await SendAttendanceEmail(
+                    ticket.Booking.CustomerEmail,
+                    ticket.Booking.CustomerName,
+                    ticket.Booking.Event.Title,
+                    eventId
+                );
+            }
+            catch (SmtpCommandException smtpEx)
+            {
+                // Lỗi từ máy chủ SMTP (vd: Sai thông tin xác thực)
+                emailStatus = $"SMTP Error: {smtpEx.Message}";
+            }
+            catch (System.Net.Sockets.SocketException sockEx)
+            {
+                // Lỗi kết nối mạng/máy chủ mail
+                emailStatus = "Network Error: Could not connect to the email server.";
+            }
+            catch (Exception mailEx)
+            {
+                // Các lỗi không xác định khác khi gửi mail
+                emailStatus = $"General Email Error: {mailEx.Message}";
+            }
+
+            // Trả về kết quả thành công cho giao diện quét (kèm theo trạng thái email để debug nếu cần)
+            return Json(new
+            {
+                success = true,
+                message = "Check-in successful! Welcome to the event.",
+                customer = ticket.Booking.CustomerName,
+                emailLog = emailStatus // Thông tin này dùng để admin theo dõi lỗi ngầm
+            });
         }
 
+        private async Task SendAttendanceEmail(string customerEmail, string customerName, string eventTitle, int eventId)
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("EventHub System", "nhinnl22@uef.edu.vn"));
+            message.To.Add(new MailboxAddress(customerName, customerEmail));
+            message.Subject = $"Check-in Successful: {eventTitle}";
 
+            // Tạo đường dẫn đánh giá (Link này sẽ dẫn về trang Review của bạn)
+            string reviewUrl = $"{Request.Scheme}://{Request.Host}/Review/Create?eventId={eventId}&email={customerEmail}";
+
+            var bodyBuilder = new BodyBuilder
+            {
+                HtmlBody = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;'>
+                    <div style='background: #0d6efd; color: white; padding: 20px; text-align: center;'>
+                        <h2>Check-in Confirmed!</h2>
+                    </div>
+                    <div style='padding: 30px; line-height: 1.6;'>
+                        <p>Hi <strong>{customerName}</strong>,</p>
+                        <p>Congratulations! You have successfully checked in for <strong>{eventTitle}</strong>.</p>
+                        <p>We hope you have a fantastic time at the event. We value your feedback to make future events even better.</p>
+                
+                        <div style='text-align: center; margin: 30px 0;'>
+                            <a href='{reviewUrl}' style='background: #198754; color: white; padding: 12px 25px; text-decoration: none; border-radius: 50px; font-weight: bold;'>Rate This Event</a>
+                        </div>
+                
+                        <p>Best regards,<br/>The EventHub Team</p>
+                    </div>
+                </div>"
+            };
+            message.Body = bodyBuilder.ToMessageBody();
+
+            using var client = new SmtpClient();
+            await client.ConnectAsync("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync("nhinnl22@uef.edu.vn", "jlhbjmhrtritadow");
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
+        }
 
     }
 }

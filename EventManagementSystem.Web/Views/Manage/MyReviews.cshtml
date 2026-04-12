@@ -1,0 +1,225 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.Review>
+@{
+    ViewData["Title"] = "My Reviews";
+    Layout = "_Layout";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root {
+        --review-primary: #006D5B;
+        --star-gold: #ffc107;
+        --soft-bg: #f8fafb;
+        --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        --hover-shadow: 0 20px 40px rgba(0, 109, 91, 0.08);
+    }
+
+    body {
+        background-color: var(--soft-bg);
+        font-family: 'Arimo', sans-serif;
+    }
+
+    .review-header {
+        padding: 60px 0 30px;
+        text-align: center;
+    }
+
+    .review-title {
+        font-weight: 800;
+        color: var(--review-primary);
+        letter-spacing: -0.5px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+    }
+
+    .review-underline {
+        width: 60px;
+        height: 4px;
+        background: var(--review-primary);
+        margin: 0 auto;
+        border-radius: 10px;
+    }
+
+    /* Wrapper tập trung vào giữa */
+    .review-feed-container {
+        max-width: 750px;
+        margin: 0 auto;
+        padding-bottom: 60px;
+    }
+
+    /* Review Card Styling - Một cột duy nhất */
+    .review-card {
+        background: #ffffff;
+        border-radius: 24px;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        padding: 35px;
+        margin-bottom: 25px;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+        box-shadow: var(--card-shadow);
+        position: relative;
+    }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+    .quote-icon {
+        position: absolute;
+        top: 30px;
+        right: 35px;
+        font-size: 3rem;
+        color: rgba(0, 109, 91, 0.05);
+        pointer-events: none;
+    }
+
+    .event-info {
+        margin-bottom: 15px;
+        padding-right: 50px;
+    }
+
+    .event-name-link {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--review-primary);
+        text-decoration: none;
+        transition: 0.2s;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+        .event-name-link:hover {
+            color: #004d40;
+        }
+
+    .review-date {
+        font-size: 0.85rem;
+        color: #95a5a6;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .stars-container {
+        margin-bottom: 20px;
+        color: var(--star-gold);
+        font-size: 1rem;
+        display: flex;
+        gap: 4px;
+    }
+
+    .review-text {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: #333;
+        font-style: italic;
+        position: relative;
+        padding: 20px 25px;
+        background: #fcfdfe;
+        border-radius: 18px;
+        border-left: 5px solid var(--review-primary);
+    }
+
+    .review-footer {
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-view-event {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--review-primary);
+        text-transform: uppercase;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+        padding: 8px 16px;
+        background: #f0fdfa;
+        border-radius: 50px;
+    }
+
+        .btn-view-event:hover {
+            gap: 12px;
+            background: var(--review-primary);
+            color: white;
+        }
+
+    /* Empty State */
+    .empty-state {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 50px;
+        background: white;
+        border-radius: 30px;
+        box-shadow: var(--card-shadow);
+    }
+</style>
+
+<div class="container">
+    <header class="review-header">
+        <h1 class="review-title">My Event Reviews</h1>
+        <div class="review-underline"></div>
+    </header>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state text-center">
+            <div class="empty-icon">
+                <i class="fa-regular fa-comments" style="font-size: 4rem; color: #dee2e6; margin-bottom: 20px; display: block;"></i>
+            </div>
+            <h4 class="fw-bold">No reviews yet</h4>
+            <p class="text-muted mb-4">You haven't shared your thoughts on any events. Your feedback helps organizers improve!</p>
+            <a asp-controller="Home" asp-action="Events"
+               class="btn btn-primary rounded-pill px-4 py-2 fw-bold"
+               style="background: var(--review-primary); border: none;">
+                Browse Events
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="review-feed-container">
+            @foreach (var review in Model)
+            {
+                <div class="review-card">
+                    <i class="fa-solid fa-quote-right quote-icon"></i>
+
+                    <div class="event-info">
+                        <a asp-area="" asp-controller="Event" asp-action="Detail" asp-route-id="@review.EventId" class="event-name-link">
+                            @review.Event?.Title
+                        </a>
+                        <div class="review-date">
+                            <i class="fa-regular fa-clock"></i>
+                            Reviewed on @review.CreatedAt.ToString("dd MMM yyyy")
+                        </div>
+                    </div>
+
+                    <div class="stars-container">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="@(i <= review.Rating ? "fa-solid" : "fa-regular") fa-star"></i>
+                        }
+                    </div>
+
+                    <div class="review-text">
+                        "@review.Comment"
+                    </div>
+
+                    <div class="review-footer">
+                        <span class="text-muted small">Status: Published</span>
+                        <a asp-area="" asp-controller="Event" asp-action="Detail" asp-route-id="@review.EventId" class="btn-view-event">
+                            View Event <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -37,8 +37,6 @@ namespace EventManagementSystem.Web.Areas.Admin.Controllers
                 Email = u.Email,
                 PhoneNumber = u.PhoneNumber,
                 Region = u.Region ?? "Unspecified",
-                Slug = u.Slug,
-                IsApproved = u.IsApproved,
                 // Đếm số sự kiện mà Organizer này đã tạo
                 TotalEvents = _context.Events.Count(e => e.OrganizerId == u.Id),
                 // Kiểm tra trạng thái Lockout thực tế của Identity
@@ -134,55 +132,6 @@ namespace EventManagementSystem.Web.Areas.Admin.Controllers
             {
                 return Json(new { success = false, message = ex.Message });
             }
-        }
-        [HttpPost]
-        public async Task<IActionResult> SetSlug([FromBody] SetSlugRequest req)
-        {
-            if (string.IsNullOrWhiteSpace(req.Slug))
-            {
-                return Json(new { success = false, message = "Slug không được để trống" });
-            }
-
-            var user = await _userManager.FindByIdAsync(req.Id);
-
-            if (user == null)
-                return Json(new { success = false, message = "User not found" });
-
-            req.Slug = req.Slug.Trim().ToLower().Replace(" ", "-");
-
-            var exists = await _userManager.Users
-                .AnyAsync(u => u.Slug == req.Slug && u.Id != req.Id);
-
-            if (exists)
-                return Json(new { success = false, message = "Slug already exists" });
-
-            user.Slug = req.Slug;
-            user.IsApproved = true;
-
-            await _userManager.UpdateAsync(user);
-
-            return Json(new { success = true });
-        }
-
-        public class SetSlugRequest
-        {
-            public string Id { get; set; }
-            public string Slug { get; set; }
-        }
-        [HttpPost]
-        public async Task<IActionResult> RemoveSlug(string id)
-        {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
-                return Json(new { success = false });
-
-            user.Slug = null;
-            user.IsApproved = false;
-
-            await _userManager.UpdateAsync(user);
-
-            return Json(new { success = true });
         }
     }
 }

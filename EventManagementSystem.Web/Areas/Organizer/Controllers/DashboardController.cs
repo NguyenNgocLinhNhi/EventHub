@@ -25,24 +25,7 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
         {
             var userId = _userManager.GetUserId(User);
 
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-                return RedirectToAction("Login", "Account");
-
-            // ===== CASE: CHƯA APPROVED =====
-            if (!user.IsApproved || string.IsNullOrEmpty(user.Slug))
-            {
-                var pendingModel = new OrganizerDashboardViewModel
-                {
-                    IsApproved = false,
-                    Slug = user.Slug
-                };
-
-                return View(pendingModel);
-            }
-
-            // ===== CASE: ĐÃ APPROVED =====
+            // Nạp thêm TicketTypes để biết tổng số vé ban đầu của từng sự kiện
             var myEvents = await _context.Events
                 .Where(e => e.OrganizerId == userId)
                 .Include(e => e.TicketTypes)
@@ -52,32 +35,31 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
 
             var viewModel = new OrganizerDashboardViewModel
             {
-                IsApproved = true,
-                Slug = user.Slug,
-
                 TotalEvents = myEvents.Count,
 
+                // CHỈ tính tiền từ các vé CHƯA bị hủy (Net Revenue)
                 TotalRevenue = myEvents.SelectMany(e => e.Bookings)
-                                       .Where(b => b.Status == "Confirmed" || b.Status == "Success")
-                                       .Sum(b => b.TotalAmount),
+                               .Where(b => b.Status == "Confirmed" || b.Status == "Success")
+                               .SelectMany(b => b.BookingDetails)
+                               .Where(d => !d.IsCancelled)
+                               .Sum(d => d.UnitPrice * d.Quantity),
 
+                // CHỈ tính số lượng vé thực tế chưa bị hủy
                 TotalTickets = myEvents.SelectMany(e => e.Bookings)
-                                       .Where(b => b.Status == "Confirmed" || b.Status == "Success")
-                                       .SelectMany(b => b.BookingDetails)
-                                       .Sum(d => d.Quantity),
+                               .Where(b => b.Status == "Confirmed" || b.Status == "Success")
+                               .SelectMany(b => b.BookingDetails)
+                               .Where(d => !d.IsCancelled)
+                               .Sum(d => d.Quantity),
 
                 TotalCustomers = myEvents.SelectMany(e => e.Bookings)
-                                         .Select(b => b.CustomerEmail)
-                                         .Distinct()
-                                         .Count(),
+                                 .Select(b => b.CustomerEmail)
+                                 .Distinct().Count(),
 
-                RecentEvents = myEvents
-                    .OrderByDescending(e => e.StartDate)
-                    .Take(5)
-                    .ToList(),
+                RecentEvents = myEvents.OrderByDescending(e => e.StartDate).Take(5).ToList(),
 
                 RecentBookings = await _context.Bookings
                     .Include(b => b.Event)
+                    .Include(b => b.BookingDetails) // Bổ sung Include để tính Net Amount ở View
                     .Where(b => b.Event.OrganizerId == userId)
                     .OrderByDescending(b => b.BookingDate)
                     .Take(5)

@@ -1,14 +1,14 @@
 ﻿using EventManagementSystem.Web.Areas.Organizer.ViewModels;
 using EventManagementSystem.Web.Data;
+using EventManagementSystem.Web.Models.Entities;
 using EventManagementSystem.Web.Models.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using System.IO;
-using Microsoft.AspNetCore.Hosting;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventManagementSystem.Web.Areas.Organizer.Controllers
 {
@@ -111,19 +111,51 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
         }
 
         [HttpPost]
-        public IActionResult SubmitContact([FromBody] ContactFormModel model)
+        public async Task<IActionResult> SubmitContact([FromBody] ContactFormModel model)
         {
-            // Kiểm tra dữ liệu dựa trên các Attribute trong ContactFormModel
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid) return Json(new { success = false, message = "Invalid data." });
+
+            string? finalUserId = null;
+            // Vì trang này chỉ dành cho NTC, chúng ta gán cứng Category là Organizer
+            string finalCategory = "Organizer";
+
+            // 1. Kiểm tra nếu người dùng đang đăng nhập
+            if (User.Identity.IsAuthenticated)
             {
-                // Lấy thông báo lỗi đầu tiên để trả về cho người dùng
-                var error = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault()?.ErrorMessage;
-                return Json(new { success = false, message = error ?? "Invalid data." });
+                finalUserId = _userManager.GetUserId(User);
+            }
+            else
+            {
+                // 2. Nếu chưa đăng nhập, tìm tài khoản dựa trên Email người dùng nhập vào
+                var userByEmail = await _userManager.FindByEmailAsync(model.Email.Trim());
+                if (userByEmail != null)
+                {
+                    // Kiểm tra xem tài khoản này có phải là Organizer không trước khi liên kết ID
+                    if (await _userManager.IsInRoleAsync(userByEmail, "Organizer"))
+                    {
+                        finalUserId = userByEmail.Id;
+                    }
+                }
             }
 
-            // Logic xử lý (Lưu DB hoặc gửi Email)
-            // Cần đảm bảo Model có thuộc tính FullName hoặc sửa thành Name cho đồng bộ
-            return Json(new { success = true, message = "Thank you " + model.FullName + "! Your request has been received." });
+            var inquiry = new ContactInquiry
+            {
+                UserId = finalUserId, // Sẽ có ID nếu Email khớp với một NTC trong hệ thống
+                Name = model.FullName,
+                Email = model.Email.Trim(),
+                Subject = model.Subject,
+                Message = model.Message,
+                CreatedAt = DateTime.Now,
+                IsReplied = false,
+                IsReadByAdmin = false,
+                IsReadByAttendee = false,
+                Category = finalCategory // Luôn lưu là "Organizer"
+            };
+
+            _context.ContactInquiries.Add(inquiry);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Sent successfully! Your request has been linked to your Organizer account." });
         }
 
         // 2. Trang Dashboard: Chỉ dành cho nhà tổ chức đã đăng nhập

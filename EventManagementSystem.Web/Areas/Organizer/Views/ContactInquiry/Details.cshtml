@@ -1,0 +1,101 @@
+﻿@model EventManagementSystem.Web.Models.Entities.ContactInquiry
+
+@{
+    ViewData["Title"] = "Inquiry Details";
+    Layout = "_LayoutOrganizer";
+}
+
+<div class="container-fluid">
+    <div class="mb-4">
+        <a asp-action="Index" class="text-decoration-none text-muted">
+            <i class="bi bi-arrow-left"></i> Back to Inquiries
+        </a>
+        <h2 class="fw-bold mt-2">Inquiry Details</h2>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h4 class="fw-bold mb-1">@Model.Name</h4>
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-envelope me-2"></i>@Model.Email
+                            </p>
+                        </div>
+                        <span class="badge @(Model.IsReplied ? "bg-success" : "bg-warning text-dark") px-3 py-2 rounded-pill">
+                            @(Model.IsReplied ? "Replied" : "Pending")
+                        </span>
+                    </div>
+
+                    <div class="bg-light p-3 rounded-3 mb-4 border-start border-4 border-primary">
+                        <small class="text-uppercase fw-bold text-muted d-block mb-1">Related Event:</small>
+                        <span class="fs-6">
+                            <i class="bi bi-calendar-event me-2"></i>
+                            @(Model.Event != null ? Model.Event.Title : "General Inquiry")
+                        </span>
+                    </div>
+
+                    <div class="mb-4">
+                        <small class="text-uppercase fw-bold text-muted d-block mb-2">Message Content:</small>
+                        <div class="p-3 border rounded-3 bg-white" style="min-height: 120px; white-space: pre-wrap;">@Model.Message</div>
+                    </div>
+
+                    <div class="text-muted small">
+                        <i class="bi bi-clock me-1"></i> Received on: @Model.CreatedAt.ToString("MMMM dd, yyyy HH:mm")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 border-top border-4 border-primary">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Your Response</h5>
+
+                    @if (Model.IsReplied)
+                    {
+                        <div class="alert alert-success border-0 bg-success-subtle text-success p-3">
+                            <h6 class="fw-bold mb-2">Replied Message:</h6>
+                            <p class="mb-2" style="white-space: pre-wrap;">@Model.ReplyMessage</p>
+                            <hr>
+                            <small>
+                                <i class="bi bi-check2-all me-1"></i>
+                                Replied on: @Model.RepliedAt?.ToString("MMMM dd, yyyy HH:mm")
+                            </small>
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-action="Reply" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Reply Message</label>
+                                <textarea name="replyMessage" class="form-control border-0 bg-light" rows="8"
+                                      placeholder="Type your answer here..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">
+                                <i class="bi bi-send-fill me-2"></i> Send Response
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+
+    .bg-success-subtle {
+        background-color: #e6fffa;
+    }
+
+    .card {
+        transition: transform 0.2s;
+    }
+</style>

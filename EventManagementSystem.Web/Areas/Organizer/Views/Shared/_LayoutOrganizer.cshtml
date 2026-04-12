@@ -1,9 +1,69 @@
-﻿@using EventManagementSystem.Web.Models.Identity
+﻿@using EventManagementSystem.Web.Data
+@using EventManagementSystem.Web.Models.Identity
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext _context
 
 @{
     var currentUser = await UserManager.GetUserAsync(User);
+    var orgData = await _context.OrganizationInfos.FirstOrDefaultAsync();
+
+    // 1. Lấy danh sách ID các sự kiện thuộc về NTC này
+    var myEventIds = _context.Events
+                        .Where(e => e.OrganizerId == currentUser.Id)
+                        .Select(e => e.Id)
+                        .ToList();
+
+    // 2. Lấy thắc mắc mới (ContactInquiries)
+    var contactNotes = (from i in _context.ContactInquiries
+                        where myEventIds.Contains(i.EventId ?? 0) && !i.IsReadByOrganizer
+                        select new
+                        {
+                            Id = i.Id,
+                            Title = "New inquiry: " + i.Subject,
+                            Time = i.CreatedAt,
+                            Url = Url.Action("Index", "ContactInquiry", new { area = "Organizer" }),
+                            Icon = "bi-chat-left-text text-success",
+                            Type = "Inquiry"
+                        }).ToList<dynamic>();
+
+    // 3. Lấy thông báo mua vé mới (Đơn hàng Confirmed chưa đọc)
+    var bookingNotes = (from b in _context.Bookings
+                        where myEventIds.Contains(b.EventId) && b.Status == "Confirmed" && !b.IsReadByOrganizer
+                        select new
+                        {
+                            Id = b.Id,
+                            Title = "New purchase: " + b.CustomerName,
+                            Time = b.BookingDate,
+                            Url = Url.Action("Index", "Ticket", new { area = "Organizer" }),
+                            Icon = "bi-cart-check text-primary",
+                            Type = "Booking"
+                        }).ToList<dynamic>();
+
+    // 4. Lấy thông báo hủy vé mới (Vé IsCancelled chưa đọc)
+    var cancelNotes = (from d in _context.BookingDetails
+                       where myEventIds.Contains(d.Booking.EventId) && d.IsCancelled && !d.IsReadByOrganizer
+                       select new
+                       {
+                           Id = d.Id,
+                           Title = "Ticket Void: " + d.SeatNumber + " (" + d.Booking.CustomerName + ")",
+                           Time = d.CancelledAt ?? DateTime.Now, // Thay DateTime.Now bằng trường dữ liệu thực tế
+                           Url = Url.Action("Index", "Ticket", new { area = "Organizer" }),
+                           Icon = "bi-x-circle text-danger",
+                           Type = "Cancellation"
+                       }).ToList<dynamic>();
+
+    // 5. Gộp tất cả và sắp xếp theo thời gian mới nhất
+    var allNotifications = contactNotes.Concat(bookingNotes).Concat(cancelNotes)
+                           .OrderByDescending(n => n.Time)
+                           .Take(10).ToList();
+
+    int totalUnreadCount = allNotifications.Count;
+
+    // Phản hồi từ Admin (Giữ nguyên logic cũ)
+    int unreadSupportCount = _context.ContactInquiries
+        .Count(i => i.UserId == currentUser.Id && i.EventId == null && i.IsReplied && !i.IsReadByAttendee);
 }
 
 <!DOCTYPE html>
@@ -124,6 +184,30 @@
             color: #ff8787 !important; /* Màu đỏ sáng hơn để dễ nhìn trên nền xanh */
             font-weight: 700;
         }
+
+        .badge.bg-danger {
+            animation: pulse-red 2s infinite;
+        }
+
+        @@keyframes pulse-red {
+            0%
+
+        {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+        }
+
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 8px rgba(220, 53, 69, 0);
+        }
+
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        }
+
+        }
     </style>
 </head>
 <body>
@@ -176,6 +260,30 @@
                         <i class="bi bi-currency-dollar"></i> Revenue report
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ContactInquiry" ? "active" : "")"
+                       asp-area="Organizer" asp-controller="ContactInquiry" asp-action="Index">
+                        <i class="bi bi-chat-dots"></i> Customer Inquiries
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Support" ? "active" : "")"
+                       asp-area="Organizer" asp-controller="Support" asp-action="Index">
+                        <div class="d-flex align-items-center w-100 justify-content-between">
+                            <div>
+                                <i class="bi bi-headset me-2"></i>
+                                <span>System Help</span>
+                            </div>
+                            @if (unreadSupportCount > 0)
+                            {
+                                <span class="badge rounded-pill bg-danger shadow-sm"
+                                      style="font-size: 0.7rem; padding: 0.4em 0.6em;">
+                                    @unreadSupportCount
+                                </span>
+                            }
+                        </div>
+                    </a>
+                </li>
             </ul>
 
             <div class="sidebar-footer">
@@ -184,7 +292,7 @@
                     <div class="user-info mb-3">
                         <i class="bi bi-person-circle text-white"></i>
                         <div class="overflow-hidden">
-                            <p class="small fw-bold mb-0 text-truncate">@(currentUser.OrganizationName ?? "Organization")</p>
+                            <p class="small fw-bold mb-0 text-truncate">@(orgData?.OrganizationName ?? "Organization")</p>
                             <p class="text-white-50 mb-0 text-truncate" style="font-size: 11px;">@currentUser.Email</p>
                         </div>
                     </div>
@@ -204,6 +312,51 @@
         </div>
 
         <div class="main-wrapper">
+            <header class="d-flex align-items-center justify-content-end px-4 shadow-sm bg-white" style="height: 70px;">
+                <div class="dropdown me-3">
+                    <button class="btn btn-link p-0 position-relative text-dark" id="orgNotifDrop" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-4"></i>
+                        @if (totalUnreadCount > 0)
+                        {
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                                @totalUnreadCount
+                            </span>
+                        }
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-3 p-0" style="width: 320px;">
+                        <div class="p-3 border-bottom bg-light rounded-top-4">
+                            <h6 class="fw-bold mb-0">Notifications</h6>
+                        </div>
+                        <div style="max-height: 350px; overflow-y: auto;">
+                            @if (!allNotifications.Any())
+                            {
+                                <div class="p-4 text-center text-muted small">
+                                    <i class="bi bi-bell-slash d-block fs-3 mb-2"></i>
+                                    No new notifications
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var note in allNotifications)
+                                {
+                                    <div class="notification-item position-relative border-bottom" id="org-note-@note.Type-@note.Id">
+                                        <a href="@note.Url" class="dropdown-item p-3 d-flex align-items-start gap-3" onclick="markAsRead('@note.Type', @note.Id)">
+                                            <div class="bg-light p-2 rounded-3"><i class="bi @note.Icon"></i></div>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <p class="mb-1 text-dark fw-bold small text-wrap">@note.Title</p>
+                                                <small class="text-muted">@note.Time.ToString("dd/MM HH:mm")</small>
+                                            </div>
+                                        </a>
+                                        <button class="btn-close position-absolute top-50 end-0 translate-middle-y me-2"
+                                                style="font-size: 0.7rem;" onclick="dismissNotification('@note.Type', @note.Id)"></button>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </header>
+
             <div class="content-area">
                 @RenderBody()
             </div>
@@ -216,3 +369,43 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+    function markAsRead(type, id) {
+        // Gửi yêu cầu cập nhật trạng thái đã đọc dựa trên loại thông báo
+    $.post('/Organizer/Notification/MarkRead', { type: type, id: id }, function (res) {
+                if (res.success) {
+                    removeNotificationUI(type, id);
+            }
+        });
+    }
+
+    function dismissNotification(type, id) {
+        event.preventDefault();
+        event.stopPropagation();
+        $.post('/Organizer/Notification/MarkRead', { type: type, id: id }, function (res) {
+            if (res.success) {
+                removeNotificationUI(type, id);
+            }
+        });
+    }
+
+    function removeNotificationUI(type, id) {
+        $(`#org-note-${type}-${id}`).fadeOut(300, function() {
+            $(this).remove();
+            let countBadge = $('#orgNotifDrop .badge');
+            if (countBadge.length) {
+                let currentCount = parseInt(countBadge.text());
+                if (currentCount > 1) {
+                    countBadge.text(currentCount - 1);
+                } else {
+                    countBadge.remove();
+                    // Nếu hết thông báo, hiện dòng chữ "No new notifications"
+                    if ($('.notification-item').length === 0) {
+                        $('.dropdown-menu div[style*="max-height"]').html('<div class="p-4 text-center text-muted small"><i class="bi bi-bell-slash d-block fs-3 mb-2"></i>No new notifications</div>');
+                    }
+                }
+            }
+        });
+    }
+</script>

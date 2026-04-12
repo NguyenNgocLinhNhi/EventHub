@@ -20,6 +20,7 @@ namespace EventManagementSystem.Web.Areas.Admin.ViewModels
 
     public class RecentEventViewModel
     {
+        public int Id { get; set; }
         public string Title { get; set; } = string.Empty; // Event.Title
         public string OrganizerName { get; set; } = string.Empty; // Event.Organizer.FullName
         public bool IsApproved { get; set; } // Dựa trên Event.IsActive

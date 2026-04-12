@@ -7,8 +7,6 @@
         public int TotalEvents { get; set; }
         public int TotalCustomers { get; set; }
         public int TotalViews { get; set; } // Số lượt xem (nếu có tracking)
-        public bool IsApproved { get; set; }
-        public string? Slug { get; set; }
 
         public List<EventManagementSystem.Web.Models.Entities.Event> RecentEvents { get; set; } = new();
         public List<EventManagementSystem.Web.Models.Entities.Booking> RecentBookings { get; set; } = new();

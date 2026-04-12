@@ -9,13 +9,10 @@
     var daysLeft = timeSpan.Days > 0 ? timeSpan.Days : 0;
     var hoursLeft = timeSpan.Hours > 0 ? timeSpan.Hours : 0;
 
-    // Minimum price logic
+    // Minimum price logic - Sửa lỗi Null và gán dữ liệu từ Model
     var minPrice = Model.SpotlightEvent != null && Model.SpotlightEvent.TicketTypes != null && Model.SpotlightEvent.TicketTypes.Any()
                    ? Model.SpotlightEvent.TicketTypes.Min(t => t.Price).ToString("N0")
                    : "Contact Us";
-
-    // Lấy slug từ ViewBag để dùng cho các link
-    string currentSlug = ViewBag.OrgSlug;
 }
 
 <main>
@@ -32,12 +29,7 @@
                     </p>
 
                     <div class="bg-white rounded p-3 shadow-sm border animated slideInRight mb-4" style="border-radius: 50px !important;">
-                        @* FIX: Thêm tham số slug vào Form Search *@
                         <form action="@Url.Action("Events", "Home")" method="get">
-                            @if (!string.IsNullOrEmpty(currentSlug))
-                            {
-                                <input type="hidden" name="slug" value="@currentSlug" />
-                            }
                             <div class="input-group input-group-lg">
                                 <span class="input-group-text bg-white border-0"><i class="bi bi-search text-muted"></i></span>
                                 <input type="text" name="searchString" class="form-control border-0 shadow-none" placeholder="Search events, artists, or venues...">
@@ -48,8 +40,11 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="owl-carousel header-carousel animated fadeIn">
+                        @* Vibrant Concert *@
                         <img class="img-fluid rounded shadow" src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=800&q=80" alt="Concert Life">
+                        @* Tech Conference *@
                         <img class="img-fluid rounded shadow" src="https://media.istockphoto.com/id/2174406748/photo/woman-is-presenting-a-phone.jpg?s=612x612&w=0&k=20&c=ccnWslGUMEonLey8OWp3RDNFESYUg_ST0WuFQQSBwQE=" alt="Tech Conference">
+                        @* Elegant Gala *@
                         <img class="img-fluid rounded shadow" src="https://eagleviewbh.com/wp-content/uploads/2025/12/New-Year-Celebration-1000-x-667-px.jpg?auto=format&fit=crop&w=800&q=80" alt="Corporate Gala">
                     </div>
                 </div>
@@ -114,9 +109,9 @@
             </div>
 
             <div class="row g-4 justify-content-center">
-                @* FIX: Thêm asp-route-slug vào tất cả các link Category *@
+                @* Technology *@
                 <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <a asp-controller="Home" asp-action="Events" asp-route-slug="@currentSlug" asp-route-searchString="Technology" class="cat-circle d-block text-decoration-none">
+                    <a asp-controller="Home" asp-action="Events" asp-route-searchString="Technology" class="cat-circle d-block text-decoration-none">
                         <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
                             <img class="img-fluid w-100 h-100" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=300&q=80" alt="Tech">
                         </div>
@@ -124,8 +119,9 @@
                     </a>
                 </div>
 
+                @* Music *@
                 <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.2s">
-                    <a asp-controller="Home" asp-action="Events" asp-route-slug="@currentSlug" asp-route-searchString="Music" class="cat-circle d-block text-decoration-none">
+                    <a asp-controller="Home" asp-action="Events" asp-route-searchString="Music" class="cat-circle d-block text-decoration-none">
                         <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
                             <img class="img-fluid w-100 h-100" src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=300&q=80" alt="Music">
                         </div>
@@ -133,8 +129,9 @@
                     </a>
                 </div>
 
+                @* Food *@
                 <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.3s">
-                    <a asp-controller="Home" asp-action="Events" asp-route-slug="@currentSlug" asp-route-searchString="Food" class="cat-circle d-block text-decoration-none">
+                    <a asp-controller="Home" asp-action="Events" asp-route-searchString="Food" class="cat-circle d-block text-decoration-none">
                         <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
                             <img class="img-fluid w-100 h-100" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=300&q=80" alt="Food">
                         </div>
@@ -142,8 +139,9 @@
                     </a>
                 </div>
 
+                @* Education *@
                 <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.4s">
-                    <a asp-controller="Home" asp-action="Events" asp-route-slug="@currentSlug" asp-route-searchString="Education" class="cat-circle d-block text-decoration-none">
+                    <a asp-controller="Home" asp-action="Events" asp-route-searchString="Education" class="cat-circle d-block text-decoration-none">
                         <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
                             <img class="img-fluid w-100 h-100" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_BUqXbr84hNp5b6D19Fggg0KP371VJVA0Jw&s" alt="Education">
                         </div>
@@ -151,8 +149,9 @@
                     </a>
                 </div>
 
+                @* Business *@
                 <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.5s">
-                    <a asp-controller="Home" asp-action="Events" asp-route-slug="@currentSlug" asp-route-searchString="Business" class="cat-circle d-block text-decoration-none">
+                    <a asp-controller="Home" asp-action="Events" asp-route-searchString="Business" class="cat-circle d-block text-decoration-none">
                         <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
                             <img class="img-fluid w-100 h-100" src="https://plus.unsplash.com/premium_photo-1661772661721-b16346fe5b0f?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YnVzaW5lc3N8ZW58MHx8MHx8fDA%3D" alt="Business">
                         </div>
@@ -160,8 +159,9 @@
                     </a>
                 </div>
 
+                @* Health/Wellness *@
                 <div class="col-lg-2 col-md-3 col-6 text-center wow fadeInUp" data-wow-delay="0.6s">
-                    <a asp-controller="Home" asp-action="Events" asp-route-slug="@currentSlug" asp-route-searchString="Health" class="cat-circle d-block text-decoration-none">
+                    <a asp-controller="Home" asp-action="Events" asp-route-searchString="Health" class="cat-circle d-block text-decoration-none">
                         <div class="circle-img mb-3 mx-auto position-relative overflow-hidden shadow-sm">
                             <img class="img-fluid w-100 h-100" src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=300&q=80" alt="Health">
                         </div>
@@ -172,7 +172,7 @@
         </div>
     </div>
 
-    @*Section 3: Spotlight Event*@
+    @*Section 3: Spotlight Event (Cập nhật dữ liệu từ Model)*@
     @if (Model.SpotlightEvent != null)
     {
         <div class="container-fluid bg-dark py-5 my-5 wow fadeIn" data-wow-delay="0.1s"
@@ -214,8 +214,8 @@
                         </div>
 
                         <div class="d-flex gap-3">
-                            @* FIX: Thêm slug vào trang Detail nếu cần *@
-                            <a href="@Url.Action("Detail", "Event", new { id = Model.SpotlightEvent.Id, slug = currentSlug })" class="btn btn-primary py-3 px-5 fw-bold">Book Tickets Now <i class="fa fa-arrow-right ms-2"></i></a>
+                            <a href="@Url.Action("Detail", "Event", new { id = Model.SpotlightEvent.Id })" class="btn btn-primary py-3 px-5 fw-bold">Book Tickets Now <i class="fa fa-arrow-right ms-2"></i></a>
+                            
                         </div>
                     </div>
                 </div>
@@ -233,7 +233,7 @@
 
             <div class="row g-4">
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <a asp-action="Events" asp-route-slug="@currentSlug" asp-route-searchString="Music" class="collection-item position-relative d-block overflow-hidden rounded shadow-sm">
+                    <a href="#" class="collection-item position-relative d-block overflow-hidden rounded shadow-sm">
                         <img class="img-fluid w-100" src="https://thumbs.dreamstime.com/b/have-great-weekend-text-alarm-clock-wooden-background-390989017.jpg?w=768" alt="Weekend" style="height: 320px; object-fit: cover;">
                         <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-4"
                              style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);">
@@ -244,7 +244,7 @@
                 </div>
 
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <a asp-action="Events" asp-route-slug="@currentSlug" asp-route-searchString="Education" class="collection-item position-relative d-block overflow-hidden rounded shadow-sm">
+                    <a href="#" class="collection-item position-relative d-block overflow-hidden rounded shadow-sm">
                         <img class="img-fluid w-100" src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80" alt="Learning" style="height: 320px; object-fit: cover;">
                         <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-4"
                              style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);">
@@ -255,7 +255,7 @@
                 </div>
 
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                    <a asp-action="Events" asp-route-slug="@currentSlug" asp-route-searchString="Business" class="collection-item position-relative d-block overflow-hidden rounded shadow-sm">
+                    <a href="#" class="collection-item position-relative d-block overflow-hidden rounded shadow-sm">
                         <img class="img-fluid w-100" src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=800&q=80" alt="Gala" style="height: 320px; object-fit: cover;">
                         <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-4"
                              style="background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);">

@@ -1,63 +1,107 @@
 ﻿@model EventManagementSystem.Web.Models.Entities.Booking
 
+@* Tính toán các giá trị tài chính ngay tại đầu view *@
+@{
+    var refundedAmount = Model.BookingDetails.Where(d => d.IsCancelled).Sum(d => d.UnitPrice * d.Quantity);
+    var netTotal = Model.TotalAmount - refundedAmount;
+}
+
 <div class="modal-header border-0 pb-0" style="font-family: 'Arimo', sans-serif;">
-    <h5 class="modal-title fw-bold">Order details #@Model.Id.ToString("D5")</h5>
+    <h5 class="modal-title fw-bold">Order Details #@Model.Id.ToString("D5")</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
+
 <div class="modal-body p-4" style="font-family: 'Arimo', sans-serif;">
     <div class="row mb-4">
         <div class="col-sm-6">
             <h6 class="text-muted small fw-bold text-uppercase">Customer</h6>
             <p class="mb-0 fw-bold">@Model.CustomerName</p>
             <p class="text-muted small">@Model.CustomerEmail</p>
+            <p class="text-muted small">Phone: @Model.PhoneNumber</p> 
         </div>
         <div class="col-sm-6 text-sm-end">
             <h6 class="text-muted small fw-bold text-uppercase">Event</h6>
             <p class="mb-0 fw-bold">@Model.Event?.Title</p>
             <p class="text-muted small">@Model.BookingDate.ToString("dd/MM/yyyy HH:mm")</p>
+            @* Hiển thị trạng thái tổng quát của đơn hàng *@
+            <span class="badge @(Model.Status == "Cancelled" ? "bg-danger" : "bg-success")">
+                @Model.Status.ToUpper()
+            </span> 
         </div>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-bordered">
+        <table class="table table-bordered align-middle">
             <thead class="bg-light">
                 <tr>
-                    <th>Ticket type</th>
-                    <th class="text-center">Quantity</th>
-                    <th class="text-end">Unit price</th>
+                    <th>Ticket Type</th>
+                    <th class="text-center">Seat</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-end">Unit Price</th>
                     <th class="text-end">Subtotal</th>
-                </tr>
+                </tr> 
             </thead>
             <tbody>
                 @foreach (var detail in Model.BookingDetails)
                 {
-                    <tr>
-                        <td>@detail.TicketType?.Name</td>
+                    <tr class="@(detail.IsCancelled ? "table-light text-muted" : "")">
+                        <td class="@(detail.IsCancelled ? "text-decoration-line-through" : "fw-bold")">
+                            @detail.TicketType?.Name
+                            @if (detail.IsCancelled)
+                            {
+                                <span class="badge bg-secondary ms-1">VOID</span>
+                            }
+                        </td> 
+                        <td class="text-center @(detail.IsCancelled ? "text-decoration-line-through" : "")">
+                            @detail.SeatNumber
+                        </td> 
                         <td class="text-center">@detail.Quantity</td>
-                        <td class="text-end">@detail.UnitPrice.ToString("N0")đ</td>
-                        <td class="text-end fw-bold">@((detail.Quantity * detail.UnitPrice).ToString("N0"))đ</td>
+                        <td class="text-end">@detail.UnitPrice.ToString("N0")đ</td> 
+                        <td class="text-end @(detail.IsCancelled ? "text-decoration-line-through" : "fw-bold")">
+                            @((detail.Quantity * detail.UnitPrice).ToString("N0"))đ
+                        </td>
                     </tr>
                 }
             </tbody>
             <tfoot>
-                <tr class="table-primary fw-bold">
-                    <td colspan="3" class="text-end">TOTAL AMOUNT</td>
-                    <td class="text-end">@Model.TotalAmount.ToString("N0")đ</td>
+                <tr class="text-end">
+                    <td colspan="4" class="text-muted border-0 pt-3">Original Total:</td>
+                    <td class="text-muted border-0 pt-3">@Model.TotalAmount.ToString("N0")đ</td>
+                </tr> 
+                @if (refundedAmount > 0)
+                {
+                    <tr class="text-end text-danger">
+                        <td colspan="4" class="border-0 py-1">Refunded Amount (100%):</td>
+                        <td class="border-0 py-1">-@refundedAmount.ToString("N0")đ</td>
+                    </tr>
+                }
+                <tr class="table-primary fw-bold text-end">
+                    <td colspan="4" style="font-size: 1.1rem;">NET TOTAL (ACTUAL REVENUE):</td>
+                    <td style="font-size: 1.1rem;">@netTotal.ToString("N0")đ</td>
                 </tr>
             </tfoot>
         </table>
     </div>
 </div>
+
 <div class="modal-footer border-0" style="font-family: 'Arimo', sans-serif;">
     <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-primary rounded-3" onclick="window.print()">
-        <i class="bi bi-printer me-2"></i>Print invoice
-    </button>
+        <i class="bi bi-printer me-2"></i>Print Details
+    </button> 
 </div>
 
 <style>
-    /* Đảm bảo phông chữ được áp dụng cho toàn bộ modal */
-    .modal-content {
-        font-family: 'Arimo', sans-serif;
+    /* Các định dạng bổ sung cho hiển thị trạng thái hủy */
+    .text-decoration-line-through {
+        text-decoration: line-through !important;
+    }
+
+    .bg-success-light {
+        background-color: #f0fdf4;
+    }
+
+    .table-light {
+        background-color: #f8f9fa !important;
     }
 </style>

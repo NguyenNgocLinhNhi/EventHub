@@ -10,7 +10,5 @@
         public int TotalEvents { get; set; } // Đếm từ bảng Event
         public bool IsActive { get; set; } // Dựa trên LockoutEnd
         public string? CurrentRole { get; set; } = "Organizer";
-        public string? Slug { get; set; }      // link /org/{slug}
-        public bool IsApproved { get; set; }
     }
 }

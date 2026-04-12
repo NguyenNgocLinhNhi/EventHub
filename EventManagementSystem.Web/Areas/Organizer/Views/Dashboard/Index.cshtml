@@ -5,30 +5,6 @@
     Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
 }
 
-@* ===== THÊM: CHECK PENDING ===== *@
-@if (!Model.IsApproved || string.IsNullOrEmpty(Model.Slug))
-{
-    <div class="container text-center mt-5">
-        <div class="card border-0 shadow-sm p-5 rounded-4">
-            <h2 class="text-warning fw-bold">⏳ Account Pending Approval</h2>
-            <p class="text-muted mt-3">
-                Your account is waiting for admin approval.
-            </p>
-            <p class="text-muted">
-                You cannot access full features until your public link is assigned.
-            </p>
-
-            <div class="mt-4">
-                <span class="badge bg-warning text-dark px-3 py-2">
-                    Status: Pending
-                </span>
-            </div>
-        </div>
-    </div>
-
-    return;
-}
-
 <div class="container-fluid p-4 bg-light" style="font-family: 'Arimo', sans-serif;">
     <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
@@ -46,17 +22,6 @@
             </div>
         </div>
     </div>
-
-    @* ===== THÊM: HIỂN THỊ LINK ===== *@
-    @if (Model.IsApproved && !string.IsNullOrEmpty(Model.Slug))
-    {
-        <div class="alert alert-success">
-            Your public page:
-            <a href="/org/@Model.Slug" target="_blank">
-                /org/@Model.Slug
-            </a>
-        </div>
-    }
 
     <div class="row mb-4">
         @foreach (var stat in new[] {
@@ -99,10 +64,19 @@
                 {
                     @foreach (var ev in Model.RecentEvents)
                     {
+                        // CHỈ tính những vé CHƯA bị hủy
                         var sold = ev.Bookings?
-                        .Where(b => b.Status == "Confirmed" || b.Status == "Success")
-                        .SelectMany(b => b.BookingDetails)
-                        .Sum(d => d.Quantity) ?? 0;
+                            .Where(b => b.Status == "Confirmed" || b.Status == "Success")
+                            .SelectMany(b => b.BookingDetails)
+                            .Where(d => !d.IsCancelled)
+                            .Sum(d => d.Quantity) ?? 0;
+
+                        // Doanh thu thực tế của từng sự kiện
+                        var eventRevenue = ev.Bookings?
+                            .Where(b => b.Status == "Confirmed" || b.Status == "Success")
+                            .SelectMany(b => b.BookingDetails)
+                            .Where(d => !d.IsCancelled)
+                            .Sum(d => d.UnitPrice * d.Quantity) ?? 0;
 
                         var currentStock = ev.TicketTypes?.Sum(t => t.Quantity) ?? 0;
                         var totalCapacity = currentStock + sold;
@@ -115,7 +89,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h6 class="fw-bold mb-0">@ev.Title</h6>
                                     <span class="text-success fw-bold small">
-                                        @((ev.Bookings?.Where(b => b.Status == "Confirmed" || b.Status == "Success").Sum(b => b.TotalAmount) ?? 0).ToString("N0")) đ
+                                        @eventRevenue.ToString("N0") đ
                                     </span>
                                 </div>
                                 <small class="text-muted">@ev.StartDate.ToString("dd/MM/yyyy HH:mm")</small>
@@ -147,6 +121,9 @@
                 {
                     @foreach (var booking in Model.RecentBookings)
                     {
+                        // Tính toán Net Amount cho từng đơn hàng
+                        var netAmount = booking.BookingDetails.Where(d => !d.IsCancelled).Sum(d => d.UnitPrice * d.Quantity);
+
                         <div class="d-flex align-items-center mb-4 p-2 rounded-3 hover-shadow transition">
                             <div class="avatar-sm bg-info bg-opacity-10 text-info p-2 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                 <i class="bi bi-person fs-5"></i>
@@ -154,8 +131,14 @@
                             <div class="flex-grow-1">
                                 <div class="d-flex justify-content-between">
                                     <span class="fw-bold small text-dark">@booking.CustomerName</span>
-                                    <span class="text-success small fw-bold">+@booking.TotalAmount.ToString("N0")đ</span>
+                                    <span class="text-success small fw-bold">
+                                        +@netAmount.ToString("N0")đ
+                                    </span>
                                 </div>
+                                @if (netAmount < booking.TotalAmount)
+                                {
+                                    <small class="text-danger d-block" style="font-size: 0.7rem;">(Partially Refunded)</small>
+                                }
                                 <small class="text-muted text-truncate d-block" style="max-width: 150px;">
                                     @(booking.Event?.Title ?? "Event")
                                 </small>
@@ -173,10 +156,10 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-    }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
 
     .transition-hover:hover {
         border-color: #00786F !important;

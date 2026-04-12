@@ -174,12 +174,26 @@
                     }
                     @foreach (var item in Model.OrderByDescending(e => e.Bookings?.Where(b => b.Status == "Confirmed").Sum(b => b.TotalAmount)).Take(5))
                     {
-                        decimal revenue = item.Bookings?.Where(b => b.Status == "Confirmed").Sum(b => b.TotalAmount) ?? 0m;
-                        int totalSold = item.Bookings?.Where(b => b.Status == "Confirmed").SelectMany(b => b.BookingDetails).Sum(d => d.Quantity) ?? 0;
-                        int totalCapacity = item.TicketTypes?.Sum(tt => tt.Quantity) ?? 0;
-                        int totalCheckedIn = item.Bookings?.Where(b => b.Status == "Confirmed").SelectMany(b => b.BookingDetails).Count(d => d.IsCheckedIn == true) ?? 0;
+                        // Doanh thu thực tế (đã trừ hủy)
+                        decimal itemRevenue = item.Bookings?.Where(b => b.Status == "Confirmed")
+                            .SelectMany(b => b.BookingDetails)
+                            .Where(d => !d.IsCancelled)
+                            .Sum(d => d.UnitPrice * d.Quantity) ?? 0m; int totalSold = item.Bookings?.Where(b => b.Status == "Confirmed").SelectMany(b => b.BookingDetails).Sum(d => d.Quantity) ?? 0;
+                        
+                        // Số lượng vé thực tế đã bán (đã trừ hủy)
+                        int itemSold = item.Bookings?.Where(b => b.Status == "Confirmed")
+                            .SelectMany(b => b.BookingDetails)
+                            .Where(d => !d.IsCancelled)
+                            .Sum(d => d.Quantity) ?? 0;
 
-                        decimal fillRatio = totalCapacity > 0 ? (totalSold * 100m / totalCapacity) : 0m;
+                        int totalCapacity = item.TicketTypes?.Sum(tt => tt.Quantity) ?? 0; int totalCheckedIn = item.Bookings?.Where(b => b.Status == "Confirmed").SelectMany(b => b.BookingDetails).Count(d => d.IsCheckedIn == true) ?? 0;
+
+                        // Số người tham gia thực tế trên tổng số vé hợp lệ
+                        int itemCheckedIn = item.Bookings?.Where(b => b.Status == "Confirmed")
+                            .SelectMany(b => b.BookingDetails)
+                            .Count(d => d.IsCheckedIn == true && !d.IsCancelled) ?? 0;
+
+                        decimal fillRatio = (totalCapacity + totalSold) > 0 ? (totalSold * 100m / (totalCapacity + totalSold)) : 0m;
                         decimal checkInRatio = totalSold > 0 ? (totalCheckedIn * 100m / totalSold) : 0m;
                         var checkInColor = checkInRatio < 50m ? "bg-danger" : (checkInRatio < 80m ? "bg-warning" : "bg-success");
 
@@ -198,7 +212,7 @@
                                 </a>
                                 <small class="text-muted">@item.StartDate.ToString("dd/MM/yyyy")</small>
                             </td>
-                            <td class="text-end text-success fw-bold">@revenue.ToString("N0")đ</td>
+                            <td class="text-end text-success fw-bold">@itemRevenue.ToString("N0")đ</td>
                             <td class="ps-5 pe-4">
                                 <div class="d-flex flex-column gap-2 py-2">
                                     <div>

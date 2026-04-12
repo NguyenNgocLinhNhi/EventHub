@@ -1,0 +1,126 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.ContactInquiry>
+@{
+    ViewData["Title"] = "Support Inquiries";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">Support Inquiries</h3>
+            <p class="text-muted small mb-0">Manage and respond to technical support requests from Organizers.</p>
+        </div>
+        <span class="badge bg-primary px-3 py-2">Total: @Model.Count()</span>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3 text-muted small fw-bold text-uppercase">Organizer</th>
+                            <th class="py-3 text-muted small fw-bold text-uppercase">Subject & Message</th>
+                            <th class="py-3 text-muted small fw-bold text-uppercase">Date</th>
+                            <th class="py-3 text-muted small fw-bold text-uppercase text-center">Status</th>
+                            <th class="pe-4 py-3 text-end text-muted small fw-bold text-uppercase">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="@(!item.IsReadByAdmin ? "table-light border-start border-4 border-primary" : "")">
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm me-3 bg-soft-primary text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: #e7f1ff;">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">@item.Name</div>
+                                            <div class="text-muted small">@item.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">@item.Subject</div>
+                                    <div class="text-truncate text-muted small" style="max-width: 300px;">@item.Message</div>
+                                </td>
+                                <td>
+                                    <div class="small text-dark">@item.CreatedAt.ToString("dd/MM/yyyy")</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">@item.CreatedAt.ToString("HH:mm")</div>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.IsReplied)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill" style="background: #e8f5e9;">Replied</span>
+                                    }
+                                    else if (!item.IsReadByAdmin)
+                                    {
+                                        <span class="badge bg-danger px-3 py-2 rounded-pill">New</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill" style="background: #f8f9fa;">Read</span>
+                                    }
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <button class="btn btn-outline-primary btn-sm rounded-3 px-3"
+                                            onclick="openReplyModal('@item.Id', '@item.Name', `@item.Message`, `@item.ReplyMessage`)">
+                                        <i class="bi bi-reply-fill me-1"></i> @(item.IsReplied ? "View" : "Reply")
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section FooterModals {
+    <div class="modal fade" id="replyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-bottom-0 pt-4 px-4">
+                    <h5 class="modal-title fw-bold">Support Response</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form asp-action="Reply" method="post">
+                    <div class="modal-body px-4">
+                        <input type="hidden" id="inquiryId" name="id" />
+
+                        <div class="mb-3">
+                            <label class="form-label small text-muted fw-bold">From Organizer:</label>
+                            <p id="organizerName" class="fw-bold mb-2"></p>
+                            <div class="p-3 bg-light rounded-3 small italic" id="originalMessage"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="replyMessage" class="form-label small text-muted fw-bold">Your Response:</label>
+                            <textarea class="form-control rounded-3" id="replyMessage" name="message" rows="5" placeholder="Type your answer here..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pb-4 px-4">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">Send Feedback</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function openReplyModal(id, name, msg, oldReply) {
+            document.getElementById('inquiryId').value = id;
+            document.getElementById('organizerName').innerText = name;
+            document.getElementById('originalMessage').innerText = '"' + msg + '"';
+            document.getElementById('replyMessage').value = oldReply || '';
+
+            var myModal = new bootstrap.Modal(document.getElementById('replyModal'));
+            myModal.show();
+        }
+    </script>
+}

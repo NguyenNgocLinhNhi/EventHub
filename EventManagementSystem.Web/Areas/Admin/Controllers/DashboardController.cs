@@ -25,55 +25,71 @@ namespace EventManagementSystem.Web.Areas.Admin.Controllers
         {
             var model = new AdminDashboardViewModel();
 
-            // 1. Thống kê người dùng
+            // 1. Thống kê người dùng & sự kiện (Giữ nguyên)
             model.TotalUsers = await _userManager.Users.CountAsync();
-
-            // Lấy danh sách Organizer dựa trên Role "Organizer"
             var organizers = await _userManager.GetUsersInRoleAsync("Organizer");
             model.TotalOrganizers = organizers.Count;
-
-            // 2. Thống kê sự kiện (Sử dụng thuộc tính Status trong Event.cs)
             model.TotalActiveEvents = await _context.Events
                 .CountAsync(e => e.Status == "Published" && e.IsActive == true);
 
-            // 3. Thống kê vé và doanh thu (Sử dụng thuộc tính TotalAmount trong Booking.cs)
-            // Tính tổng doanh thu từ tất cả các Booking có trạng thái "Confirmed" hoặc "Success"
-            var totalRevenue = await _context.Bookings
-                .Where(b => b.Status == "Confirmed" || b.Status == "Success")
-                .SumAsync(b => b.TotalAmount);
+            // 2. THỐNG KÊ DOANH THU & PHÍ THỰC TẾ (Chỉ tính vé hợp lệ)
+            // Tính tổng doanh thu từ các vé CHƯA bị hủy của đơn hàng thành công
+            var totalNetRevenue = await _context.BookingDetails
+                .Where(d => (d.Booking.Status == "Confirmed" || d.Booking.Status == "Success") && !d.IsCancelled)
+                .SumAsync(d => d.UnitPrice * d.Quantity);
 
-            // Phí commission hệ thống (ví dụ 10% doanh thu)
-            model.TotalCommission = totalRevenue * 0.1m;
+            // Phí dịch vụ 10% dựa trên doanh thu thực tế
+            model.TotalCommission = totalNetRevenue * 0.1m;
 
-            // Tổng số vé đã bán (Sum Quantity từ BookingDetails)
-            model.TotalTicketsSold = await _context.BookingDetails.SumAsync(bd => bd.Quantity);
+            // Tổng số vé thực tế đã bán (Loại trừ vé đã hủy)
+            model.TotalTicketsSold = await _context.BookingDetails
+                .Where(d => (d.Booking.Status == "Confirmed" || d.Booking.Status == "Success") && !d.IsCancelled)
+                .SumAsync(bd => bd.Quantity);
 
-            model.TotalSystemViews = 15420; // Giả lập dữ liệu traffic
-
-            // 4. Lấy 5 sự kiện mới cập nhật (Sử dụng quan hệ Virtual Organizer trong Event.cs)
+            // 3. Lấy 5 sự kiện mới cập nhật (Cần gán Id để nút mắt hoạt động)
             model.RecentEvents = await _context.Events
                 .Include(e => e.Organizer)
                 .OrderByDescending(e => e.CreatedAt)
                 .Take(5)
                 .Select(e => new RecentEventViewModel
                 {
+                    Id = e.Id,
                     Title = e.Title,
                     OrganizerName = e.Organizer.FullName ?? "N/A",
-                    IsApproved = e.IsActive, // Dùng IsActive để hiển thị trạng thái
+                    IsApproved = e.IsActive,
                     CreatedAt = e.CreatedAt
                 }).ToListAsync();
 
-            // 5. Lấy 5 giao dịch gần nhất (Dữ liệu từ Booking.cs)
-            model.RecentTransactions = await _context.Bookings
+            // 4. LẤY 5 GIAO DỊCH PHÍ GẦN NHẤT (Chỉ lấy đơn hàng có vé hợp lệ)
+            var recentBookings = await _context.Bookings
                 .Include(b => b.Event)
+                .Include(b => b.BookingDetails)
+                .Where(b => b.Status == "Confirmed" || b.Status == "Success")
                 .OrderByDescending(b => b.BookingDate)
+                .ToListAsync();
+
+            model.RecentTransactions = recentBookings
+                .Select(b => {
+                    // Tính phí 10% dựa trên các vé chưa bị hủy trong đơn hàng này
+                    var netAmount = b.BookingDetails
+                        .Where(d => !d.IsCancelled)
+                        .Sum(d => d.UnitPrice * d.Quantity);
+
+                    return new
+                    {
+                        Email = b.CustomerEmail,
+                        Fee = netAmount * 0.1m,
+                        Event = b.Event?.Title ?? "N/A"
+                    };
+                })
+                .Where(x => x.Fee > 0) // Chỉ hiển thị giao dịch có phát sinh phí
                 .Take(5)
-                .Select(b => new RecentTransactionViewModel
+                .Select(x => new RecentTransactionViewModel
                 {
-                    UserEmail = b.CustomerEmail,
-                    Amount = b.TotalAmount,
-                    EventTitle = b.Event.Title
-                }).ToListAsync();
+                    UserEmail = x.Email,
+                    Amount = x.Fee,
+                    EventTitle = x.Event
+                }).ToList();
 
             return View(model);
         }

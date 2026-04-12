@@ -33,7 +33,9 @@ namespace EventManagementSystem.Web.Controllers
             if (@event == null) return NotFound();
 
             var bookedSeats = await _context.BookingDetails
-                .Where(d => d.Booking.EventId == id && (d.Booking.Status == "Confirmed" || d.Booking.Status == "Pending"))
+                .Where(d => d.Booking.EventId == id &&
+                            (d.Booking.Status == "Confirmed" || d.Booking.Status == "Pending") &&
+                            !d.IsCancelled) // Ghế đã hủy thì không tính là đã đặt
                 .Select(d => d.SeatNumber)
                 .ToListAsync();
 
@@ -72,12 +74,14 @@ namespace EventManagementSystem.Web.Controllers
                     .Include(e => e.TicketTypes)
                     .FirstOrDefaultAsync(e => e.Id == eventId);
 
-                if (@event == null) return BadRequest("Sự kiện không tồn tại.");
+                if (@event == null) return BadRequest("Event not found.");
 
                 var seatArray = selectedSeats.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
                 var existingSeats = await _context.BookingDetails
-                    .Where(d => d.Booking.EventId == eventId && (d.Booking.Status == "Confirmed" || d.Booking.Status == "Pending"))
+                    .Where(d => d.Booking.EventId == eventId &&
+                                (d.Booking.Status == "Confirmed" || d.Booking.Status == "Pending") &&
+                                !d.IsCancelled) // Bỏ qua các ghế đã hủy để người khác có thể đặt lại
                     .Select(d => d.SeatNumber)
                     .ToListAsync();
 
@@ -85,7 +89,7 @@ namespace EventManagementSystem.Web.Controllers
                 {
                     if (existingSeats.Contains(seat.Trim()))
                     {
-                        return BadRequest($"Ghế {seat} vừa có người khác đặt. Vui lòng thử lại.");
+                        return BadRequest($"Seat {seat} has already been taken. Please try again.");
                     }
                 }
 
@@ -96,7 +100,7 @@ namespace EventManagementSystem.Web.Controllers
                     BookingDate = DateTime.Now,
                     TotalAmount = totalAmount,
                     Status = "Pending",
-                    PaymentMethod = paymentMethod, // Đã bổ sung lưu phương thức thanh toán [cite: 5]
+                    PaymentMethod = paymentMethod, // Đã bổ sung lưu phương thức thanh toán
                     CustomerName = customerName,
                     CustomerEmail = customerEmail,
                     PhoneNumber = phoneNumber,
@@ -112,7 +116,7 @@ namespace EventManagementSystem.Web.Controllers
                     if (typeIndex >= ticketTypesOrdered.Count) typeIndex = ticketTypesOrdered.Count - 1;
 
                     var ticketType = ticketTypesOrdered.ElementAt(typeIndex);
-                    if (ticketType.Quantity <= 0) return BadRequest($"Hạng vé {ticketType.Name} đã hết.");
+                    if (ticketType.Quantity <= 0) return BadRequest($"Ticket category {ticketType.Name} is sold out.");
 
                     booking.BookingDetails.Add(new BookingDetail
                     {
@@ -120,9 +124,9 @@ namespace EventManagementSystem.Web.Controllers
                         SeatNumber = seatCode.Trim(),
                         Quantity = 1,
                         UnitPrice = ticketType.Price,
-                        // Quan trọng: Tạo TicketCode ngay từ lúc này để quản lý [cite: 2]
+                        // Quan trọng: Tạo TicketCode ngay từ lúc này để quản lý
                         TicketCode = "EH-" + Guid.NewGuid().ToString().ToUpper().Substring(0, 8),
-                        IsCheckedIn = false // Mặc định chưa tham gia [cite: 3]
+                        IsCheckedIn = false // Mặc định chưa tham gia
                     });
 
                     ticketType.Quantity -= 1;
@@ -143,7 +147,7 @@ namespace EventManagementSystem.Web.Controllers
             catch (Exception)
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Lỗi xử lý đơn hàng.");
+                return StatusCode(500, "An error occurred while processing your booking.");
             }
         }
 
@@ -159,43 +163,51 @@ namespace EventManagementSystem.Web.Controllers
 
             if (booking == null) return NotFound();
 
-            // Cập nhật trạng thái chính thức [cite: 1]
+            // Update official status
             booking.Status = "Confirmed";
             await _context.SaveChangesAsync();
 
-            // TẠO NỘI DUNG VÉ CHO EMAIL
+            // GENERATE TICKET CONTENT FOR EMAIL
             var ticketListHtml = new StringBuilder();
 
             foreach (var detail in booking.BookingDetails)
             {
-                // Sử dụng mã soát vé đã lưu trong DB để tạo QR [cite: 2, 4]
+                // Generate the absolute URL for the cancellation action
+                string cancelUrl = Url.Action("CancelTicket", "Booking", new { ticketCode = detail.TicketCode }, Request.Scheme);
+
+               // Use the saved ticket code to generate the QR
                 string qrUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={detail.TicketCode}";
 
                 ticketListHtml.Append($@"
-                    <div style='border: 2px dashed #006D5B; padding: 20px; margin-bottom: 20px; border-radius: 10px; background-color: #fff; font-family: sans-serif;'>
-                        <h2 style='color: #006D5B; text-align: center; margin-top: 0;'>VÉ XEM SỰ KIỆN</h2>
-                        <p><b>Sự kiện:</b> {booking.Event?.Title}</p>
-                        <p><b>Vị trí ghế:</b> <span style='font-size: 20px; color: #ce1212;'>{detail.SeatNumber}</span></p>
-                        <p><b>Mã soát vé:</b> {detail.TicketCode}</p>
-                        <div style='text-align: center; margin-top: 15px;'>
-                            <img src='{qrUrl}' width='150' alt='QR Code' />
-                            <p style='font-size: 12px; color: #666;'>Vui lòng trình mã này tại cửa sự kiện để Check-in</p>
-                        </div>
-                    </div>");
+            <div style='border: 2px dashed #006D5B; padding: 20px; margin-bottom: 20px; border-radius: 10px; background-color: #fff; font-family: sans-serif;'>
+                <h2 style='color: #006D5B; text-align: center; margin-top: 0;'>EVENT TICKET</h2>
+                <p><b>Event:</b> {booking.Event?.Title}</p>
+                <p><b>Seat Number:</b> <span style='font-size: 20px; color: #ce1212;'>{detail.SeatNumber}</span></p>
+                <p><b>Validation Code:</b> {detail.TicketCode}</p>
+                <div style='text-align: center; margin-top: 15px;'>
+                    <img src='{qrUrl}' width='150' alt='QR Code' />
+                    <p style='font-size: 12px; color: #666;'>Please present this code at the entrance for Check-in</p>
+                    <div style='margin-top: 15px;'>
+                        <a href='{cancelUrl}' style='display: inline-block; padding: 10px 20px; background-color: #dc3545; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px;'>
+                            Cancel This Ticket (100% Refund)
+                        </a>
+                    </div>
+                </div>
+            </div>");
             }
 
-            string subject = $"[EventHub] Xác nhận đặt vé thành công #{booking.Id}";
+            string subject = $"[EventHub] Booking Confirmation Success #{booking.Id}";
             string body = $@"
-                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f9f9f9;'>
-                    <h3 style='color: #333;'>Cảm ơn {booking.CustomerName}!</h3>
-                    <p>Thanh toán thành công. Dưới đây là danh sách vé điện tử của bạn:</p>
-                    {ticketListHtml}
-                    <div style='background-color: #eee; padding: 15px; border-radius: 5px; margin-top: 20px;'>
-                        <p style='margin: 5px 0;'><b>Thời gian:</b> {booking.Event?.StartDate:dd/MM/yyyy HH:mm}</p>
-                        <p style='margin: 5px 0;'><b>Địa điểm:</b> {booking.Event?.Location}</p>
-                    </div>
-                    <p style='text-align: center; color: #888; font-size: 12px; margin-top: 20px;'>Đây là email tự động, vui lòng không phản hồi.</p>
-                </div>";
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f9f9f9;'>
+            <h3 style='color: #333;'>Thank you, {booking.CustomerName}!</h3>
+            <p>Your payment was successful. Below is your electronic ticket list:</p>
+            {ticketListHtml}
+            <div style='background-color: #eee; padding: 15px; border-radius: 5px; margin-top: 20px;'>
+                <p style='margin: 5px 0;'><b>Time:</b> {booking.Event?.StartDate:MMMM dd, yyyy HH:mm}</p>
+                <p style='margin: 5px 0;'><b>Location:</b> {booking.Event?.Location}</p>
+            </div>
+            <p style='text-align: center; color: #888; font-size: 12px; margin-top: 20px;'>This is an automated email, please do not reply.</p>
+        </div>";
 
             await _emailService.SendEmailAsync(booking.CustomerEmail, subject, body);
 
@@ -286,6 +298,122 @@ namespace EventManagementSystem.Web.Controllers
             }
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CancelTicket(string ticketCode)
+        {
+            var detail = await _context.BookingDetails
+                .Include(d => d.Booking).ThenInclude(b => b.Event)
+                .Include(d => d.TicketType)
+                .FirstOrDefaultAsync(d => d.TicketCode == ticketCode);
+
+            if (detail == null) return NotFound("Ticket code not found.");
+            if (detail.IsCancelled) return BadRequest("This ticket is already cancelled.");
+
+            // Kiểm tra điều kiện 24h
+            var eventStartTime = detail.Booking.Event.StartDate;
+            if ((eventStartTime - DateTime.Now).TotalHours < 24)
+                return BadRequest("Cannot cancel within 24 hours of the event.");
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // 1. CẬP NHẬT TRẠNG THÁI (Thay vì xóa)
+                detail.IsCancelled = true;
+
+                // GÁN THỜI GIAN HỦY THỰC TẾ TẠI ĐÂY
+                detail.CancelledAt = DateTime.Now;
+
+                // 2. Hoàn trả số lượng vào kho
+                detail.TicketType.Quantity += 1;
+
+                // 3. Kiểm tra xem tất cả vé trong đơn hàng đã hủy hết chưa
+                var allCancelled = await _context.BookingDetails
+                    .Where(d => d.BookingId == detail.BookingId)
+                    .AllAsync(d => d.IsCancelled);
+
+                if (allCancelled)
+                {
+                    detail.Booking.Status = "Cancelled";
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                // 4. GỬI EMAIL (Bổ sung thông tin sự kiện)
+                await SendCancellationEmail(detail);
+
+                TempData["Message"] = "Ticket successfully cancelled and invalidated.";
+                return RedirectToAction("BookingSuccess", new { id = detail.BookingId });
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Error processing cancellation.");
+            }
+        }
+
+        private async Task SendCancellationEmail(BookingDetail detail)
+        {
+            var booking = detail.Booking;
+            var @event = booking.Event;
+
+            string subject = $"[EventHub] Cancellation Confirmed: {@event?.Title}";
+            string body = $@"
+        <div style='font-family: Arial; padding: 20px; border: 1px solid #eee;'>
+            <h2 style='color: #dc3545;'>Cancellation Confirmed</h2>
+            <p>Hello <b>{booking.CustomerName}</b>,</p>
+            <p>You have successfully cancelled a ticket for the following event:</p>
+            <div style='background: #f8f9fa; padding: 15px; border-left: 4px solid #dc3545;'>
+                <p style='margin:0'><b>Event:</b> {@event?.Title}</p>
+                <p style='margin:0'><b>Date:</b> {@event?.StartDate:dd/MM/yyyy HH:mm}</p>
+                <p style='margin:0'><b>Location:</b> {@event?.Location}</p>
+                <p style='margin:0'><b>Seat:</b> <span style='color:red'>{detail.SeatNumber}</span></p>
+            </div>
+            <p><b>Refund Status:</b> 100% refund has been initiated to your original payment method.</p>
+            <p style='font-size: 12px; color: #888;'>This ticket is now VOID and cannot be used for entry.</p>
+        </div>";
+
+            await _emailService.SendEmailAsync(booking.CustomerEmail, subject, body);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelFullBooking(int bookingId)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.Event)
+                .Include(b => b.BookingDetails)
+                .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+            if (booking == null) return NotFound("Booking not found.");
+
+            // Condition: 24-hour check
+            if ((booking.Event.StartDate - DateTime.Now).TotalHours < 24)
+            {
+                return BadRequest("This booking cannot be canceled this close to the event start time.");
+            }
+
+            foreach (var detail in booking.BookingDetails)
+            {
+                if (!detail.IsCancelled) // Chỉ xử lý những vé chưa bị hủy lẻ trước đó
+                {
+                    detail.IsCancelled = true;
+
+                    if (detail.TicketType != null)
+                    {
+                        detail.TicketType.Quantity += 1;
+                        _context.TicketTypes.Update(detail.TicketType);
+                    }
+                }
+            }
+
+            booking.Status = "Cancelled";
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "Full booking has been canceled and refunded.";
+            return RedirectToAction("BookingSuccess", new { id = bookingId });
         }
     }
 }

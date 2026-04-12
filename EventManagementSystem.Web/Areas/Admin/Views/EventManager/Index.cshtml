@@ -106,7 +106,7 @@
             </div>
             <div>
                 <p class="text-muted small mb-0 fw-bold">Total Revenue</p>
-                <h3 class="fw-bold mb-0 text-dark">$@string.Format("{0:N0}", stats.Revenue)</h3>
+                <h3 class="fw-bold mb-0 text-dark">@string.Format("{0:N0}", stats.Revenue) đ</h3>
             </div>
         </div>
     </div>
@@ -174,11 +174,13 @@
                         <td>
                             <div class="small fw-bold">@item.TicketsSold / @item.TotalTickets</div>
                             <div class="progress mt-1" style="height: 4px; width: 80px;">
-                                @{ var percent = item.TotalTickets > 0 ? (item.TicketsSold * 100 / item.TotalTickets) : 0; }
+                                @{
+                                    var percent = item.TotalTickets > 0 ? (item.TicketsSold * 100 / item.TotalTickets) : 0;
+                                }
                                 <div class="progress-bar bg-primary" style="width: @percent%"></div>
                             </div>
                         </td>
-                        <td class="fw-bold text-dark">$@item.Revenue.ToString("N0")</td>
+                        <td class="fw-bold text-dark">@item.Revenue.ToString("N0") đ</td>
                         <td>
                             <span class="badge rounded-pill status-text @(item.Status == "Upcoming" ? "bg-primary-subtle text-primary" : (item.Status == "Ongoing" ? "bg-success-subtle text-success" : "bg-secondary-subtle text-secondary")) px-3">
                                 @item.Status

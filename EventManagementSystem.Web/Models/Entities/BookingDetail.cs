@@ -31,6 +31,9 @@ namespace EventManagementSystem.Web.Models.Entities
         public string? TicketCode { get; set; } // Mã để tạo QR Code
         public DateTime? CheckInTime { get; set; } // Thời gian quét vé
 
-        
+        public bool IsCancelled { get; set; } = false;
+
+        public bool IsReadByOrganizer { get; set; } = false;
+        public DateTime? CancelledAt { get; set; }
     }
 }

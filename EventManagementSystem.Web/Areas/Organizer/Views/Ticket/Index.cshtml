@@ -3,7 +3,11 @@
     ViewData["Title"] = "Ticket management";
     Layout = "~/Areas/Organizer/Views/Shared/_LayoutOrganizer.cshtml";
 
-    var totalTickets = Model.Sum(b => b.BookingDetails?.Sum(d => d.Quantity) ?? 0);
+    // Logic: Chỉ tính tổng số lượng của những vé CHƯA bị hủy lẻ và thuộc đơn hàng chưa hủy hoàn toàn
+    var totalTickets = Model
+        .Where(b => b.Status != "Cancelled")
+        .Sum(b => b.BookingDetails?.Where(d => !d.IsCancelled).Sum(d => d.Quantity) ?? 0);
+
     var confirmed = Model.Count(b => b.Status == "Confirmed");
     var pending = Model.Count(b => b.Status == "Pending");
     var cancelled = Model.Count(b => b.Status == "Cancelled");
@@ -82,11 +86,36 @@
                     <td>
                         @foreach (var detail in booking.BookingDetails)
                         {
-                            <span class="badge bg-info-light text-info rounded-pill px-2 small mb-1">@detail.TicketType?.Name</span>
+                            if (detail.IsCancelled)
+                            {
+                                <span class="badge bg-secondary text-decoration-line-through rounded-pill px-2 small mb-1" title="Cancelled">
+                                    @detail.TicketType?.Name (Void)
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info-light text-info rounded-pill px-2 small mb-1">
+                                    @detail.TicketType?.Name
+                                </span>
+                            }
                         }
                     </td>
-                    <td class="text-center fw-bold">@booking.BookingDetails.Sum(d => d.Quantity)</td>
-                    <td class="fw-bold text-success">@booking.TotalAmount.ToString("N0")đ</td>
+                    <td class="text-center fw-bold">
+                        @booking.BookingDetails.Where(d => !d.IsCancelled).Sum(d => d.Quantity)
+                    </td>
+                    <td class="fw-bold text-success">
+                        @{
+                            var netAmount = booking.BookingDetails.Where(d => !d.IsCancelled).Sum(d => d.UnitPrice * d.Quantity);
+                        }
+                        @netAmount.ToString("N0")đ
+
+                        @if (netAmount < booking.TotalAmount)
+                        {
+                            <div class="text-danger small fw-normal" style="font-size: 0.7rem; margin-top: -5px;">
+                                (Partially Refunded)
+                            </div>
+                        }
+                    </td>
                     <td class="small">@booking.BookingDate.ToString("dd/MM/yyyy")</td>
                     <td class="text-end pe-4">
                         <div class="btn-group border rounded-3 overflow-hidden shadow-sm">

@@ -69,14 +69,26 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
             ViewBag.SelectedStatus = status;
 
             // --- THỐNG KÊ TỔNG QUAN ---
-            decimal totalRevenue = allConfirmedBookings.Sum(b => b.TotalAmount);
+            decimal totalRevenue = allConfirmedBookings
+                .SelectMany(b => b.BookingDetails)
+                .Where(d => !d.IsCancelled)
+                .Sum(d => d.UnitPrice * d.Quantity);
             ViewBag.TotalRevenue = totalRevenue;
 
             // Thống kê tháng này vs tháng trước của hệ thống
-            var sysConfirmed = events.SelectMany(e => e.Bookings ?? new List<Booking>()).Where(b => b.Status == "Confirmed").ToList();
-            ViewBag.CurrentMonthRevenue = sysConfirmed.Where(b => b.BookingDate.Month == now.Month && b.BookingDate.Year == now.Year).Sum(b => b.TotalAmount);
+            var sysConfirmedDetails = events.SelectMany(e => e.Bookings ?? new List<Booking>())
+                .Where(b => b.Status == "Confirmed")
+                .SelectMany(b => b.BookingDetails)
+                .Where(d => !d.IsCancelled);
+
+            ViewBag.CurrentMonthRevenue = sysConfirmedDetails
+                .Where(d => d.Booking.BookingDate.Month == now.Month && d.Booking.BookingDate.Year == now.Year)
+                .Sum(d => d.UnitPrice * d.Quantity);
+
             var lastMonth = now.AddMonths(-1);
-            ViewBag.LastMonthRevenue = sysConfirmed.Where(b => b.BookingDate.Month == lastMonth.Month && b.BookingDate.Year == lastMonth.Year).Sum(b => b.TotalAmount);
+            ViewBag.LastMonthRevenue = sysConfirmedDetails
+                .Where(d => d.Booking.BookingDate.Month == lastMonth.Month && d.Booking.BookingDate.Year == lastMonth.Year)
+                .Sum(d => d.UnitPrice * d.Quantity);
 
             // --- BIỂU ĐỒ 12 THÁNG (Theo năm được chọn hoặc hiện tại) ---
             int chartYear = toDate?.Year ?? now.Year;
@@ -87,7 +99,11 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
 
             for (int i = 1; i <= 12; i++)
             {
-                monthlyRev.Add(allConfirmedBookings.Where(b => b.BookingDate.Month == i && b.BookingDate.Year == chartYear).Sum(b => b.TotalAmount));
+                monthlyRev.Add(allConfirmedBookings
+                    .Where(b => b.BookingDate.Month == i && b.BookingDate.Year == chartYear)
+                    .SelectMany(b => b.BookingDetails)
+                    .Where(d => !d.IsCancelled)
+                    .Sum(d => d.UnitPrice * d.Quantity));
                 monthlyCust.Add(allBookings.Where(b => b.BookingDate.Month == i && b.BookingDate.Year == chartYear).Select(b => b.CustomerEmail).Distinct().Count());
             }
             ViewBag.MonthlyRevenueChart = monthlyRev;
@@ -95,11 +111,13 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
 
             // --- PHƯƠNG THỨC THANH TOÁN ---
             ViewBag.PaymentStats = allConfirmedBookings
-                .GroupBy(b => b.PaymentMethod ?? "Khác")
+                .SelectMany(b => b.BookingDetails)
+                .Where(d => !d.IsCancelled)
+                .GroupBy(d => d.Booking.PaymentMethod ?? "Other")
                 .Select(g => new {
                     Method = g.Key,
-                    Amount = g.Sum(x => x.TotalAmount),
-                    Percentage = totalRevenue > 0 ? (g.Sum(x => x.TotalAmount) * 100m / totalRevenue) : 0m
+                    Amount = g.Sum(x => x.UnitPrice * x.Quantity),
+                    Percentage = totalRevenue > 0 ? (g.Sum(x => x.UnitPrice * x.Quantity) * 100m / totalRevenue) : 0m
                 }).OrderByDescending(x => x.Amount).ToList();
 
             return View(events);
@@ -193,10 +211,21 @@ namespace EventManagementSystem.Web.Areas.Organizer.Controllers
 
             // Thống kê nhanh
             var confirmedBookings = ev.Bookings?.Where(b => b.Status == "Confirmed").ToList() ?? new List<Booking>();
-            ViewBag.TotalRevenue = confirmedBookings.Sum(b => b.TotalAmount);
-            ViewBag.TicketsSold = confirmedBookings.SelectMany(b => b.BookingDetails).Sum(d => d.Quantity);
+            ViewBag.TotalRevenue = confirmedBookings
+                .SelectMany(b => b.BookingDetails)
+                .Where(d => !d.IsCancelled)
+                .Sum(d => d.UnitPrice * d.Quantity);
+
+            ViewBag.TicketsSold = confirmedBookings
+                .SelectMany(b => b.BookingDetails)
+                .Where(d => !d.IsCancelled)
+                .Sum(d => d.Quantity);
+
             ViewBag.TotalCapacity = ev.TicketTypes?.Sum(t => t.Quantity) ?? 0;
-            ViewBag.CheckedInCount = confirmedBookings.SelectMany(b => b.BookingDetails).Count(d => d.IsCheckedIn);
+
+            ViewBag.CheckedInCount = confirmedBookings
+                .SelectMany(b => b.BookingDetails)
+                .Count(d => d.IsCheckedIn && !d.IsCancelled); // Chỉ tính check-in cho vé hợp lệ
 
             return View(ev);
         }

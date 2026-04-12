@@ -1,0 +1,122 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.ContactInquiry>
+
+@{
+    ViewData["Title"] = "Customer Inquiries";
+    Layout = "_LayoutOrganizer"; // Sử dụng layout dành cho nhà tổ chức [cite: 23]
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Customer Inquiries</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Inquiries</li>
+                </ol>
+            </nav>
+        </div>
+        <span class="badge bg-primary rounded-pill p-2 px-3">
+            Total: @Model.Count()
+        </span>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3">Customer</th>
+                            <th class="py-3">Event</th>
+                            <th class="py-3">Message</th>
+                            <th class="py-3">Date</th>
+                            <th class="py-3 text-center">Status</th>
+                            <th class="pe-4 py-3 text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                    No inquiries found.
+                                </td>
+                            </tr>
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold">@item.Name</div>
+                                    <div class="small text-muted">@item.Email</div>
+                                </td>
+                                <td>
+                                    @if (item.Event != null)
+                                    {
+                                        <span class="badge bg-info text-dark">
+                                            <i class="bi bi-calendar-event me-1"></i> @item.Event.Title
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">General Inquiry</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="text-truncate" style="max-width: 250px;">
+                                        @item.Message
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="small">@item.CreatedAt.ToString("MMM dd, yyyy")</div>
+                                    <div class="small text-muted">@item.CreatedAt.ToString("HH:mm")</div>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.IsReplied)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success px-3">Replied</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning border border-warning px-3">Pending</span>
+                                    }
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                        <i class="bi bi-reply-fill"></i> View & Reply
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* CSS bổ sung để làm đẹp giao diện khớp với Layout [cite: 25, 47] */
+    .table thead th {
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        border-bottom-width: 1px;
+    }
+
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }
+
+    .bg-success-subtle {
+        background-color: #e6fffa;
+    }
+
+    .bg-warning-subtle {
+        background-color: #fffaf0;
+    }
+</style>

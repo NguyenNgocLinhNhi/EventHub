@@ -77,6 +77,23 @@ namespace EventManagementSystem.Web.Controllers
             return View(bookings);
         }
 
+        // ===================== MY REVIEWS =====================
+        [Authorize]
+        public async Task<IActionResult> MyReviews()
+        {
+            // Lấy email của người dùng đang đăng nhập
+            var userEmail = User.Identity.Name;
+
+            var myReviews = await _context.Reviews
+                .Include(r => r.Event)
+                .Where(r => r.CustomerEmail == userEmail)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            // File View phải nằm tại: Views/Manage/MyReviews.cshtml
+            return View(myReviews);
+        }
+
         // ===================== INDEX (GET) =====================
         [HttpGet]
         public async Task<IActionResult> Index(ManageMessageId? message)

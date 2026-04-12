@@ -110,20 +110,31 @@
                                 <th class="pe-4">TIME</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             @foreach (var detail in attendees)
                             {
-                                <tr>
+                                <tr class="@(detail.IsCancelled ? "table-light text-muted" : "")">
                                     <td class="ps-4">
-                                        <div class="fw-bold">@detail.Booking.CustomerName</div>
+                                        <div class="fw-bold @(detail.IsCancelled ? "text-decoration-line-through" : "")">@detail.Booking.CustomerName</div>
                                         <div class="small text-muted">@detail.Booking.CustomerEmail</div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark border">@detail.TicketType.Name</span>
-                                        <div class="small fw-bold text-primary mt-1">Seat: @detail.SeatNumber</div>
+                                        <span class="badge @(detail.IsCancelled ? "bg-secondary" : "bg-light text-dark") border">
+                                            @detail.TicketType.Name @(detail.IsCancelled ? "(VOID)" : "")
+                                        </span>
+                                        <div class="small fw-bold text-primary mt-1 @(detail.IsCancelled ? "text-decoration-line-through" : "")">
+                                            Seat: @detail.SeatNumber
+                                        </div>
                                     </td>
                                     <td>
-                                        @if (detail.IsCheckedIn)
+                                        @if (detail.IsCancelled)
+                                        {
+                                            <span class="badge bg-danger-light text-danger px-3 py-2 rounded-pill">
+                                                <i class="bi bi-x-circle-fill me-1"></i> Cancelled
+                                            </span>
+                                        }
+                                        else if (detail.IsCheckedIn)
                                         {
                                             <span class="badge bg-success-light text-success px-3 py-2 rounded-pill">
                                                 <i class="bi bi-check-circle-fill me-1"></i> Attended
@@ -137,7 +148,7 @@
                                         }
                                     </td>
                                     <td class="pe-4 small text-muted">
-                                        @(detail.IsCheckedIn? detail.CheckInTime?.ToString("HH:mm dd/MM") : "---")
+                                        @(detail.IsCheckedIn && !detail.IsCancelled ? detail.CheckInTime?.ToString("HH:mm dd/MM") : "---")
                                     </td>
                                 </tr>
                             }

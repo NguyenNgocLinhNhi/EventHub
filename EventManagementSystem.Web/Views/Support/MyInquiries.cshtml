@@ -1,0 +1,219 @@
+﻿@model IEnumerable<EventManagementSystem.Web.Models.Entities.ContactInquiry>
+
+@{
+    ViewData["Title"] = "Support History";
+    Layout = "_Layout";
+}
+
+<style>
+    /* Timeline Styles */
+    .timeline-container {
+        position: relative;
+        padding-left: 30px;
+    }
+
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e9ecef;
+        }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 40px;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: -37px;
+        top: 5px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--primary);
+        border: 4px solid #fff;
+        box-shadow: 0 0 0 2px var(--primary);
+    }
+
+    .status-pill {
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 4px 12px;
+        letter-spacing: 0.5px;
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: var(--primary);
+    }
+
+    .nav-pills .nav-link {
+        color: #6c757d;
+        font-weight: 600;
+    }
+</style>
+
+@* --- GIỮ NGUYÊN HERO HEADER --- *@
+<div class="container-fluid bg-primary hero-header mb-5">
+    <div class="container py-5">
+        <div class="row g-3 align-items-center">
+            <div class="col-lg-6 text-center text-lg-start">
+                <h1 class="display-1 mb-0 animated slideInLeft text-dark">Support</h1>
+            </div>
+            <div class="col-lg-6 animated slideInRight">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center justify-content-lg-end mb-0">
+                        <li class="breadcrumb-item">
+                            <a class="text-muted" asp-controller="Home" asp-action="Index" style="text-decoration: none;">Home</a>
+                        </li>
+                        <li class="breadcrumb-item text-primary active" aria-current="page">My Inquiries</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                @* --- Bộ lọc nhanh --- *@
+                <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3">
+                    <h4 class="fw-bold mb-0">Conversation History</h4>
+                    <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active rounded-pill" data-bs-toggle="pill" data-bs-target="#all">All</button>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#pending">Pending</button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="all">
+                        @if (!Model.Any())
+                        {
+                            <div class="text-center py-5">
+                                <i class="bi bi-chat-dots fs-1 text-muted opacity-25"></i>
+                                <p class="text-muted mt-3">No support tickets found.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="timeline-container">
+                                @foreach (var item in Model)
+                                {
+                                    <div class="timeline-item">
+                                        @* Logic đồng bộ màu sắc cho chấm Timeline: Vàng nếu chưa xử lý, Xanh/Mặc định nếu đã xong *@
+                                        <div class="timeline-dot @(item.IsReplied ? "" : "bg-warning")"
+                                             style="@(item.IsReplied ? "" : "box-shadow: 0 0 0 2px #ffc107;")"></div>
+
+                                        <div class="card border-0 shadow-sm rounded-4 mb-3 inquiry-card">
+                                            <div class="card-body p-4">
+                                                <div class="d-flex justify-content-between mb-3">
+                                                    <span class="text-primary fw-bold">
+                                                        <i class="bi @(item.EventId != null ? "bi-calendar-check" : "bi-patch-question") me-2"></i>
+                                                        @(item.Event?.Title ?? "General Inquiry")
+                                                    </span>
+                                                    @* Badge đồng bộ: Vàng cho PROCESSING, Xanh cho RESOLVED *@
+                                                    <span class="badge status-pill rounded-pill @(item.IsReplied ? "bg-success" : "bg-warning text-dark")">
+                                                        <i class="bi @(item.IsReplied ? "bi-check-circle" : "bi-clock-history") me-1"></i>
+                                                        @(item.IsReplied ? "RESOLVED" : "PROCESSING")
+                                                    </span>
+                                                </div>
+
+                                                <p class="text-dark fs-6 mb-2">@item.Message</p>
+                                                <small class="text-muted">Sent on @item.CreatedAt.ToString("MMM dd, yyyy HH:mm")</small>
+
+                                                @* Logic hiển thị phần chân Card đồng bộ *@
+                                                @if (item.IsReplied)
+                                                {
+                                                    <div class="ms-4 mt-3 p-3 border-start border-4 border-primary bg-light rounded-end-4 shadow-sm">
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <div class="avatar-sm bg-primary rounded-circle text-white d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; font-size: 10px;">
+                                                                <i class="bi bi-person-fill"></i>
+                                                            </div>
+                                                            <span class="fw-bold small">Organizer Response</span>
+                                                            <span class="mx-2 text-muted">•</span>
+                                                            <small class="text-muted">@item.RepliedAt?.ToString("MMM dd, HH:mm")</small>
+                                                        </div>
+                                                        <p class="mb-0 text-secondary">@item.ReplyMessage</p>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    @* Đây là phần dòng chữ vàng bạn muốn hiện ở Tab All cho khớp với Tab Pending *@
+                                                    <div class="mt-3 py-2 border-top border-light">
+                                                        <small class="text-warning fst-italic">
+                                                            <i class="bi bi-info-circle me-1"></i> Waiting for organizer's response...
+                                                        </small>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    @* Tab nội dung đang xử lý (Pending) *@
+                    <div class="tab-pane fade" id="pending">
+                        @{
+                            // Lọc ra những thắc mắc chưa được trả lời
+                            var pendingInquiries = Model.Where(i => !i.IsReplied).ToList();
+                        }
+
+                        @if (!pendingInquiries.Any())
+                        {
+                            <div class="text-center py-5 bg-white rounded-4 shadow-sm border">
+                                <i class="bi bi-check2-all fs-1 text-success opacity-50"></i>
+                                <p class="text-muted mt-3">All clear! You don't have any pending requests.</p>
+                                <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-primary rounded-pill btn-sm">Need help?</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="timeline-container">
+                                @foreach (var item in pendingInquiries)
+                                {
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot bg-warning" style="box-shadow: 0 0 0 2px #ffc107;"></div>
+
+                                        <div class="card border-0 shadow-sm rounded-4 mb-3 inquiry-card">
+                                            <div class="card-body p-4">
+                                                <div class="d-flex justify-content-between mb-3">
+                                                    <span class="text-primary fw-bold">
+                                                        <i class="bi @(item.EventId != null ? "bi-calendar-check" : "bi-patch-question") me-2"></i>
+                                                        @(item.Event?.Title ?? "General Inquiry")
+                                                    </span>
+                                                    <span class="badge status-pill rounded-pill bg-warning text-dark">
+                                                        <i class="bi bi-clock-history me-1"></i> PROCESSING
+                                                    </span>
+                                                </div>
+                                                <p class="text-dark fs-6 mb-2">@item.Message</p>
+                                                <small class="text-muted">Sent on @item.CreatedAt.ToString("MMM dd, yyyy HH:mm")</small>
+
+                                                <div class="mt-3 py-2 border-top border-light">
+                                                    <small class="text-warning fst-italic">
+                                                        <i class="bi bi-info-circle me-1"></i> Waiting for organizer's response...
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
